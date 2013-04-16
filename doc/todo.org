@@ -1,0 +1,11 @@
+#+title: XMonad Configuration To-do
+#+author: Peter Jones <pjones@pmade.com>
+#+todo: TODO(t) CURRENT(c) | DONE(d)
+#+startup: content
+
+* Windows
+** TODO Automatically float dialogs
+   - This probably already works but my handbreak manage hook prevents
+     dialogs opened by handbreak to float properly.
+   - https://bbs.archlinux.org/viewtopic.php?pid=716030
+   - http://xmonad.org/xmonad-docs/xmonad/XMonad-ManageHook.html
