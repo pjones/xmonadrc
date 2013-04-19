@@ -16,6 +16,8 @@ cabal-version: >=1.8
 library
   exposed-modules:
     XMonad.Local.Keys
+    XMonad.Local.Prompt
+    XMonad.Local.Workspaces
 
   hs-source-dirs: src
   ghc-options: -Wall -Werror
@@ -32,4 +34,14 @@ executable xmonadrc
   ghc-options: -Wall -Werror
   build-depends: base
                , xmonad
+               , xmonadrc
+
+------------------------------------------------------------------------------
+executable checkrc
+  main-is: checkrc.hs
+  ghc-options: -Wall -Werror
+  build-depends: base
+               , containers
+               , xmonad
+               , xmonad-contrib
                , xmonadrc

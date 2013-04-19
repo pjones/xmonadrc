@@ -5,6 +5,7 @@ TARGET = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
 SRC    = $(shell find . -type f -name '*.hs')
 BIN    = cabal-dev/bin/pjones-xmonad
 XMONAD = cabal-dev/bin/xmonad
+CHECK  = cabal-dev/bin/checkrc
 
 ################################################################################
 .PHONEY: install restart
@@ -22,6 +23,7 @@ restart: install
 ################################################################################
 $(BIN): $(SRC)
 	cabal-dev install
+	$(CHECK)
 
 ################################################################################
 $(TARGET): $(BIN)
