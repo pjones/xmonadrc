@@ -3,6 +3,7 @@
 module XMonad.Local.Workspaces
        ( names
        , hidden
+       , hiddenName
        , asKey
        , viewPrevWS
        ) where
@@ -17,7 +18,7 @@ import qualified XMonad.StackSet as W
 --
 --  * Primary: 1 through 9 and 0 (i.e. the number row on a keyboard)
 --  * Secondary: F1 through F12
-names :: [String]
+names :: [WorkspaceId]
 names = map show primary ++ map (("F" ++) . show) secondary
   where primary   = [1..9] ++ [0] :: [Int]
         secondary = [1..12]       :: [Int]
@@ -25,8 +26,16 @@ names = map show primary ++ map (("F" ++) . show) secondary
 --------------------------------------------------------------------------------
 -- | Names of workspaces that should be hidden from display when they
 -- have no windows in them.
-hidden :: [String]
+hidden :: [WorkspaceId]
 hidden = filter (\(x:_) -> x == 'F') names
+
+--------------------------------------------------------------------------------
+-- | Returns a string that should be shown for the name of the
+-- workspace when it doesn't contain any windows and is not a visible
+-- workspace (i.e. the @ppHiddenNoWindows@ field in the @PP@ record).
+hiddenName :: WorkspaceId -> String
+hiddenName ('F':_) = ""
+hiddenName x       = x
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for

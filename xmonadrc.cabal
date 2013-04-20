@@ -15,7 +15,10 @@ cabal-version: >=1.8
 ------------------------------------------------------------------------------
 library
   exposed-modules:
+    XMonad.Local.Action
     XMonad.Local.Keys
+    XMonad.Local.Layout
+    XMonad.Local.Log
     XMonad.Local.Prompt
     XMonad.Local.Workspaces
 
@@ -34,6 +37,7 @@ executable xmonadrc
   ghc-options: -Wall -Werror
   build-depends: base
                , xmonad
+               , xmonad-contrib
                , xmonadrc
 
 ------------------------------------------------------------------------------

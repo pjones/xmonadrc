@@ -3,7 +3,7 @@ ARCH   = $(shell uname -m)
 OS     = $(shell uname -s | tr '[A-Z]' '[a-z]')
 TARGET = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
 SRC    = $(shell find . -type f -name '*.hs')
-BIN    = cabal-dev/bin/pjones-xmonad
+BIN    = cabal-dev/bin/xmonadrc
 XMONAD = cabal-dev/bin/xmonad
 CHECK  = cabal-dev/bin/checkrc
 
@@ -27,6 +27,6 @@ $(BIN): $(SRC)
 
 ################################################################################
 $(TARGET): $(BIN)
-	mv $@ $@.prev
+	if [ -r $@ ]; then mv $@ $@.prev; fi
 	cp -p $< $@
 	cd $(dir $@) && ln -nfs $(notdir $@) xmonad
