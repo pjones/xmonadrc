@@ -42,6 +42,7 @@ library
                , text           == 0.11.*
                , xmonad         == 0.11
                , xmonad-contrib == 0.11.1
+               , xmonad-extras  == 0.11
 
 ------------------------------------------------------------------------------
 executable xmonadrc

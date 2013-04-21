@@ -17,6 +17,7 @@ module XMonad.Local.Action
 import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook, tileWindow)
+import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
 import XMonad.Hooks.FadeWindows (fadeWindowsEventHook)
 import XMonad.Hooks.ManageDocks (manageDocks)
 import XMonad.Hooks.ManageHelpers
@@ -47,6 +48,7 @@ tileWindow = ask >>= doF . W.sink
 handleEventHook :: Event -> X All
 handleEventHook = mconcat [ fadeWindowsEventHook
                           , focusFollowsTiledOnly
+                          , fullscreenEventHook
                           ]
 
 --------------------------------------------------------------------------------

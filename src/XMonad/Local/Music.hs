@@ -10,7 +10,7 @@ the LICENSE file. -}
 
 --------------------------------------------------------------------------------
 -- | Utilities and configuration for manipulating music from within XMonad.
-module XMonad.Local.Music (musicPrompt) where
+module XMonad.Local.Music (albumPrompt, radioPrompt) where
 
 --------------------------------------------------------------------------------
 import Control.Applicative
@@ -27,6 +27,7 @@ import Text.ParserCombinators.Parsec (parseFromFile)
 import Text.Playlist
 import XMonad.Core
 import XMonad.Prompt
+import XMonad.Prompt.MPD (addAndPlay)
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -49,8 +50,12 @@ radioStationPlaylist = do
   either (fail . show) return parsed
 
 --------------------------------------------------------------------------------
-musicPrompt :: XPConfig -> X ()
-musicPrompt c = do
+albumPrompt :: XPConfig -> X ()
+albumPrompt c = addAndPlay MPD.withMPD c [MPD.Artist, MPD.Album]
+
+--------------------------------------------------------------------------------
+radioPrompt :: XPConfig -> X ()
+radioPrompt c = do
   playlist <- io $ radioStationPlaylist `catch` econst []
   let titles = map T.unpack $ playlistTitles playlist
   mkXPrompt RadioStream c (mkComplFunFromList' titles) $ playStream playlist

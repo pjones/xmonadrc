@@ -11,6 +11,7 @@ module Main where
 
 --------------------------------------------------------------------------------
 import XMonad
+import XMonad.Hooks.EwmhDesktops (ewmh)
 import qualified XMonad.Local.Action as Local
 import qualified XMonad.Local.Keys   as Local
 import qualified XMonad.Local.Layout as Local
@@ -22,7 +23,7 @@ import XMonad.Util.Run (spawnPipe)
 main :: IO ()
 main = do
   xmobar <- spawnPipe "xmobar"
-  xmonad $ defaultConfig
+  xmonad $ ewmh defaultConfig
     { normalBorderColor  = "#1a1a1a"
     , focusedBorderColor = "#00bfff"
     , terminal           = "urxvtc"

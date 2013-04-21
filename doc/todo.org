@@ -10,8 +10,10 @@
      dialogs opened by handbreak to float properly.
    - https://bbs.archlinux.org/viewtopic.php?pid=716030
    - http://xmonad.org/xmonad-docs/xmonad/XMonad-ManageHook.html
-** TODO Put EwmhDesktops back into the config
+** DONE Put EwmhDesktops back into the config
+   CLOSED: [2013-04-20 Sat 19:04]
 * Music
 ** TODO Lowercase radio station names in a completion function
 ** TODO Allow playlists instead of just raw URLs
-** TODO Bring in MPD prompt from xmonad-extras
+** DONE Bring in MPD prompt from xmonad-extras
+   CLOSED: [2013-04-20 Sat 19:04]
