@@ -12,6 +12,8 @@ module Text.Playlist.Internal
        , Playlist
        , Title
        , URL
+       , playlistTitles
+       , playlistLookup
        ) where
 
 --------------------------------------------------------------------------------
@@ -29,3 +31,13 @@ data Stream = Stream Title URL deriving (Show)
 --------------------------------------------------------------------------------
 -- | A playlist is a list of streams to play or choose from.
 type Playlist = [Stream]
+
+--------------------------------------------------------------------------------
+-- | Return a list stream tiles that are part of the playlist.
+playlistTitles :: Playlist -> [Text]
+playlistTitles = map $ \(Stream t _) -> t
+
+--------------------------------------------------------------------------------
+-- | Look up a stream's URL in a playlist.
+playlistLookup :: Playlist -> Title -> Maybe URL
+playlistLookup plist title = lookup title (map (\(Stream t u) -> (t, u)) plist)

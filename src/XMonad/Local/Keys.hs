@@ -40,6 +40,7 @@ import XMonad.Util.Paste (sendKey)
 
 --------------------------------------------------------------------------------
 -- Local modules.
+import XMonad.Local.Music (musicPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Workspaces (asKey, viewPrevWS)
 
@@ -177,4 +178,7 @@ musicKeys _ =
   , ("<XF86AudioMute>",          spawn "amixer set Master toggle")
   , ("<XF86AudioLowerVolume>",   spawn "amixer set Master 5%-")
   , ("<XF86AudioRaiseVolume>",   spawn "amixer set Master 5%+")
+
+    -- Prompt to change radio stations.
+  , ("M4-<Space>", musicPrompt Local.promptConfig)
   ]

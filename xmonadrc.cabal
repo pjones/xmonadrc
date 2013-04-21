@@ -20,6 +20,7 @@ library
     XMonad.Local.Keys
     XMonad.Local.Layout
     XMonad.Local.Log
+    XMonad.Local.Music
     XMonad.Local.Prompt
     XMonad.Local.Workspaces
 
@@ -32,7 +33,11 @@ library
 
   build-depends: base == 4.5.*
                , X11            == 1.6.1.*
+               , bytestring     >= 0.9 && < 0.11
                , containers     == 0.4.2.*
+               , directory      == 1.1.*
+               , filepath       == 1.3.*
+               , libmpd         == 0.8.*
                , parsec         == 3.1.*
                , text           == 0.11.*
                , xmonad         == 0.11

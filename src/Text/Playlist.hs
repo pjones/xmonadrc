@@ -11,6 +11,8 @@ the LICENSE file. -}
 module Text.Playlist
        ( Stream
        , Playlist
+       , playlistTitles
+       , playlistLookup
        , module Text.Playlist.Simple
        ) where
 
