@@ -149,7 +149,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
-  , ("C-z C-t",   spawn "urxvtc -name BigTerm")
+  , ("C-z C-t",   spawn "mlclient --fontsize=18")
   , ("M-l",       spawn "xscreensaver-command -lock")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")

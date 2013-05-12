@@ -27,7 +27,7 @@ main = do
   xmonad $ ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { normalBorderColor  = "#1a1a1a"
     , focusedBorderColor = "#00bfff"
-    , terminal           = "urxvtc"
+    , terminal           = "mlclient"
     , layoutHook         = Local.layoutHook
     , manageHook         = Local.manageHook
     , handleEventHook    = Local.handleEventHook
