@@ -15,7 +15,7 @@ module XMonad.Local.Layout (layoutHook) where
 --------------------------------------------------------------------------------
 import XMonad hiding (layoutHook, float)
 import XMonad.Hooks.ManageDocks (avoidStruts)
-import XMonad.Layout.BoringWindows
+import XMonad.Layout.BoringWindows (boringWindows)
 import XMonad.Layout.Named (named)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.PerWorkspace (onWorkspace)

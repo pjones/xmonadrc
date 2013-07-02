@@ -29,7 +29,7 @@ import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onNextNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
-import XMonad.Layout.BoringWindows (markBoring)
+import qualified XMonad.Layout.BoringWindows as Boring
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
 import XMonad.Prompt.Shell (shellPrompt)
@@ -80,15 +80,16 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z n",   windows W.focusDown)
-  , ("C-z p",   windows W.focusUp)
-  , ("C-z o",   windows W.focusDown)
+  [ ("C-z n",   Boring.focusDown)
+  , ("C-z p",   Boring.focusUp)
+  , ("C-z o",   Boring.focusDown)
   , ("C-z S-n", windows W.swapDown)
   , ("C-z S-p", windows W.swapUp)
-  , ("C-z m",   windows W.focusMaster)
+  , ("C-z m",   Boring.focusMaster)
   , ("C-z S-m", promote) -- Promote current window to master.
   , ("C-z S-t", withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z b",   markBoring)
+  , ("C-z b",   Boring.markBoring)
+  , ("C-z S-b", Boring.clearBoring)
   , ("C-z w",   windowPromptGoto Local.promptConfig)
   , ("C-z S-k", kill) -- Kill the current window.
   , ("M-<L>",   sendMessage Shrink)
