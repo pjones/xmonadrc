@@ -1,32 +1,38 @@
 ################################################################################
-ARCH   = $(shell uname -m)
-OS     = $(shell uname -s | tr '[A-Z]' '[a-z]')
-TARGET = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
-SRC    = $(shell find . -type f -name '*.hs')
-BIN    = cabal-dev/bin/xmonadrc
-XMONAD = cabal-dev/bin/xmonad
-CHECK  = cabal-dev/bin/checkrc
+ARCH     = $(shell uname -m)
+OS       = $(shell uname -s | tr '[A-Z]' '[a-z]')
+TARGET   = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
+SRC      = $(shell find . -type f -name '*.hs')
+BIN      = cabal-dev/bin
+XMONAD   = $(HOME)/bin/xmonad
+XMONADRC = $(BIN)/xmonadrc
+CHECK    = $(BIN)/checkrc
 
 ################################################################################
-.PHONEY: install restart
+.PHONEY: install restart clean
 
 ################################################################################
-all: $(BIN)
+all: $(XMONADRC)
 
 ################################################################################
 install: $(TARGET)
+	cp -r $(BIN)/xmonad $(XMONAD)
 
 ################################################################################
 restart: install
 	$(XMONAD) --restart
 
 ################################################################################
-$(BIN): $(SRC)
+clean:
+	rm -rf dist $(XMONADRC) $(CHECK)
+
+################################################################################
+$(XMONADRC): $(SRC)
 	cabal-dev install
 	$(CHECK)
 
 ################################################################################
-$(TARGET): $(BIN)
+$(TARGET): $(XMONADRC)
 	if [ -r $@ ]; then mv $@ $@.prev; fi
 	cp -p $< $@
-	cd $(dir $@) && ln -nfs $(notdir $@) xmonad
+	cd $(dir $@) && ln -nfs $(notdir $@) xmonadrc
