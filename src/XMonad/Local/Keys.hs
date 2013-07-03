@@ -26,7 +26,7 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.OnScreen (onlyOnScreen)
-import XMonad.Actions.PhysicalScreens (onNextNeighbour)
+import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import qualified XMonad.Layout.BoringWindows as Boring
@@ -118,6 +118,8 @@ workspaceMovementKeys c = do
                     ("C-z S-", W.shift)
                   , -- Force workspace N to the second screen.
                     ("C-z C-", onlyOnScreen 1)
+                  , -- Force workspace N to the third screen.
+                    ("C-z M-", onlyOnScreen 2)
                   ]
 
 --------------------------------------------------------------------------------
@@ -142,7 +144,8 @@ layoutKeys c =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z C-o", onNextNeighbour W.view)
+  [ ("C-z C-n", onNextNeighbour W.view)
+  , ("C-z C-p", onPrevNeighbour W.view)
   ]
 
 --------------------------------------------------------------------------------
