@@ -4,6 +4,10 @@
 #+startup: content
 
 * Windows
+** TODO Update pointer on keyboard focus change
+   - Key bindings that change the window focus should also call into
+     the update pointer package to update the current pointer
+     location.
 ** DONE Automatically float dialogs
    CLOSED: [2013-04-20 Sat 18:06]
    - This probably already works but my handbreak manage hook prevents
@@ -17,3 +21,7 @@
 ** TODO Allow playlists instead of just raw URLs
 ** DONE Bring in MPD prompt from xmonad-extras
    CLOSED: [2013-04-20 Sat 19:04]
+* Misc
+** TODO Update the README now that I'm installing xmonad
+   - I'm installing cabal-dev/bin/xmonad to ~/bin now
+   - Document features of each file like urgency hints
