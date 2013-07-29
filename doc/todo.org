@@ -4,7 +4,8 @@
 #+startup: content
 
 * Windows
-** TODO Update pointer on keyboard focus change
+** DONE Update pointer on keyboard focus change
+   CLOSED: [2013-07-29 Mon 12:27]
    - Key bindings that change the window focus should also call into
      the update pointer package to update the current pointer
      location.
