@@ -28,6 +28,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
+import XMonad.Actions.UpdatePointer (PointerPosition(..), updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import qualified XMonad.Layout.BoringWindows as Boring
 import XMonad.Layout.ResizableTile
@@ -63,6 +64,11 @@ rawKeys c = concatMap ($ c) keymaps where
             ]
 
 --------------------------------------------------------------------------------
+-- | Change focus and update the mouse pointer.
+changeFocus :: X () -> X ()
+changeFocus f = f >> updatePointer (Relative 0.98 0.01)
+
+--------------------------------------------------------------------------------
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 --
 -- TODO: spawn "xmonad --recompile && xmonad --restart"
@@ -80,12 +86,12 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z n",   Boring.focusDown)
-  , ("C-z p",   Boring.focusUp)
-  , ("C-z o",   Boring.focusDown)
+  [ ("C-z n",   changeFocus Boring.focusDown)
+  , ("C-z p",   changeFocus Boring.focusUp)
+  , ("C-z o",   changeFocus Boring.focusDown)
   , ("C-z S-n", windows W.swapDown)
   , ("C-z S-p", windows W.swapUp)
-  , ("C-z m",   Boring.focusMaster)
+  , ("C-z m",   changeFocus Boring.focusMaster)
   , ("C-z S-m", promote) -- Promote current window to master.
   , ("C-z S-t", withFocused $ windows . W.sink) -- Tile window.
   , ("C-z b",   Boring.markBoring)
@@ -111,7 +117,7 @@ workspaceMovementKeys :: XConfig Layout -> [(String, X ())]
 workspaceMovementKeys c = do
   (name,   key)    <- zip (workspaces c) (map asKey $ workspaces c)
   (prefix, action) <- actions
-  return (prefix ++ key, windows $ action name)
+  return (prefix ++ key, changeFocus $ windows (action name))
   where actions = [ -- Bring workspace N to the current screen.
                     ("C-z ",   W.greedyView)
                   , -- Move the current window to workspace N.
@@ -126,8 +132,8 @@ workspaceMovementKeys c = do
 -- Other operations on workspaces not covered in 'workspaceMovementKeys'.
 workspaceOtherKeys :: XConfig Layout -> [(String, X ())]
 workspaceOtherKeys _ =
-  [ ("C-z l",   viewPrevWS)
-  , ("C-z C-z", viewPrevWS) -- TODO: Remove duplicate binding.
+  [ ("C-z l",   changeFocus $ viewPrevWS)
+  , ("C-z C-z", changeFocus $ viewPrevWS) -- TODO: Remove duplicate binding.
   ]
 
 --------------------------------------------------------------------------------
@@ -144,8 +150,8 @@ layoutKeys c =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z C-n", onNextNeighbour W.view)
-  , ("C-z C-p", onPrevNeighbour W.view)
+  [ ("C-z C-n", changeFocus $ onNextNeighbour W.view)
+  , ("C-z C-p", changeFocus $ onPrevNeighbour W.view)
   ]
 
 --------------------------------------------------------------------------------
