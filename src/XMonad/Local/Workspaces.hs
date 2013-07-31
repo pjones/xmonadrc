@@ -17,7 +17,7 @@ module XMonad.Local.Workspaces
        ) where
 
 --------------------------------------------------------------------------------
-import Control.Monad (when)
+import Control.Monad (unless)
 import XMonad
 import qualified XMonad.StackSet as W
 
@@ -58,4 +58,4 @@ viewPrevWS :: X ()
 viewPrevWS = do
   ws <- gets windowset
   let hs = W.hidden ws
-  when (not $ null hs) (windows . W.view . W.tag $ head hs)
+  unless (null hs) (windows . W.view . W.tag $ head hs)

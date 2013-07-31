@@ -14,7 +14,7 @@ module XMonad.Local.Keys (keys, rawKeys) where
 -- General Haskell Packages.
 import qualified Data.Map as M
 import Graphics.X11.Xlib
-import System.Exit (ExitCode(..), exitWith)
+import System.Exit (exitSuccess)
 
 --------------------------------------------------------------------------------
 -- Package: xmonad.
@@ -78,7 +78,7 @@ baseKeys _ =
   [ ("C-z z",   sendKey controlMask xK_z) -- Send C-z to application.
   , ("C-z C-g", return ()) -- No-op to cancel the prefix key.
   , ("C-z g",   return ()) -- Same as above.
-  , ("C-z S-q", io $ exitWith ExitSuccess)
+  , ("C-z S-q", io $ exitSuccess)
   , ("C-z x",   xmonadPrompt Local.promptConfig)
   ]
 
@@ -132,8 +132,8 @@ workspaceMovementKeys c = do
 -- Other operations on workspaces not covered in 'workspaceMovementKeys'.
 workspaceOtherKeys :: XConfig Layout -> [(String, X ())]
 workspaceOtherKeys _ =
-  [ ("C-z l",   changeFocus $ viewPrevWS)
-  , ("C-z C-z", changeFocus $ viewPrevWS) -- TODO: Remove duplicate binding.
+  [ ("C-z l",   changeFocus viewPrevWS)
+  , ("C-z C-z", changeFocus viewPrevWS) -- TODO: Remove duplicate binding.
   ]
 
 --------------------------------------------------------------------------------
