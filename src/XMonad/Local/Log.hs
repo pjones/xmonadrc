@@ -54,6 +54,6 @@ statusBarPrinter output = defaultPP
   , ppUrgent          = xmobarColor "#1c1c1c" "#d33682" . wrap "<" ">"
   , ppSep             = xmobarColor "#5c5c5c" "" " | "
   , ppWsSep           = " "
-  , ppTitle           = xmobarColor "#9396c4" "" . shorten 40
+  , ppTitle           = const ""
   , ppOutput          = hPutStrLn output
   }

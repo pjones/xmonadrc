@@ -7,7 +7,7 @@ license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@pmade.com>
 maintainer:    Peter Jones <pjones@pmade.com>
-copyright:     Copyright (c) 2013 Peter Jones
+copyright:     Copyright (c) 2013,2014 Peter Jones
 category:      Graphics
 build-type:    Simple
 cabal-version: >=1.8

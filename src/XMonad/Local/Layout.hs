@@ -13,17 +13,20 @@ the LICENSE file. -}
 module XMonad.Local.Layout (layoutHook) where
 
 --------------------------------------------------------------------------------
-import XMonad hiding (layoutHook, float)
+import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Layout.BoringWindows (boringWindows)
-import XMonad.Layout.Named (named)
+import XMonad.Layout.LayoutCombinators
+import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders (noBorders)
+import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.Reflect (reflectHoriz)
+import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.SimplestFloat (simplestFloat)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
-import XMonad.Layout.ToggleLayouts (toggleLayouts)
+import XMonad.Layout.TwoPane (TwoPane(..))
 
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
@@ -34,10 +37,29 @@ layoutHook = avoidStruts $ boringWindows layouts
 -- | All of the layouts and layout modifiers that I use.  See the
 -- documentation for @layoutHook@ above for information about the type
 -- signature.
-layouts = onWorkspace "F12" float $ toggleLayouts full toggle
-  where tall   = named "Tall"  $ ResizableTall 1 (1.5/100) (2/3) []
-        rtall  = named "RTall" $ reflectHoriz tall
-        full   = named "Full"  $ noBorders Full
-        three  = named "3Col"  $ ThreeColMid 1 (3/100) (1/2)
-        float  = named "Float" simplestFloat
-        toggle = tall ||| rtall ||| three
+layouts =  floatF12 maxToggle where
+  tall      = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
+  rtall     = renamed [Replace "RTall"] $ reflectHoriz tall
+  two       = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
+  three     = renamed [Replace "3Col"]  $ ThreeColMid 1 (3/100) (1/2)
+  full      = renamed [Replace "Full"]  $ noBorders Full
+  float     = renamed [Replace "Float"] simplestFloat
+  floatF12  = onWorkspace "F12" float
+  maxToggle = renamed [CutWordsLeft 1] $ maximize toggle
+  toggle    = deco tall ||| deco rtall ||| deco three ||| deco two ||| full
+
+--------------------------------------------------------------------------------
+-- | Add simple decorations to windows.
+deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText theme where
+  theme = defaultTheme { decoHeight          = 12
+                       , activeColor         = "#b5a924"
+                       , activeBorderColor   = "#b58900"
+                       , activeTextColor     = "#222222"
+                       , inactiveColor       = "#222222"
+                       , inactiveBorderColor = "#222222"
+                       , inactiveTextColor   = "#586e75"
+                       , urgentColor         = "#dc5c5a"
+                       , urgentBorderColor   = "#dc322f"
+                       , urgentTextColor     = "#000000"
+                       , fontName            = "xft:dejavu sans mono:pixelsize=9"
+                       }

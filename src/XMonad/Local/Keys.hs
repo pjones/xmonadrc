@@ -31,8 +31,9 @@ import XMonad.Actions.Promote (promote)
 import XMonad.Actions.UpdatePointer (PointerPosition(..), updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import qualified XMonad.Layout.BoringWindows as Boring
+import XMonad.Layout.LayoutCombinators
+import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
-import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (windowPromptGoto)
 import XMonad.Prompt.XMonad (xmonadPrompt)
@@ -140,10 +141,14 @@ workspaceOtherKeys _ =
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
-  [ ("C-z <Space>",   sendMessage ToggleLayout)
+  [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
   , ("C-z C-<Space>", sendMessage NextLayout)
   , ("C-z S-<Space>", setLayout $ layoutHook c)
   , ("C-z s",         sendMessage ToggleStruts)
+  , ("M-0",           sendMessage $ JumpToLayout "Tall")
+  , ("M-1",           sendMessage $ JumpToLayout "Full")
+  , ("M-2",           sendMessage $ JumpToLayout "2Col")
+  , ("M-3",           sendMessage $ JumpToLayout "3Col")
   ]
 
 --------------------------------------------------------------------------------
