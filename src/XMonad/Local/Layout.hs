@@ -52,8 +52,8 @@ layouts =  floatF12 maxToggle where
 -- | Add simple decorations to windows.
 deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText theme where
   theme = defaultTheme { decoHeight          = 12
-                       , activeColor         = "#b5a924"
-                       , activeBorderColor   = "#b58900"
+                       , activeColor         = "#285577"
+                       , activeBorderColor   = "#477394"
                        , activeTextColor     = "#222222"
                        , inactiveColor       = "#222222"
                        , inactiveBorderColor = "#222222"

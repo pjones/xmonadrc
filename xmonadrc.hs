@@ -26,7 +26,7 @@ main = do
   xmobar <- spawnPipe "xmobar"
   xmonad $ ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { normalBorderColor  = "#222222"
-    , focusedBorderColor = "#b5a924"
+    , focusedBorderColor = "#477394"
     , terminal           = "mlclient"
     , layoutHook         = Local.layoutHook
     , manageHook         = Local.manageHook
@@ -34,7 +34,7 @@ main = do
     , workspaces         = Workspaces.names
     , modMask            = mod3Mask
     , keys               = Local.keys
-    , borderWidth        = 1
+    , borderWidth        = 2
     , logHook            = Local.logHook xmobar
     , focusFollowsMouse  = False
     }
