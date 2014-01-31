@@ -54,7 +54,7 @@ deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText theme where
   theme = defaultTheme { decoHeight          = 12
                        , activeColor         = "#285577"
                        , activeBorderColor   = "#477394"
-                       , activeTextColor     = "#222222"
+                       , activeTextColor     = "#839496"
                        , inactiveColor       = "#222222"
                        , inactiveBorderColor = "#222222"
                        , inactiveTextColor   = "#586e75"
