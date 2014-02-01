@@ -25,6 +25,7 @@ import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
+import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
 import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
@@ -142,8 +143,8 @@ workspaceOtherKeys _ =
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
   [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
-  , ("C-z C-<Space>", sendMessage NextLayout)
-  , ("C-z S-<Space>", setLayout $ layoutHook c)
+  , ("C-z C-<Space>", cycleThroughLayouts ["Tall", "RTall"])
+  , ("C-z S-<Space>", sendMessage $ JumpToLayout "Full")
   , ("C-z s",         sendMessage ToggleStruts)
   , ("M-0",           sendMessage $ JumpToLayout "Tall")
   , ("M-1",           sendMessage $ JumpToLayout "Full")
