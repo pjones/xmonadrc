@@ -141,7 +141,7 @@ workspaceOtherKeys _ =
 --------------------------------------------------------------------------------
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
-layoutKeys c =
+layoutKeys _ =
   [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
   , ("C-z C-<Space>", cycleThroughLayouts ["Tall", "RTall"])
   , ("C-z S-<Space>", sendMessage $ JumpToLayout "Full")

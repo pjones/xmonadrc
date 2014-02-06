@@ -22,6 +22,7 @@ library
     XMonad.Local.Log
     XMonad.Local.Music
     XMonad.Local.Prompt
+    XMonad.Local.Theme
     XMonad.Local.Workspaces
 
   other-modules:

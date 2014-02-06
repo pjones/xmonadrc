@@ -29,6 +29,9 @@ import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
 
 --------------------------------------------------------------------------------
+import XMonad.Local.Theme (decoTheme)
+
+--------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook = avoidStruts $ boringWindows layouts
@@ -50,16 +53,4 @@ layouts =  floatF12 maxToggle where
 
 --------------------------------------------------------------------------------
 -- | Add simple decorations to windows.
-deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText theme where
-  theme = defaultTheme { decoHeight          = 12
-                       , activeColor         = "#285577"
-                       , activeBorderColor   = "#477394"
-                       , activeTextColor     = "#839496"
-                       , inactiveColor       = "#222222"
-                       , inactiveBorderColor = "#222222"
-                       , inactiveTextColor   = "#586e75"
-                       , urgentColor         = "#dc5c5a"
-                       , urgentBorderColor   = "#dc322f"
-                       , urgentTextColor     = "#000000"
-                       , fontName            = "xft:dejavu sans mono:pixelsize=9"
-                       }
+deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText decoTheme
