@@ -16,11 +16,11 @@ import XMonad.Layout.SimpleDecoration
 
 --------------------------------------------------------------------------------
 windowBorderColor :: String
-windowBorderColor = "#86b335"
+windowBorderColor = "#6c71c4"
 
 --------------------------------------------------------------------------------
 windowDecoColor :: String
-windowDecoColor = "#9ACD3D"
+windowDecoColor = "#9396c4"
 
 --------------------------------------------------------------------------------
 xmonadColors :: XConfig a -> XConfig a
