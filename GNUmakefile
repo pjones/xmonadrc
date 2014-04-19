@@ -11,7 +11,7 @@ CHECK    = $(BIN)/checkrc
 
 
 ################################################################################
-.PHONEY: install restart clean
+.PHONEY: install restart clean realclean
 
 ################################################################################
 all: $(XMONADRC)
@@ -29,7 +29,12 @@ clean:
 	rm -rf dist $(XMONADRC) $(CHECK)
 
 ################################################################################
+realclean:
+	rm -rf .cabal-sandbox cabal.sandbox.config
+
+################################################################################
 $(XMONADRC): $(SRC) $(SANDBOX)
+	ghc -V | grep -q 7.6.3 # Required compiler version.
 	cabal install
 	$(CHECK)
 
