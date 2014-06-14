@@ -166,7 +166,7 @@ appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
   , ("C-z C-t",   spawn "mlclient --fontsize=18")
-  , ("M-l",       spawn "i3lock -dc 444444")
+  , ("M-l",       spawn "i3lock -dc 444444 -i ~/.lock-screen.png")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
   , ("M-<Space>", shellPrompt Local.promptConfig)
