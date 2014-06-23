@@ -185,8 +185,8 @@ musicKeys _ =
   , ("M-<F3>",  spawn "mpc next")
   , ("M-<F4>",  spawn "mpc clear")
   , ("M4-<F1>", spawn "amixer set Master toggle")
-  , ("M4-<F2>", spawn "amixer set PCM 5%-")
-  , ("M4-<F3>", spawn "amixer set PCM 5%+")
+  , ("M4-<F2>", spawn "amixer set Master 5%-")
+  , ("M4-<F3>", spawn "amixer set Master 5%+")
 
     -- Keys for my laptop and keyboards with media keys.
   , ("M-<XF86AudioMute>",        spawn "mpc-pause")
