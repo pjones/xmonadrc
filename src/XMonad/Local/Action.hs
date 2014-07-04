@@ -28,11 +28,15 @@ import qualified XMonad.StackSet as W
 -- @composeAll@ are composed together so multiple matches can act on
 -- the window set.  Therefore actions higher in the list to
 -- @composeAll@ will have final say.
+--
+-- Use the `xprop' tool to get the info you need for these matches.
+-- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
 manageHook = manageDocks <> composeAll
   [ -- Force dialog windows and pop-ups to be floating.
     isDialog                                    --> doCenterFloat
   , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat
+  , className =? "Gcr-prompter"                 --> doCenterFloat
 
     -- Some application windows ask to be floating (I'm guessing) but
     -- it's stupid to float them.
