@@ -37,6 +37,9 @@ manageHook = manageDocks <> composeAll
     -- Some application windows ask to be floating (I'm guessing) but
     -- it's stupid to float them.
   , title =? "HandBrake" --> tileWindow
+
+    -- XFCE notification daemon windows steal the focus.
+  , title =? "xfce4-notifyd" --> doIgnore
   ]
 
 --------------------------------------------------------------------------------
