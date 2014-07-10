@@ -150,6 +150,7 @@ layoutKeys _ =
   , ("M-1",           sendMessage $ JumpToLayout "Full")
   , ("M-2",           sendMessage $ JumpToLayout "2Col")
   , ("M-3",           sendMessage $ JumpToLayout "3Col")
+  , ("M-4",           sendMessage $ JumpToLayout "MTall")
   ]
 
 --------------------------------------------------------------------------------

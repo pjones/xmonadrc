@@ -43,13 +43,15 @@ layoutHook = avoidStruts $ boringWindows layouts
 layouts =  floatF12 maxToggle where
   tall      = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
   rtall     = renamed [Replace "RTall"] $ reflectHoriz tall
+  mtall     = renamed [Replace "MTall"] $ Mirror tall
   two       = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
   three     = renamed [Replace "3Col"]  $ ThreeColMid 1 (3/100) (1/2)
   full      = renamed [Replace "Full"]  $ noBorders Full
   float     = renamed [Replace "Float"] simplestFloat
   floatF12  = onWorkspace "F12" float
   maxToggle = renamed [CutWordsLeft 1] $ maximize toggle
-  toggle    = deco tall ||| deco rtall ||| deco three ||| deco two ||| full
+  toggle    = deco tall  ||| deco rtall ||| deco mtall |||
+              deco three ||| deco two   ||| full
 
 --------------------------------------------------------------------------------
 -- | Add simple decorations to windows.
