@@ -157,8 +157,12 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z C-n", changeFocus $ onNextNeighbour W.view)
-  , ("C-z C-p", changeFocus $ onPrevNeighbour W.view)
+  [ ("C-z C-n",   changeFocus $ onNextNeighbour W.view)
+  , ("C-z C-p",   changeFocus $ onPrevNeighbour W.view)
+  , ("M-<F11>",   spawn "xbacklight -dec 10")
+  , ("M-<F12>",   spawn "xbacklight -inc 10")
+  , ("M-S-<F11>", spawn "xbacklight -set 10")
+  , ("M-S-<F12>", spawn "xbacklight -set 80")
   ]
 
 --------------------------------------------------------------------------------
@@ -175,6 +179,7 @@ appKeys c =
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
+  , ("M-<F6>",               spawn "tptoggle.sh")
   ]
 
 --------------------------------------------------------------------------------
