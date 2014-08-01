@@ -44,6 +44,9 @@ manageHook = manageDocks <> composeAll
 
     -- XFCE notification daemon windows steal the focus.
   , title =? "xfce4-notifyd" --> doIgnore
+
+    -- Virtual Keyboard.
+  , className =? "XVkbd" --> doFloat
   ]
 
 --------------------------------------------------------------------------------
