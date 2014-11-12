@@ -35,6 +35,7 @@ import qualified XMonad.Layout.BoringWindows as Boring
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.WindowNavigation
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (windowPromptGoto)
 import XMonad.Prompt.XMonad (xmonadPrompt)
@@ -88,24 +89,30 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z n",   changeFocus Boring.focusDown)
-  , ("C-z p",   changeFocus Boring.focusUp)
-  , ("C-z o",   changeFocus Boring.focusDown)
-  , ("C-z S-n", windows W.swapDown)
-  , ("C-z S-p", windows W.swapUp)
-  , ("C-z m",   changeFocus Boring.focusMaster)
-  , ("C-z S-m", promote) -- Promote current window to master.
-  , ("C-z S-t", withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z b",   Boring.markBoring)
-  , ("C-z S-b", Boring.clearBoring)
-  , ("C-z w",   windowPromptGoto Local.promptConfig)
-  , ("C-z S-k", kill) -- Kill the current window.
-  , ("M-<L>",   sendMessage Shrink)
-  , ("M-<R>",   sendMessage Expand)
-  , ("M-<U>",   sendMessage MirrorShrink)
-  , ("M-<D>",   sendMessage MirrorExpand)
-  , ("M--",     sendMessage $ IncMasterN (-1))
-  , ("M-=",     sendMessage $ IncMasterN 1)
+  [ ("C-z f",     changeFocus $ sendMessage $ Go R)
+  , ("C-z b",     changeFocus $ sendMessage $ Go L)
+  , ("C-z n",     changeFocus $ sendMessage $ Go D)
+  , ("C-z p",     changeFocus $ sendMessage $ Go U)
+  , ("C-z C-v",   changeFocus Boring.focusDown)
+  , ("C-z M1-v",  changeFocus Boring.focusUp)
+  , ("C-z S-f",   changeFocus $ sendMessage $ Swap R)
+  , ("C-z S-b",   changeFocus $ sendMessage $ Swap L)
+  , ("C-z S-n",   changeFocus $ sendMessage $ Swap D)
+  , ("C-z S-p",   changeFocus $ sendMessage $ Swap U)
+  , ("C-z S-v",   changeFocus $ windows W.swapDown)
+  , ("C-z m",     changeFocus Boring.focusMaster)
+  , ("C-z S-m",   promote) -- Promote current window to master.
+  , ("C-z S-t",   withFocused $ windows . W.sink) -- Tile window.
+  , ("C-z M-b",   Boring.markBoring)
+  , ("C-z M-S-b", Boring.clearBoring)
+  , ("C-z w",     windowPromptGoto Local.promptConfig)
+  , ("C-z S-k",   kill) -- Kill the current window.
+  , ("M--",       sendMessage Shrink)
+  , ("M-=",       sendMessage Expand)
+  , ("M-S--",     sendMessage MirrorShrink)
+  , ("M-S-=",     sendMessage MirrorExpand)
+  , ("C-z -",     sendMessage $ IncMasterN (-1))
+  , ("C-z =",     sendMessage $ IncMasterN 1)
   ]
 
 --------------------------------------------------------------------------------
@@ -157,8 +164,8 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z C-n",   changeFocus $ onNextNeighbour W.view)
-  , ("C-z C-p",   changeFocus $ onPrevNeighbour W.view)
+  [ ("C-z C-f",   changeFocus $ onNextNeighbour W.view)
+  , ("C-z C-b",   changeFocus $ onPrevNeighbour W.view)
   , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")

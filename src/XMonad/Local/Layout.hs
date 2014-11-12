@@ -27,6 +27,7 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.SimplestFloat (simplestFloat)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
+import XMonad.Layout.WindowNavigation
 
 --------------------------------------------------------------------------------
 import XMonad.Local.Theme (decoTheme)
@@ -34,7 +35,7 @@ import XMonad.Local.Theme (decoTheme)
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
-layoutHook = avoidStruts $ boringWindows layouts
+layoutHook = avoidStruts $ boringWindows $ windowNavigation layouts
 
 --------------------------------------------------------------------------------
 -- | All of the layouts and layout modifiers that I use.  See the
