@@ -4,6 +4,8 @@
 #+startup: content
 
 * Windows
+** DONE Fix stupid file dialogs that set their size to being very skinny
+   CLOSED: [2014-11-13 Thu 15:26]
 ** DONE Update pointer on keyboard focus change
    CLOSED: [2013-07-29 Mon 12:27]
    - Key bindings that change the window focus should also call into

@@ -33,8 +33,11 @@ import qualified XMonad.StackSet as W
 -- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
 manageHook = manageDocks <> composeAll
-  [ -- Force dialog windows and pop-ups to be floating.
-    isDialog                                    --> doCenterFloat
+  [ -- HandBrake file dialog asks for crazy sizes.
+    className =? "Handbrake" <&&> isDialog     --> forceCenterFloat
+
+    -- Force dialog windows and pop-ups to be floating.
+  , isDialog                                    --> doCenterFloat
   , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat
   , className =? "Gcr-prompter"                 --> doCenterFloat
 
@@ -53,6 +56,22 @@ manageHook = manageDocks <> composeAll
 -- | Helper function to force a window to be tiled.
 tileWindow :: ManageHook
 tileWindow = ask >>= doF . W.sink
+
+--------------------------------------------------------------------------------
+-- | Useful when a floating window requests stupid dimensions.  There
+-- was a bug in Handbrake that would pop up the file dialog with
+-- almost no height do to one of my rotated monitors.
+forceCenterFloat :: ManageHook
+forceCenterFloat = doFloatDep move
+  where
+    move :: W.RationalRect -> W.RationalRect
+    move _ = W.RationalRect x y w h
+
+    w, h, x, y :: Rational
+    w = 1/2
+    h = 1/2
+    x = (1-w)/2
+    y = (1-h)/2
 
 --------------------------------------------------------------------------------
 handleEventHook :: Event -> X All
