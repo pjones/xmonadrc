@@ -30,6 +30,7 @@ import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
+import XMonad.Actions.TagWindows
 import XMonad.Actions.UpdatePointer (PointerPosition(..), updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import qualified XMonad.Layout.BoringWindows as Boring
@@ -108,6 +109,8 @@ windowKeys _ =
   , ("C-z M-b",   Boring.markBoring)
   , ("C-z M-S-b", Boring.clearBoring)
   , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
+  , ("C-z M-j",   setInteresting)
+  , ("C-z j",     focusDownTaggedGlobal interestingWindowTag)
   , ("C-z S-k",   kill) -- Kill the current window.
   , ("M--",       changeFocus $ sendMessage Shrink)
   , ("M-=",       changeFocus $ sendMessage Expand)
@@ -116,6 +119,17 @@ windowKeys _ =
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
   ]
+  where
+    -- A window tag to use for the currently interesting window.
+    interestingWindowTag :: String
+    interestingWindowTag = "interesting"
+
+    -- Removes the interesting tag from all windows, then sets it on
+    -- the current window.
+    setInteresting :: X ()
+    setInteresting = do
+      withTaggedGlobal interestingWindowTag (delTag interestingWindowTag)
+      withFocused (addTag interestingWindowTag)
 
 --------------------------------------------------------------------------------
 -- Keys for manipulating workspaces.
