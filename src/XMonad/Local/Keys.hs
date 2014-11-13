@@ -110,7 +110,7 @@ windowKeys _ =
   , ("C-z M-S-b", Boring.clearBoring)
   , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
   , ("C-z M-j",   setInteresting)
-  , ("C-z j",     focusDownTaggedGlobal interestingWindowTag)
+  , ("C-z j",     changeFocus $ focusDownTaggedGlobal interestingWindowTag)
   , ("C-z S-k",   kill) -- Kill the current window.
   , ("M--",       changeFocus $ sendMessage Shrink)
   , ("M-=",       changeFocus $ sendMessage Expand)
