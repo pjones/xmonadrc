@@ -26,6 +26,7 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
+import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
@@ -89,7 +90,8 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z f",     changeFocus $ sendMessage $ Go R)
+  [ ("C-z l",     changeFocus $ nextMatch History (return True))
+  , ("C-z f",     changeFocus $ sendMessage $ Go R)
   , ("C-z b",     changeFocus $ sendMessage $ Go L)
   , ("C-z n",     changeFocus $ sendMessage $ Go D)
   , ("C-z p",     changeFocus $ sendMessage $ Go U)
@@ -101,18 +103,18 @@ windowKeys _ =
   , ("C-z S-p",   changeFocus $ sendMessage $ Swap U)
   , ("C-z S-v",   changeFocus $ windows W.swapDown)
   , ("C-z m",     changeFocus Boring.focusMaster)
-  , ("C-z S-m",   promote) -- Promote current window to master.
-  , ("C-z S-t",   withFocused $ windows . W.sink) -- Tile window.
+  , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
+  , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
   , ("C-z M-b",   Boring.markBoring)
   , ("C-z M-S-b", Boring.clearBoring)
-  , ("C-z w",     windowPromptGoto Local.promptConfig)
+  , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
   , ("C-z S-k",   kill) -- Kill the current window.
-  , ("M--",       sendMessage Shrink)
-  , ("M-=",       sendMessage Expand)
-  , ("M-S--",     sendMessage MirrorShrink)
-  , ("M-S-=",     sendMessage MirrorExpand)
-  , ("C-z -",     sendMessage $ IncMasterN (-1))
-  , ("C-z =",     sendMessage $ IncMasterN 1)
+  , ("M--",       changeFocus $ sendMessage Shrink)
+  , ("M-=",       changeFocus $ sendMessage Expand)
+  , ("M-S--",     changeFocus $ sendMessage MirrorShrink)
+  , ("M-S-=",     changeFocus $ sendMessage MirrorExpand)
+  , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
+  , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
   ]
 
 --------------------------------------------------------------------------------
@@ -141,8 +143,7 @@ workspaceMovementKeys c = do
 -- Other operations on workspaces not covered in 'workspaceMovementKeys'.
 workspaceOtherKeys :: XConfig Layout -> [(String, X ())]
 workspaceOtherKeys _ =
-  [ ("C-z l",   changeFocus viewPrevWS)
-  , ("C-z C-z", changeFocus viewPrevWS) -- TODO: Remove duplicate binding.
+  [ ("C-z C-z", changeFocus viewPrevWS)
   ]
 
 --------------------------------------------------------------------------------

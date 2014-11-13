@@ -13,6 +13,7 @@ module XMonad.Local.Log (logHook) where
 --------------------------------------------------------------------------------
 import System.IO (Handle, hPutStrLn)
 import XMonad hiding (logHook)
+import XMonad.Actions.GroupNavigation (historyHook)
 import XMonad.Hooks.DynamicLog hiding (xmobar)
 import XMonad.Hooks.FadeInactive (isUnfocusedOnCurrentWS)
 import XMonad.Hooks.FadeWindows
@@ -23,6 +24,7 @@ import XMonad.Local.Workspaces (hiddenName)
 logHook :: Handle -> X ()
 logHook h = do
   fadeWindowsLogHook fadeHook
+  historyHook
   dynamicLogWithPP $ statusBarPrinter h
 
 --------------------------------------------------------------------------------
