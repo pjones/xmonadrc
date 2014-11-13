@@ -33,6 +33,7 @@ import XMonad.Actions.Promote (promote)
 import XMonad.Actions.TagWindows
 import XMonad.Actions.UpdatePointer (PointerPosition(..), updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
+import XMonad.Hooks.UrgencyHook (focusUrgent)
 import qualified XMonad.Layout.BoringWindows as Boring
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize (maximizeRestore)
@@ -112,6 +113,7 @@ windowKeys _ =
   , ("C-z M-j",   setInteresting)
   , ("C-z j",     changeFocus $ focusDownTaggedGlobal interestingWindowTag)
   , ("C-z S-k",   kill) -- Kill the current window.
+  , ("C-z u",     changeFocus $ focusUrgent)
   , ("M--",       changeFocus $ sendMessage Shrink)
   , ("M-=",       changeFocus $ sendMessage Expand)
   , ("M-S--",     changeFocus $ sendMessage MirrorShrink)

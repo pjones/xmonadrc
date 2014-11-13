@@ -14,7 +14,7 @@ module Main where
 --------------------------------------------------------------------------------
 import XMonad hiding (config)
 import XMonad.Hooks.EwmhDesktops (ewmh)
-import XMonad.Hooks.UrgencyHook (NoUrgencyHook(..), withUrgencyHook)
+import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
 import qualified XMonad.Local.Action as Local
 import qualified XMonad.Local.Keys   as Local
 import qualified XMonad.Local.Layout as Local
@@ -41,7 +41,9 @@ config xmobar =
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = do
-  xmobar <- spawnPipe "xmobar"
-  xmonad . ewmh . withUrgencyHook NoUrgencyHook .
-    Local.xmonadColors $ config xmobar
+main = do xmobar <- spawnPipe "xmobar"
+          xmonad . ewmh .
+            withUrgencyHookC NoUrgencyHook urgencyConfig .
+            Local.xmonadColors $ config xmobar
+  where
+    urgencyConfig = UrgencyConfig Focused Dont
