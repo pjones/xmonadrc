@@ -3,9 +3,12 @@ ARCH              = $(shell uname -m)
 OS                = $(shell uname -s | tr '[A-Z]' '[a-z]')
 TARGET            = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
 SRC               = $(shell find . -type f -name '*.hs')
+DEST              = $(HOME)/bin
 SANDBOX           = cabal.sandbox.config
-XMONAD            = $(HOME)/bin/xmonad
+XMONAD            = .cabal-sandbox/bin/xmonad
 XMONADRC          = dist/build/xmonadrc/xmonadrc
+TAFFYBAR          = taffybar.sh
+TAFFYBARRC        = dist/build/taffybarrc/taffybarrc
 CABAL_FLAGS       = --enable-optimization=2
 CABAL_ADD_SOURCE ?=
 DO_CHECK         ?= YES
@@ -18,12 +21,15 @@ all: $(XMONADRC)
 
 ################################################################################
 install: $(TARGET)
-	mkdir -p $(dir $(XMONAD))
-	cp -r $(XMONADRC) $(XMONAD)
+	mkdir -p $(DEST)
+	cp -f $(XMONADRC) $(DEST)/xmonad
+	cp -f $(TAFFYBARRC) $(DEST)
+	cp -f $(TAFFYBAR) $(DEST)
 
 ################################################################################
 restart: install
 	$(XMONAD) --restart
+	$(DEST)/$(TAFFYBAR) restart > /dev/null 2>&1 &
 
 ################################################################################
 clean:

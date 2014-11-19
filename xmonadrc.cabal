@@ -65,3 +65,10 @@ executable checkrc
                , xmonad
                , xmonad-contrib
                , xmonadrc
+
+------------------------------------------------------------------------------
+executable taffybarrc
+  main-is: taffybarrc.hs
+  ghc-options: -Wall -Werror -threaded -rtsopts
+  build-depends: base
+               , taffybar
