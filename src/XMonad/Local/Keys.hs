@@ -31,7 +31,7 @@ import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Actions.TagWindows
-import XMonad.Actions.UpdatePointer (PointerPosition(..), updatePointer)
+import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import qualified XMonad.Layout.BoringWindows as Boring
@@ -72,7 +72,7 @@ rawKeys c = concatMap ($ c) keymaps where
 --------------------------------------------------------------------------------
 -- | Change focus and update the mouse pointer.
 changeFocus :: X () -> X ()
-changeFocus f = f >> updatePointer (Relative 0.98 0.01)
+changeFocus f = f >> updatePointer (0.98, 0.01) (0, 0)
 
 --------------------------------------------------------------------------------
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.

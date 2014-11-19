@@ -24,8 +24,7 @@ main = do
   dpy    <- openDisplay ""
   rootw  <- rootWindow dpy $ defaultScreen dpy
 
-  let initcf = defaultConfig
-      xmc = initcf {layoutHook = Layout $ layoutHook initcf}
+  let xmc = def {layoutHook = Layout $ layoutHook def}
       initialWinset = new (layoutHook xmc) (workspaces xmc) []
 
   let cf = XConf { display       = dpy

@@ -1,14 +1,14 @@
 ################################################################################
-ARCH     = $(shell uname -m)
-OS       = $(shell uname -s | tr '[A-Z]' '[a-z]')
-TARGET   = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
-SRC      = $(shell find . -type f -name '*.hs')
-SANDBOX  = cabal.sandbox.config
-SANDBOXD = .cabal-sandbox
-BIN      = $(SANDBOXD)/bin
-XMONAD   = $(HOME)/bin/xmonad
-XMONADRC = $(BIN)/xmonadrc
-DO_CHECK ?= YES
+ARCH              = $(shell uname -m)
+OS                = $(shell uname -s | tr '[A-Z]' '[a-z]')
+TARGET            = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
+SRC               = $(shell find . -type f -name '*.hs')
+SANDBOX           = cabal.sandbox.config
+XMONAD            = $(HOME)/bin/xmonad
+XMONADRC          = dist/build/xmonadrc/xmonadrc
+CABAL_FLAGS       = --enable-optimization=2
+CABAL_ADD_SOURCE ?=
+DO_CHECK         ?= YES
 
 ################################################################################
 .PHONEY: all install restart clean realclean
@@ -19,7 +19,7 @@ all: $(XMONADRC)
 ################################################################################
 install: $(TARGET)
 	mkdir -p $(dir $(XMONAD))
-	cp -r $(BIN)/xmonad $(XMONAD)
+	cp -r $(XMONADRC) $(XMONAD)
 
 ################################################################################
 restart: install
@@ -27,27 +27,34 @@ restart: install
 
 ################################################################################
 clean:
-	rm -rf dist $(XMONADRC) $(CHECK)
+	rm -rf dist $(XMONADRC) $(CHECK) $(SANDBOX)
 
 ################################################################################
 realclean:
-	rm -rf $(SANDBOXD) $(SANDBOX)
+	rm -rf .cabal-sandbox
 
 ################################################################################
 ifeq ($(DO_CHECK),YES)
-  CHECK = $(BIN)/checkrc
+  CHECK = dist/build/checkrc/checkrc
 else
   CHECK = :
 endif
 
+################################################################################
 $(XMONADRC): $(SRC) $(SANDBOX)
-	ghc -V | grep -q 7.6.3 # Required compiler version.
-	cabal install
+	ghc -V | grep -q 7.8.3 # Required compiler version.
+	cabal build
 	$(CHECK)
 
 ################################################################################
 $(SANDBOX):
 	cabal sandbox init
+	$(if $(CABAL_ADD_SOURCE),cabal sandbox add-source $(CABAL_ADD_SOURCE),)
+	cabal install gtk2hs-buildtools
+	cabal install $(CABAL_FLAGS) xmonad-extras -fwith_mpd -f-with_hint
+	cabal install --only-dependencies $(CABAL_FLAGS)
+	cabal configure $(CABAL_FLAGS)
+	touch $@
 
 ################################################################################
 $(TARGET): $(XMONADRC)

@@ -12,6 +12,7 @@ the LICENSE file. -}
 module Main where
 
 --------------------------------------------------------------------------------
+import System.Taffybar.Hooks.PagerHints (pagerHints)
 import XMonad hiding (config)
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
@@ -21,29 +22,27 @@ import qualified XMonad.Local.Layout as Local
 import qualified XMonad.Local.Log    as Local
 import qualified XMonad.Local.Theme  as Local
 import qualified XMonad.Local.Workspaces as Workspaces
-import XMonad.Util.Run (spawnPipe)
 
 --------------------------------------------------------------------------------
 -- Damn you XMonad and your crazy type signatures!
 --
--- config :: Handle -> XConfig a
-config xmobar =
-  defaultConfig { terminal           = "mlclient"
-                , layoutHook         = Local.layoutHook
-                , manageHook         = Local.manageHook
-                , handleEventHook    = Local.handleEventHook
-                , workspaces         = Workspaces.names
-                , modMask            = mod3Mask
-                , keys               = Local.keys
-                , logHook            = Local.logHook xmobar
-                , focusFollowsMouse  = False
-                }
+-- config :: XConfig a
+config = def
+  { terminal           = "mlclient"
+  , layoutHook         = Local.layoutHook
+  , manageHook         = Local.manageHook
+  , handleEventHook    = Local.handleEventHook
+  , workspaces         = Workspaces.names
+  , modMask            = mod3Mask
+  , keys               = Local.keys
+  , logHook            = Local.logHook
+  , focusFollowsMouse  = False
+  }
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = do xmobar <- spawnPipe "xmobar"
-          xmonad . ewmh .
-            withUrgencyHookC NoUrgencyHook urgencyConfig .
-            Local.xmonadColors $ config xmobar
+main = xmonad . ewmh . pagerHints .
+  withUrgencyHookC NoUrgencyHook urgencyConfig .
+    Local.xmonadColors $ config
   where
     urgencyConfig = UrgencyConfig Focused Dont

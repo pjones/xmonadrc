@@ -16,7 +16,7 @@ import XMonad.Prompt
 
 --------------------------------------------------------------------------------
 promptConfig :: XPConfig
-promptConfig = defaultXPConfig
+promptConfig = def
   { position = Bottom
   , font     = "xft:dejavu sans mono:size=9"
   }

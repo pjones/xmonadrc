@@ -31,15 +31,15 @@ xmonadColors x = x { normalBorderColor  = "#111111"
 
 --------------------------------------------------------------------------------
 decoTheme :: Theme
-decoTheme = defaultTheme { decoHeight          = 14
-                         , activeColor         = windowDecoColor
-                         , activeBorderColor   = windowBorderColor
-                         , activeTextColor     = "#222222"
-                         , inactiveColor       = "#222222"
-                         , inactiveBorderColor = "#222222"
-                         , inactiveTextColor   = "#586e75"
-                         , urgentColor         = "#dc5c5a"
-                         , urgentBorderColor   = "#dc322f"
-                         , urgentTextColor     = "#000000"
-                         , fontName            = "xft:dejavu sans mono:size=9"
-                         }
+decoTheme = def { decoHeight          = 14
+                , activeColor         = windowDecoColor
+                , activeBorderColor   = windowBorderColor
+                , activeTextColor     = "#222222"
+                , inactiveColor       = "#222222"
+                , inactiveBorderColor = "#222222"
+                , inactiveTextColor   = "#586e75"
+                , urgentColor         = "#dc5c5a"
+                , urgentBorderColor   = "#dc322f"
+                , urgentTextColor     = "#000000"
+                , fontName            = "xft:dejavu sans mono:size=9"
+                }
