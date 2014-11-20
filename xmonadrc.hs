@@ -41,8 +41,7 @@ config = def
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = xmonad . ewmh . pagerHints .
-  withUrgencyHookC NoUrgencyHook urgencyConfig .
-    Local.xmonadColors $ config
+main = xmonad (Local.xmonadColors . ewmh . pagerHints .
+               withUrgencyHookC NoUrgencyHook urgencyConfig $ config)
   where
     urgencyConfig = UrgencyConfig Focused Dont

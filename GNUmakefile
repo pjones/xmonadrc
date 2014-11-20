@@ -21,10 +21,11 @@ all: $(XMONADRC)
 
 ################################################################################
 install: $(TARGET)
-	mkdir -p $(DEST)
+	mkdir -p $(DEST) $(HOME)/.config/taffybar
 	cp -f $(XMONADRC) $(DEST)/xmonad
 	cp -f $(TAFFYBARRC) $(DEST)
 	cp -f $(TAFFYBAR) $(DEST)
+	cp -f taffybar.gtk $(HOME)/.config/taffybar/taffybar.rc
 
 ################################################################################
 restart: install

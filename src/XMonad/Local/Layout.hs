@@ -19,7 +19,6 @@ import XMonad.Layout.BoringWindows (boringWindows)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders (noBorders)
-import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.Reflect (reflectHoriz)
 import XMonad.Layout.Renamed
@@ -28,9 +27,6 @@ import XMonad.Layout.SimplestFloat (simplestFloat)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Layout.WindowNavigation
-
---------------------------------------------------------------------------------
-import XMonad.Local.Theme (decoTheme)
 
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
@@ -51,9 +47,5 @@ layouts =  floatF12 maxToggle where
   float     = renamed [Replace "Float"] simplestFloat
   floatF12  = onWorkspace "F12" float
   maxToggle = renamed [CutWordsLeft 1] $ maximize toggle
-  toggle    = deco tall  ||| deco rtall ||| deco mtall |||
-              deco three ||| deco two   ||| full
-
---------------------------------------------------------------------------------
--- | Add simple decorations to windows.
-deco = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText decoTheme
+  toggle    = tall  ||| rtall ||| mtall |||
+              three ||| two   ||| full

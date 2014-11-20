@@ -8,38 +8,14 @@ the LICENSE file. -}
 
 --------------------------------------------------------------------------------
 -- | Color theme.
-module XMonad.Local.Theme (xmonadColors, decoTheme) where
+module XMonad.Local.Theme (xmonadColors) where
 
 --------------------------------------------------------------------------------
 import XMonad
-import XMonad.Layout.SimpleDecoration
-
---------------------------------------------------------------------------------
-windowBorderColor :: String
-windowBorderColor = "#6c71c4"
-
---------------------------------------------------------------------------------
-windowDecoColor :: String
-windowDecoColor = "#9396c4"
 
 --------------------------------------------------------------------------------
 xmonadColors :: XConfig a -> XConfig a
 xmonadColors x = x { normalBorderColor  = "#111111"
-                   , focusedBorderColor = windowBorderColor
-                   , borderWidth        = 2
+                   , focusedBorderColor = "#6c71c4"
+                   , borderWidth        = 3
                    }
-
---------------------------------------------------------------------------------
-decoTheme :: Theme
-decoTheme = def { decoHeight          = 14
-                , activeColor         = windowDecoColor
-                , activeBorderColor   = windowBorderColor
-                , activeTextColor     = "#222222"
-                , inactiveColor       = "#222222"
-                , inactiveBorderColor = "#222222"
-                , inactiveTextColor   = "#586e75"
-                , urgentColor         = "#dc5c5a"
-                , urgentBorderColor   = "#dc322f"
-                , urgentTextColor     = "#000000"
-                , fontName            = "xft:dejavu sans mono:size=9"
-                }

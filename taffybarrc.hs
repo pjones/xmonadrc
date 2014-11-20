@@ -43,9 +43,11 @@ weatherConfig = (defaultWeatherConfig "KBJC") {weatherTemplate = withColor}
 --------------------------------------------------------------------------------
 main :: IO ()
 main = taffybarMain defaultTaffybarConfig
-    { startWidgets = [pager, note]
-    , endWidgets   = [tray, clock, wea, mpris]
-    , barPosition  = Bottom
+    { startWidgets  = [pager, note]
+    , endWidgets    = [tray, clock, wea, mpris]
+    , monitorNumber = 1 -- FIXME: this is for hawkins!
+    , barHeight     = 22
+    , barPosition   = Bottom
     }
 
   where
