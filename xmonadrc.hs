@@ -42,6 +42,7 @@ config = def
 --------------------------------------------------------------------------------
 main :: IO ()
 main = xmonad (Local.xmonadColors . ewmh . pagerHints .
-               withUrgencyHookC NoUrgencyHook urgencyConfig $ config)
+               withUrgencyHookC urgencyStyle urgencyConfig $ config)
   where
     urgencyConfig = UrgencyConfig Focused Dont
+    urgencyStyle  = BorderUrgencyHook "#ff0000"
