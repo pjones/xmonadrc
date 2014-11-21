@@ -28,7 +28,7 @@ import qualified XMonad.Local.Workspaces as Workspaces
 --
 -- config :: XConfig a
 config = def
-  { terminal           = "mlclient"
+  { terminal           = "urxvtc"
   , layoutHook         = Local.layoutHook
   , manageHook         = Local.manageHook
   , handleEventHook    = Local.handleEventHook

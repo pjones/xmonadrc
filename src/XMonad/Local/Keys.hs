@@ -194,8 +194,8 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
-  , ("C-z C-t",   spawn "mlclient --fontsize=18")
-  , ("C-z M-t",   spawn "mlclient -b '#fdf6e3' -f '#002b36' --fontsize=18")
+  , ("C-z C-t",   spawn $ terminal c ++ " -name BigTerm")
+  , ("C-z M-t",   spawn $ terminal c ++ " -name BigTermP")
   , ("M-l",       spawn "i3lock -dc 444444")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
