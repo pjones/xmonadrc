@@ -2,7 +2,12 @@
 ARCH              = $(shell uname -m)
 OS                = $(shell uname -s | tr '[A-Z]' '[a-z]')
 TARGET            = $(HOME)/.xmonad/xmonad-$(ARCH)-$(OS)
+
+################################################################################
 SRC               = $(shell find . -type f -name '*.hs')
+SRC              += xmonadrc.cabal
+
+################################################################################
 DEST              = $(HOME)/bin
 SANDBOX           = cabal.sandbox.config
 XMONAD            = .cabal-sandbox/bin/xmonad

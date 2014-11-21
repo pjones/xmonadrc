@@ -11,7 +11,6 @@ module Main where
 
 --------------------------------------------------------------------------------
 import System.Taffybar
-import System.Taffybar.FreedesktopNotifications
 import System.Taffybar.MPRIS
 import System.Taffybar.Pager
 import System.Taffybar.SimpleClock
@@ -22,30 +21,27 @@ import System.Taffybar.Weather
 -- import System.Taffybar.Widgets.PollingGraph
 
 --------------------------------------------------------------------------------
-pagerConfig :: PagerConfig
-pagerConfig = defaultPagerConfig
-  { activeWindow     = colorize "white" "" . escape . shorten 10
-  , activeWorkspace  = colorize "#88b324" "" . wrap "[" "]" . escape
-  , visibleWorkspace = wrap "(" ")" . escape
-  , hiddenWorkspace  = escape
-  , emptyWorkspace   = const ""
-  , urgentWorkspace  = colorize "#1c1c1c" "#d33682" . wrap "<" ">" . escape
-  , widgetSep        = colorize "#5c5c5c" "" " | "
-  }
+-- | Local imports.
+import Taffybar.Local.Host
+import Taffybar.Local.MPRIS
+import Taffybar.Local.Pager
 
 --------------------------------------------------------------------------------
 weatherConfig :: WeatherConfig
 weatherConfig = (defaultWeatherConfig "KBJC") {weatherTemplate = withColor}
   where
-    template  = "°F:$tempF$ °C:$tempC$ H:$humidity$"
+    template  = "°F:$tempF$ °C:$tempC$ H:$humidity$%"
     withColor = wrap "<span fgcolor='#859900'>" "</span>" template
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = taffybarMain defaultTaffybarConfig
-    { startWidgets  = [pager, note]
+main = do
+  host <- getHostConfig
+
+  taffybarMain defaultTaffybarConfig
+    { startWidgets  = [pager host]
     , endWidgets    = [tray, clock, wea, mpris]
-    , monitorNumber = 1 -- FIXME: this is for hawkins!
+    , monitorNumber = primaryMonitorNum host
     , barHeight     = 22
     , barPosition   = Bottom
     }
@@ -53,8 +49,7 @@ main = taffybarMain defaultTaffybarConfig
   where
     clock  = textClockNew Nothing clkfmt 1
     clkfmt = "<span fgcolor='#268bd2'>%a %b %d, %H:%M</span>"
-    pager  = taffyPagerNew pagerConfig
-    note   = notifyAreaNew defaultNotificationConfig
+    pager  = taffyPagerNew . pagerConfig
     wea    = weatherNew weatherConfig 15
-    mpris  = mprisNew
+    mpris  = mprisNew mprisConfig
     tray   = systrayNew
