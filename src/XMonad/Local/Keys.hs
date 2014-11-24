@@ -97,6 +97,8 @@ windowKeys _ =
   , ("C-z b",     changeFocus $ sendMessage $ Go L)
   , ("C-z n",     changeFocus $ sendMessage $ Go D)
   , ("C-z p",     changeFocus $ sendMessage $ Go U)
+  , ("C-z o",     changeFocus Boring.focusDown)
+  , ("C-z S-o",   changeFocus $ windows W.swapDown)
   , ("C-z C-v",   changeFocus Boring.focusDown)
   , ("C-z M1-v",  changeFocus Boring.focusUp)
   , ("C-z S-f",   changeFocus $ sendMessage $ Swap R)
