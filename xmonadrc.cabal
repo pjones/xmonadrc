@@ -48,7 +48,7 @@ library
                , xmonad         == 0.12
                , xmonad-contrib == 0.12
                , xmonad-extras  == 0.12
-               , taffybar       == 0.4.3
+               , taffybar       == 0.4.4
 
 ------------------------------------------------------------------------------
 executable xmonadrc
