@@ -27,6 +27,9 @@ haskellPackages.cabal.mkDerivation (self: {
 
     # Packages for xmonad-extras and my xmonadrc:
     mpd_clientlib
+
+    # Other tools used by the build script.
+    gnumake gitAndTools.gitFull darcs
   ];
 
   pkgconfigDepends = with pkgs; [

@@ -1,0 +1,3 @@
+[submodule "util"]
+	path = util
+	url = git://pmade.com/haskell-util.git
