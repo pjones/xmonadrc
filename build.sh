@@ -18,7 +18,7 @@ get_src () {
   dir=$1; shift
 
   if [ ! -d $VENDOR_DIR/$dir ]; then
-    (cd $VENDOR_DIR && $@)
+    (cd $VENDOR_DIR && "$@")
   fi
 
   CABAL_ADD_SOURCE="${CABAL_ADD_SOURCE}${CABAL_ADD_SOURCE:+ }${VENDOR_DIR}/$dir"
@@ -27,13 +27,17 @@ get_src () {
 ################################################################################
 # When using xmonad from darcs.
 get_xmonad_src () {
-  get_src xmonad darcs get --lazy http://code.haskell.org/xmonad
+  hash="74d690b962f1ac9dee3d424dc7c6a1a13922af6d"
+  url="http://code.haskell.org/xmonad"
+  get_src xmonad darcs get --lazy --to-match "hash $hash" "$url"
 }
 
 ################################################################################
 # When using xmonad-contrib from darcs.
 get_xmonad_contrib_src () {
-  get_src XMonadContrib darcs get --lazy http://code.haskell.org/XMonadContrib
+  hash="8de85c44bff7b35e29159243b6bc7715865d7ecb"
+  url="http://code.haskell.org/XMonadContrib"
+  get_src XMonadContrib darcs get --lazy --to-match "hash $hash" "$url"
 }
 
 ################################################################################

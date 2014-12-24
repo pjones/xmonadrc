@@ -37,6 +37,11 @@ haskellPackages.cabal.mkDerivation (self: {
     cairo glib gtk libxml2
   ];
 
+  shellHook = ''
+    # Can't pull from Github otherwise:
+    export GIT_SSL_CAINFO=/etc/ssl/certs/ca-bundle.crt
+  '';
+
   meta = {
     homepage = "http://www.pmade.com";
     description = "Peter's XMonad Configuration";
