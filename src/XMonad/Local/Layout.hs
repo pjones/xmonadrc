@@ -15,7 +15,6 @@ module XMonad.Local.Layout (layoutHook) where
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Hooks.ManageDocks (avoidStruts)
-import XMonad.Layout.BoringWindows (boringWindows)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders (noBorders)
@@ -26,12 +25,12 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.SimplestFloat (simplestFloat)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
-import XMonad.Layout.WindowNavigation
+-- import XMonad.Layout.WindowNavigation
 
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
-layoutHook = avoidStruts $ boringWindows $ windowNavigation layouts
+layoutHook = avoidStruts {- $ windowNavigation -} layouts
 
 --------------------------------------------------------------------------------
 -- | All of the layouts and layout modifiers that I use.  See the

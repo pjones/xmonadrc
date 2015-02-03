@@ -36,6 +36,9 @@ manageHook = manageDocks <> composeAll
   [ -- HandBrake file dialog asks for crazy sizes.
     className =? "Handbrake" <&&> isDialog     --> forceCenterFloat
 
+    -- Password Safe Entry Dialog (new entries only).
+  , className =? "Pwsafe" <&&> title =? "Add Entry" --> tileWindow
+
     -- Force dialog windows and pop-ups to be floating.
   , isDialog                                    --> doCenterFloat
   , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat

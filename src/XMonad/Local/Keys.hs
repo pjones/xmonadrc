@@ -26,7 +26,9 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
+import XMonad.Actions.GridSelect
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
+import XMonad.Actions.Navigation2D
 import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
@@ -34,11 +36,9 @@ import XMonad.Actions.TagWindows
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
-import qualified XMonad.Layout.BoringWindows as Boring
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
-import XMonad.Layout.WindowNavigation
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (windowPromptGoto)
 import XMonad.Prompt.XMonad (xmonadPrompt)
@@ -93,24 +93,22 @@ baseKeys _ =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   [ ("C-z l",     changeFocus $ nextMatch History (return True))
-  , ("C-z f",     changeFocus $ sendMessage $ Go R)
-  , ("C-z b",     changeFocus $ sendMessage $ Go L)
-  , ("C-z n",     changeFocus $ sendMessage $ Go D)
-  , ("C-z p",     changeFocus $ sendMessage $ Go U)
-  , ("C-z o",     changeFocus Boring.focusDown)
-  , ("C-z S-o",   changeFocus $ windows W.swapDown)
-  , ("C-z C-v",   changeFocus Boring.focusDown)
-  , ("C-z M1-v",  changeFocus Boring.focusUp)
-  , ("C-z S-f",   changeFocus $ sendMessage $ Swap R)
-  , ("C-z S-b",   changeFocus $ sendMessage $ Swap L)
-  , ("C-z S-n",   changeFocus $ sendMessage $ Swap D)
-  , ("C-z S-p",   changeFocus $ sendMessage $ Swap U)
-  , ("C-z S-v",   changeFocus $ windows W.swapDown)
-  , ("C-z m",     changeFocus Boring.focusMaster)
+  , ("C-z f",     changeFocus $ windowGo R False)
+  , ("C-z b",     changeFocus $ windowGo L False)
+  , ("C-z n",     changeFocus $ windowGo D False)
+  , ("C-z p",     changeFocus $ windowGo U False)
+  , ("C-z C-f",   changeFocus $ windowGo R False)
+  , ("C-z C-b",   changeFocus $ windowGo L False)
+  , ("C-z C-n",   changeFocus $ windowGo D False)
+  , ("C-z C-p",   changeFocus $ windowGo U False)
+  , ("C-z o",     changeFocus $ goToSelected gridSelectConf)
+  , ("C-z S-f",   changeFocus $ windowSwap R False)
+  , ("C-z S-b",   changeFocus $ windowSwap L False)
+  , ("C-z S-n",   changeFocus $ windowSwap D False)
+  , ("C-z S-p",   changeFocus $ windowSwap U False)
+  , ("C-z m",     changeFocus $ windows W.focusMaster)
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
   , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z M-b",   Boring.markBoring)
-  , ("C-z M-S-b", Boring.clearBoring)
   , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
   , ("C-z M-j",   setInteresting)
   , ("C-z j",     changeFocus $ focusDownTaggedGlobal interestingWindowTag)
@@ -183,8 +181,8 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z C-f",   changeFocus $ onNextNeighbour W.view)
-  , ("C-z C-b",   changeFocus $ onPrevNeighbour W.view)
+  [ ("C-z M-f",   changeFocus $ onNextNeighbour W.view)
+  , ("C-z M-b",   changeFocus $ onPrevNeighbour W.view)
   , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
@@ -233,3 +231,28 @@ musicKeys _ =
   , ("M4-<Space>",     radioPrompt Local.promptConfig)
   , ("C-z M4-<Space>", albumPrompt Local.promptConfig)
   ]
+
+--------------------------------------------------------------------------------
+-- | Keys for moving around in GridSelect.
+gridSelectNavKeys :: TwoD a (Maybe a)
+gridSelectNavKeys = makeXEventhandler (shadowWithKeymap gsKeys gsSearch)
+  where
+    gsKeys = M.fromList
+      [ ((controlMask, xK_g),      cancel)
+      , ((0, xK_Return),           select)
+      , ((controlMask, xK_Return), select)
+      , ((0, xK_BackSpace),        gsErase      >> gridSelectNavKeys)
+      , ((controlMask, xK_b),      move (-1, 0) >> gridSelectNavKeys)
+      , ((controlMask, xK_f),      move (1,  0) >> gridSelectNavKeys)
+      , ((controlMask, xK_n),      move (0,  1) >> gridSelectNavKeys)
+      , ((controlMask, xK_p),      move (0, -1) >> gridSelectNavKeys)
+      ]
+
+    -- Unknown keys fall through to search.
+    gsSearch (_,s,_) = transformSearchString (++ s) >> gridSelectNavKeys
+    gsErase = transformSearchString (\s -> if (s == "") then "" else init s)
+
+--------------------------------------------------------------------------------
+gridSelectConf :: HasColorizer a => GSConfig a
+gridSelectConf = def { gs_navigate = gridSelectNavKeys
+                     }

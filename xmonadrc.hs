@@ -14,6 +14,7 @@ module Main where
 --------------------------------------------------------------------------------
 import System.Taffybar.Hooks.PagerHints (pagerHints)
 import XMonad hiding (config)
+import XMonad.Actions.Navigation2D (withNavigation2DConfig)
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
 import qualified XMonad.Local.Action as Local
@@ -41,8 +42,11 @@ config = def
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = xmonad (Local.xmonadColors . ewmh . pagerHints .
-               withUrgencyHookC urgencyStyle urgencyConfig $ config)
+main = xmonad (ewmh .
+               pagerHints .
+               withUrgencyHookC urgencyStyle urgencyConfig .
+               withNavigation2DConfig def .
+               Local.xmonadColors $ config)
   where
     urgencyConfig = UrgencyConfig Focused Dont
     urgencyStyle  = BorderUrgencyHook "#ff0000"
