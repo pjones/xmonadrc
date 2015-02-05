@@ -185,8 +185,9 @@ workspaceMovementKeys c = do
   (name,   key)    <- zip (workspaces c) (map asKey $ workspaces c)
   (prefix, action) <- actions
   return (prefix ++ key, changeFocus $ windows (action name))
-  where actions = [ -- Bring workspace N to the current screen.
-                    ("C-z ",   W.greedyView)
+  where actions = [ -- Bring workspace N to the current screen or make
+                    -- it the focused workspace if on another screen.
+                    ("C-z ",   W.view)
                   , -- Move the current window to workspace N.
                     ("C-z S-", W.shift)
                   , -- Force workspace N to the second screen.
