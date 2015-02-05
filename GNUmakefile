@@ -13,6 +13,8 @@ util/haskell.mk:
 ################################################################################
 # Settings for `haskell.mk'.
 CABAL_FLAGS =
+CABAL_PRECONFIG_HOOK = cabal install gtk2hs-buildtools
+#CABAL_POSTCONFIG_HOOK  = cabal install xmonad-extras -fwith_mpd -f-with_hint
 include util/haskell.mk
 
 ################################################################################
