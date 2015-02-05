@@ -260,8 +260,8 @@ sendResize movement = do
     (_,     Expand_D) -> sendMessage MirrorExpand
     (_,     Shrink_L) -> sendMessage Expand
     (_,     Shrink_R) -> sendMessage Shrink
-    (_,     Shrink_U) -> sendMessage MirrorShrink
-    (_,     Shrink_D) -> sendMessage MirrorExpand
+    (_,     Shrink_U) -> sendMessage MirrorExpand
+    (_,     Shrink_D) -> sendMessage MirrorShrink
 
 --------------------------------------------------------------------------------
 -- | Keys for moving around in GridSelect.
