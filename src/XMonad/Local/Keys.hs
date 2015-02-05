@@ -18,14 +18,11 @@ import System.Exit (exitSuccess)
 
 --------------------------------------------------------------------------------
 -- Package: xmonad.
-import XMonad.Core hiding (keys)
-import XMonad.Layout
-import XMonad.Operations
+import XMonad hiding (keys)
 import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
-import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
 import XMonad.Actions.GridSelect
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
@@ -36,7 +33,7 @@ import XMonad.Actions.TagWindows
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
-import XMonad.Layout.LayoutCombinators
+import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Prompt.Shell (shellPrompt)
@@ -50,6 +47,18 @@ import XMonad.Util.Paste (sendKey)
 import XMonad.Local.Music (albumPrompt, radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Workspaces (asKey, viewPrevWS)
+import XMonad.Local.Layout (selectLayoutByName)
+
+--------------------------------------------------------------------------------
+-- General purpose resize commands.
+data GPResize = Expand_L
+              | Expand_R
+              | Expand_U
+              | Expand_D
+              | Shrink_L
+              | Shrink_R
+              | Shrink_U
+              | Shrink_D
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -93,19 +102,19 @@ baseKeys _ =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   [ ("C-z l",     changeFocus $ nextMatch History (return True))
-  , ("C-z f",     changeFocus $ windowGo R False)
-  , ("C-z b",     changeFocus $ windowGo L False)
-  , ("C-z n",     changeFocus $ windowGo D False)
-  , ("C-z p",     changeFocus $ windowGo U False)
-  , ("C-z C-f",   changeFocus $ windowGo R False)
-  , ("C-z C-b",   changeFocus $ windowGo L False)
-  , ("C-z C-n",   changeFocus $ windowGo D False)
-  , ("C-z C-p",   changeFocus $ windowGo U False)
+  , ("C-z f",     changeFocus $ windowGo R True)
+  , ("C-z b",     changeFocus $ windowGo L True)
+  , ("C-z n",     changeFocus $ windowGo D True)
+  , ("C-z p",     changeFocus $ windowGo U True)
+  , ("C-z C-f",   changeFocus $ windowGo R True)
+  , ("C-z C-b",   changeFocus $ windowGo L True)
+  , ("C-z C-n",   changeFocus $ windowGo D True)
+  , ("C-z C-p",   changeFocus $ windowGo U True)
   , ("C-z o",     changeFocus $ goToSelected gridSelectConf)
-  , ("C-z S-f",   changeFocus $ windowSwap R False)
-  , ("C-z S-b",   changeFocus $ windowSwap L False)
-  , ("C-z S-n",   changeFocus $ windowSwap D False)
-  , ("C-z S-p",   changeFocus $ windowSwap U False)
+  , ("C-z S-f",   changeFocus $ windowSwap R True)
+  , ("C-z S-b",   changeFocus $ windowSwap L True)
+  , ("C-z S-n",   changeFocus $ windowSwap D True)
+  , ("C-z S-p",   changeFocus $ windowSwap U True)
   , ("C-z m",     changeFocus $ windows W.focusMaster)
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
   , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
@@ -114,10 +123,15 @@ windowKeys _ =
   , ("C-z j",     changeFocus $ focusDownTaggedGlobal interestingWindowTag)
   , ("C-z S-k",   kill) -- Kill the current window.
   , ("C-z u",     changeFocus $ focusUrgent)
-  , ("M--",       changeFocus $ sendMessage Shrink)
-  , ("M-=",       changeFocus $ sendMessage Expand)
-  , ("M-S--",     changeFocus $ sendMessage MirrorShrink)
-  , ("M-S-=",     changeFocus $ sendMessage MirrorExpand)
+  , ("M--",       changeFocus $ sendResize Expand_L)
+  , ("M-=",       changeFocus $ sendResize Shrink_L)
+  , ("M-S--",     changeFocus $ sendResize Expand_U)
+  , ("M-S-=",     changeFocus $ sendResize Shrink_U)
+  , ("M-9",       changeFocus $ sendResize Shrink_R)
+  , ("M-0",       changeFocus $ sendResize Expand_R)
+  , ("M-S-9",     changeFocus $ sendResize Expand_D)
+  , ("M-S-0",     changeFocus $ sendResize Shrink_D)
+  , ("C-z r",     changeFocus $ sendMessage Rotate)
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
   ]
@@ -167,14 +181,8 @@ workspaceOtherKeys _ =
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys _ =
   [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
-  , ("C-z C-<Space>", cycleThroughLayouts ["Tall", "RTall"])
-  , ("C-z S-<Space>", sendMessage $ JumpToLayout "Full")
+  , ("C-z C-<Space>", selectLayoutByName gridSelectConf)
   , ("C-z s",         sendMessage ToggleStruts)
-  , ("M-0",           sendMessage $ JumpToLayout "Tall")
-  , ("M-1",           sendMessage $ JumpToLayout "Full")
-  , ("M-2",           sendMessage $ JumpToLayout "2Col")
-  , ("M-3",           sendMessage $ JumpToLayout "3Col")
-  , ("M-4",           sendMessage $ JumpToLayout "MTall")
   ]
 
 --------------------------------------------------------------------------------
@@ -183,7 +191,6 @@ screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("C-z M-f",   changeFocus $ onNextNeighbour W.view)
   , ("C-z M-b",   changeFocus $ onPrevNeighbour W.view)
-  , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
   , ("M-S-<F12>", spawn "xbacklight -set 80")
@@ -231,6 +238,30 @@ musicKeys _ =
   , ("M4-<Space>",     radioPrompt Local.promptConfig)
   , ("C-z M4-<Space>", albumPrompt Local.promptConfig)
   ]
+
+--------------------------------------------------------------------------------
+sendResize :: GPResize -> X ()
+sendResize movement = do
+  winset <- gets windowset
+  let ld = description . W.layout . W.workspace . W.current $ winset
+
+  case (ld, movement) of
+    ("BSP", Expand_L) -> sendMessage (ExpandTowards L)
+    ("BSP", Expand_R) -> sendMessage (ExpandTowards R)
+    ("BSP", Expand_U) -> sendMessage (ExpandTowards U)
+    ("BSP", Expand_D) -> sendMessage (ExpandTowards D)
+    ("BSP", Shrink_L) -> sendMessage (ShrinkFrom L)
+    ("BSP", Shrink_R) -> sendMessage (ShrinkFrom R)
+    ("BSP", Shrink_U) -> sendMessage (ShrinkFrom U)
+    ("BSP", Shrink_D) -> sendMessage (ShrinkFrom D)
+    (_,     Expand_L) -> sendMessage Shrink
+    (_,     Expand_R) -> sendMessage Expand
+    (_,     Expand_U) -> sendMessage MirrorShrink
+    (_,     Expand_D) -> sendMessage MirrorExpand
+    (_,     Shrink_L) -> sendMessage Expand
+    (_,     Shrink_R) -> sendMessage Shrink
+    (_,     Shrink_U) -> sendMessage MirrorShrink
+    (_,     Shrink_D) -> sendMessage MirrorExpand
 
 --------------------------------------------------------------------------------
 -- | Keys for moving around in GridSelect.
