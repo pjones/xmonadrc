@@ -61,6 +61,12 @@ data GPResize = Expand_L
               | Shrink_D
 
 --------------------------------------------------------------------------------
+-- Actions for tagging windows.
+data TagAction = ToggleTag String
+               | FocusTag String
+               | AddTagAndJump String
+
+--------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
 keys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 keys c = mkKeymap c (rawKeys c)
@@ -71,6 +77,7 @@ rawKeys :: XConfig Layout -> [(String, X ())]
 rawKeys c = concatMap ($ c) keymaps where
   keymaps = [ baseKeys
             , windowKeys
+            , windowTagKeys
             , workspaceKeys
             , layoutKeys
             , screenKeys
@@ -119,8 +126,6 @@ windowKeys _ =
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
   , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
   , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
-  , ("C-z M-j",   setInteresting)
-  , ("C-z j",     changeFocus $ focusDownTaggedGlobal interestingWindowTag)
   , ("C-z S-k",   kill) -- Kill the current window.
   , ("C-z u",     changeFocus $ focusUrgent)
   , ("M--",       changeFocus $ sendResize Expand_L)
@@ -135,17 +140,38 @@ windowKeys _ =
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
   ]
-  where
-    -- A window tag to use for the currently interesting window.
-    interestingWindowTag :: String
-    interestingWindowTag = "interesting"
 
+--------------------------------------------------------------------------------
+-- Navigate windows by using tags.
+windowTagKeys :: XConfig Layout -> [(String, X ())]
+windowTagKeys _ =
+  [ ("C-z M-j",   setInteresting)
+  , ("C-z j",     changeFocus (focusDownTaggedGlobal interestingWindowTag))
+  ] ++ numberedTags
+  where
     -- Removes the interesting tag from all windows, then sets it on
     -- the current window.
     setInteresting :: X ()
     setInteresting = do
       withTaggedGlobal interestingWindowTag (delTag interestingWindowTag)
       withFocused (addTag interestingWindowTag)
+
+    -- A window tag to use for the currently interesting window.
+    interestingWindowTag :: String
+    interestingWindowTag = "interesting"
+
+    numberedTags :: [(String, X ())]
+    numberedTags = do
+      key              <- map show ([1 .. 8] :: [Int])
+      (prefix, action) <- numberedTemplate
+      return (prefix ++ key, action key)
+
+    numberedTemplate :: [(String, String -> X ())]
+    numberedTemplate =
+      [ ("M-",   withFocused . performTagAction . FocusTag)
+      , ("M-S-", withFocused . performTagAction . AddTagAndJump)
+      , ("M-C-", withFocused . performTagAction . ToggleTag)
+      ]
 
 --------------------------------------------------------------------------------
 -- Keys for manipulating workspaces.
@@ -159,8 +185,9 @@ workspaceMovementKeys c = do
   (name,   key)    <- zip (workspaces c) (map asKey $ workspaces c)
   (prefix, action) <- actions
   return (prefix ++ key, changeFocus $ windows (action name))
-  where actions = [ -- Bring workspace N to the current screen.
-                    ("C-z ",   W.greedyView)
+  where actions = [ -- Bring workspace N to the current screen or make
+                    -- it the focused workspace if on another screen.
+                    ("C-z ",   W.view)
                   , -- Move the current window to workspace N.
                     ("C-z S-", W.shift)
                   , -- Force workspace N to the second screen.
@@ -262,6 +289,19 @@ sendResize movement = do
     (_,     Shrink_R) -> sendMessage Shrink
     (_,     Shrink_U) -> sendMessage MirrorExpand
     (_,     Shrink_D) -> sendMessage MirrorShrink
+
+--------------------------------------------------------------------------------
+performTagAction :: TagAction -> Window -> X ()
+performTagAction action win = case action of
+  ToggleTag tag     -> toggleWindowTag tag win
+  FocusTag tag      -> changeFocus (focusDownTaggedGlobal tag)
+  AddTagAndJump tag -> addTag tag win >> performTagAction (FocusTag tag) win
+
+--------------------------------------------------------------------------------
+toggleWindowTag :: String -> Window -> X ()
+toggleWindowTag tag win = do
+  tagged <- hasTag tag win
+  (if tagged then delTag else addTag) tag win
 
 --------------------------------------------------------------------------------
 -- | Keys for moving around in GridSelect.
