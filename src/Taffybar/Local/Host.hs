@@ -37,7 +37,7 @@ getHostConfig = do
 hostDefault :: Host
 hostDefault =  Host
   { primaryMonitorNum = 1
-  , maxWindowTitle    = 40
+  , maxWindowTitle    = 50
   }
 
 --------------------------------------------------------------------------------
