@@ -17,6 +17,7 @@ import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Actions.GridSelect
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
+import XMonad.Layout.Hidden (hiddenWindows)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders (noBorders)
@@ -37,7 +38,7 @@ layoutHook = avoidStruts {- $ windowNavigation -} layouts
 -- | All of the layouts and layout modifiers that I use.  See the
 -- documentation for @layoutHook@ above for information about the type
 -- signature.
-layouts =  floatF12 maxToggle where
+layouts =  floatF12 . maxToggle . hiddenMod $ allLays  where
   tall      = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
   rtall     = renamed [Replace "RTall"] $ reflectHoriz tall
   mtall     = renamed [Replace "MTall"] $ Mirror tall
@@ -47,8 +48,9 @@ layouts =  floatF12 maxToggle where
   float     = renamed [Replace "Float"] simplestFloat
   bspace    = renamed [Replace "BSP"] emptyBSP
   floatF12  = onWorkspace "F12" float
-  maxToggle = renamed [CutWordsLeft 1] $ maximize toggle
-  toggle    = tall  ||| rtall ||| mtall |||
+  maxToggle = renamed [CutWordsLeft 1] . maximizeWithPadding 0
+  hiddenMod = renamed [CutWordsLeft 1] . hiddenWindows
+  allLays   = tall  ||| rtall ||| mtall |||
               three ||| two   ||| full  ||| bspace
 
 --------------------------------------------------------------------------------
