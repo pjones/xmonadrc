@@ -243,6 +243,7 @@ appKeys c =
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
   , ("M-<F6>",               spawn "tptoggle.sh")
+  , ("M-<F10>",              spawn "screens.sh")
   ]
 
 --------------------------------------------------------------------------------
