@@ -28,15 +28,15 @@ get_src () {
 # When using xmonad from darcs.
 get_xmonad_src () {
   hash="74d690b962f1ac9dee3d424dc7c6a1a13922af6d"
-  url="http://code.haskell.org/xmonad"
+  url="pjones@dracula.pmade.com:darcs/oss/xmonad"
   get_src xmonad darcs get --lazy --to-match "hash $hash" "$url"
 }
 
 ################################################################################
 # When using xmonad-contrib from darcs.
 get_xmonad_contrib_src () {
-  hash="8de85c44bff7b35e29159243b6bc7715865d7ecb"
-  url="http://code.haskell.org/XMonadContrib"
+  hash="4ada2fc454f82a16f5746942c176cc615a3725d9"
+  url="pjones@dracula.pmade.com:darcs/oss/XMonadContrib"
   get_src XMonadContrib darcs get --lazy --to-match "hash $hash" "$url"
 }
 
