@@ -13,15 +13,18 @@ module Taffybar.Local.Host
        ) where
 
 --------------------------------------------------------------------------------
--- Library imports.
+import Graphics.UI.Gtk (Widget)
 import Network.HostName
+import Taffybar.Local.Pager
+import Taffybar.Local.Widgets
 
 --------------------------------------------------------------------------------
 -- | Host configuration.
 data Host = Host
   { primaryMonitorNum :: Int
-  , maxWindowTitle    :: Int
-  } deriving Show
+  , leftWidgets       :: [IO Widget]
+  , rightWidgets      :: [IO Widget]
+  }
 
 --------------------------------------------------------------------------------
 -- | Get the proper configuration for the current host.
@@ -37,7 +40,8 @@ getHostConfig = do
 hostDefault :: Host
 hostDefault =  Host
   { primaryMonitorNum = 1
-  , maxWindowTitle    = 50
+  , leftWidgets       = [pager (pagerConfig 50)]
+  , rightWidgets      = [tray, clock, weather, mpris]
   }
 
 --------------------------------------------------------------------------------
@@ -45,5 +49,6 @@ hostDefault =  Host
 hostHolmwood :: Host
 hostHolmwood =  Host
   { primaryMonitorNum = 0
-  , maxWindowTitle    = 30
+  , leftWidgets       = [pager (pagerConfig 30)]
+  , rightWidgets      = [tray, clock, battery, weather, mpris]
   }

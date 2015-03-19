@@ -18,6 +18,7 @@ library
     Taffybar.Local.Host
     Taffybar.Local.MPRIS
     Taffybar.Local.Pager
+    Taffybar.Local.Widgets
     Text.Playlist
     XMonad.Local.Action
     XMonad.Local.Keys
@@ -35,20 +36,22 @@ library
   hs-source-dirs: src
   ghc-options: -Wall -Werror
 
-  build-depends: base           >= 4.0  && < 5.0
-               , X11            >= 1.6  && < 2.0
+  build-depends: X11            >= 1.6  && < 2.0
+               , base           >= 4.0  && < 5.0
                , bytestring     >= 0.9  && < 0.11
                , containers     >= 0.4  && < 0.6
                , directory      >= 1.1  && < 1.3
                , filepath       >= 1.3  && < 1.4
+               , gtk            >= 0.12 && < 0.14
                , hostname       >= 1.0  && < 1.1
-               , libmpd         >= 0.8  && < 1.0
+               , libmpd         >= 0.8  && < 0.9
                , parsec         >= 3.1  && < 3.2
                , text           >= 0.11 && < 1.3
+               , taffybar       == 0.4.4
                , xmonad         == 0.12
                , xmonad-contrib == 0.12
                , xmonad-extras  == 0.12
-               , taffybar       == 0.4.3
+
 
 ------------------------------------------------------------------------------
 executable xmonadrc

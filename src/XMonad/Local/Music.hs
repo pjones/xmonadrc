@@ -38,7 +38,7 @@ instance XPrompt RadioStream where
 --------------------------------------------------------------------------------
 -- | Full @FilePath@ to where I keep my radio station list.
 radioStationFile :: IO FilePath
-radioStationFile = (</> "develop/pmade/rc/mpd/misc/streams") <$> getHomeDirectory
+radioStationFile = (</> "documents/playlists/streams") <$> getHomeDirectory
 
 --------------------------------------------------------------------------------
 -- | Parse the radio station file and return the resulting playlist.

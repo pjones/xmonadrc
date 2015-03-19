@@ -16,15 +16,11 @@ module Taffybar.Local.Pager
 import System.Taffybar.Pager
 
 --------------------------------------------------------------------------------
--- Local imports.
-import Taffybar.Local.Host
-
---------------------------------------------------------------------------------
 -- | Per-host pager configuration.
-pagerConfig :: Host -> PagerConfig
-pagerConfig host = PagerConfig
+pagerConfig :: Int -> PagerConfig
+pagerConfig maxWidth = PagerConfig
   { activeLayout     = escape
-  , activeWindow     = colorize "white" "" . escape . shorten (maxWindowTitle host)
+  , activeWindow     = colorize "#839496" "" . escape . shorten maxWidth
   , activeWorkspace  = colorize "#88b324" "" . wrap "[" "]" . escape
   , visibleWorkspace = wrap "(" ")" . escape
   , hiddenWorkspace  = escape

@@ -34,6 +34,7 @@ import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import XMonad.Layout.BinarySpacePartition
+import XMonad.Layout.Hidden (hideWindow, popOldestHiddenWindow)
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Prompt.Shell (shellPrompt)
@@ -108,7 +109,8 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z l",     changeFocus $ nextMatch History (return True))
+  [ ("M4-<Tab>",  changeFocus $ windows W.focusDown)
+  , ("C-z l",     changeFocus $ nextMatch History (return True))
   , ("C-z f",     changeFocus $ windowGo R True)
   , ("C-z b",     changeFocus $ windowGo L True)
   , ("C-z n",     changeFocus $ windowGo D True)
@@ -139,6 +141,8 @@ windowKeys _ =
   , ("C-z r",     changeFocus $ sendMessage Rotate)
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
+  , ("C-z h",     withFocused hideWindow)
+  , ("C-z M-h",   popOldestHiddenWindow)
   ]
 
 --------------------------------------------------------------------------------
@@ -216,8 +220,8 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z M-f",   changeFocus $ onNextNeighbour W.view)
-  , ("C-z M-b",   changeFocus $ onPrevNeighbour W.view)
+  [ ("M-<Tab>",   changeFocus $ onNextNeighbour W.view)
+  , ("M-S-<Tab>", changeFocus $ onPrevNeighbour W.view)
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
   , ("M-S-<F12>", spawn "xbacklight -set 80")
@@ -239,6 +243,7 @@ appKeys c =
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
   , ("M-<F6>",               spawn "tptoggle.sh")
+  , ("M-<F10>",              spawn "screens.sh")
   ]
 
 --------------------------------------------------------------------------------
