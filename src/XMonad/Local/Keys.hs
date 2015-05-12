@@ -109,7 +109,8 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("M4-<Tab>",  changeFocus $ windows W.focusDown)
+  [ ("M-<Left>",  changeFocus $ windows W.focusUp)
+  , ("M-<Right>", changeFocus $ windows W.focusDown)
   , ("C-z l",     changeFocus $ nextMatch History (return True))
   , ("C-z f",     changeFocus $ windowGo R True)
   , ("C-z b",     changeFocus $ windowGo L True)
@@ -220,8 +221,8 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-<Tab>",   changeFocus $ onNextNeighbour W.view)
-  , ("M-S-<Tab>", changeFocus $ onPrevNeighbour W.view)
+  [ ("M-<Up>",    changeFocus $ onPrevNeighbour W.view)
+  , ("M-<Down>",  changeFocus $ onNextNeighbour W.view)
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
   , ("M-S-<F12>", spawn "xbacklight -set 80")
