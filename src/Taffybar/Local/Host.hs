@@ -41,7 +41,7 @@ hostDefault :: Host
 hostDefault =  Host
   { primaryMonitorNum = 1
   , leftWidgets       = [pager (pagerConfig 50)]
-  , rightWidgets      = [tray, clock, weather, mpris]
+  , rightWidgets      = [tray, clock, weather, notifications]
   }
 
 --------------------------------------------------------------------------------
@@ -49,6 +49,6 @@ hostDefault =  Host
 hostHolmwood :: Host
 hostHolmwood =  Host
   { primaryMonitorNum = 0
-  , leftWidgets       = [pager (pagerConfig 30)]
-  , rightWidgets      = [tray, clock, battery, weather, mpris]
+  , leftWidgets       = [pager (pagerConfig 40)]
+  , rightWidgets      = [tray, clock, battery, weather, notifications]
   }

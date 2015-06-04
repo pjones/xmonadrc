@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 {- This file is part of the xmonadrc package. It is subject to the
 license terms in the LICENSE file found in the top-level directory of
 this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
@@ -12,13 +14,17 @@ module Taffybar.Local.Widgets
        , battery
        , weather
        , mpris
+       , notifications
        , tray
        ) where
 
 --------------------------------------------------------------------------------
-import Graphics.UI.Gtk (Widget)
+import Data.Monoid
+import qualified Data.Text as Text
+import Graphics.UI.Gtk (Widget, escapeMarkup)
 import System.Taffybar.Battery
-import System.Taffybar.MPRIS
+import System.Taffybar.FreedesktopNotifications
+import System.Taffybar.MPRIS2
 import System.Taffybar.Pager
 import System.Taffybar.SimpleClock
 import System.Taffybar.Systray
@@ -29,9 +35,6 @@ import System.Taffybar.Widgets.PollingBar (BarConfig (..), defaultBarConfig)
 -- To remind me for future tweaking.
 -- import System.Taffybar.Widgets.PollingBar
 -- import System.Taffybar.Widgets.PollingGraph
-
---------------------------------------------------------------------------------
-import Taffybar.Local.MPRIS
 
 --------------------------------------------------------------------------------
 clock :: IO Widget
@@ -76,7 +79,35 @@ weather = weatherNew weatherConfig 15
 
 --------------------------------------------------------------------------------
 mpris :: IO Widget
-mpris  = mprisNew mprisConfig
+mpris = mpris2New
+
+--------------------------------------------------------------------------------
+-- | Freedesktop notifications.
+--
+-- @System.Taffybar.FreedesktopNotifications@
+notifications :: IO Widget
+notifications = notifyAreaNew nconfig where
+  nconfig :: NotificationConfig
+  nconfig = NotificationConfig { notificationMaxTimeout = 10
+                               , notificationMaxLength  = 500
+                               , notificationFormatter  = formatFun
+                               }
+
+  formatFun :: Notification -> String
+  formatFun note =
+    notePrefix note <> "<span fgcolor='#222' bgcolor='#6c71c4'>" <>
+    noteMsg note    <> "</span>"
+
+  notePrefix :: Notification -> String
+  notePrefix note = if Text.null (noteAppName note)
+                       then "Note: "
+                       else (escapeMarkup . Text.unpack) (noteAppName note <> ": ")
+
+  noteMsg :: Notification -> String
+  noteMsg note = escapeMarkup . Text.unpack . Text.take 100 . Text.concat $
+    if Text.null (noteBody note)
+       then [ noteSummary note ]
+       else [ noteSummary note, ": ", noteBody note ]
 
 --------------------------------------------------------------------------------
 tray :: IO Widget

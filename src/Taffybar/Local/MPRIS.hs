@@ -8,41 +8,44 @@ the LICENSE file. -}
 --------------------------------------------------------------------------------
 -- | Display the currently playing song.
 module Taffybar.Local.MPRIS
-       ( mprisConfig
+       ( mpris
        ) where
 
 --------------------------------------------------------------------------------
 -- Library imports.
-import Data.List
-import Data.Maybe
-import System.Taffybar.MPRIS
+import Graphics.UI.Gtk (Widget)
+import System.Taffybar.MPRIS2
 
 --------------------------------------------------------------------------------
-mprisConfig :: MPRISConfig
-mprisConfig = MPRISConfig {trackLabel = display}
+mpris :: IO Widget
+mpris = mpris2New
 
 --------------------------------------------------------------------------------
-display :: TrackInfo -> String
-display track = "<span fgcolor='#b58900'>▶</span> " ++ info
-  where
-    info :: String
-    info = case radio track of
-      Just s  -> s
-      Nothing -> intercalate " | " $ catMaybes [ trackArtist track
-                                               , trackAlbum  track
-                                               , trackTitle  track
-                                               ]
+-- mprisConfig :: MPRISConfig
+-- mprisConfig = MPRISConfig {trackLabel = display}
 
 --------------------------------------------------------------------------------
-radio :: TrackInfo -> Maybe String
-radio track = if isInfixOf "SomaFM" name
-                then Just (clean name) else Nothing
-  where
-    name :: String
-    name = intercalate " " $ catMaybes [ trackTitle  track
-                                       , trackArtist track
-                                       , trackAlbum  track
-                                       ]
+-- display :: TrackInfo -> String
+-- display track = "<span fgcolor='#b58900'>▶</span> " ++ info
+--   where
+--     info :: String
+--     info = case radio track of
+--       Just s  -> s
+--       Nothing -> intercalate " | " $ catMaybes [ trackArtist track
+--                                                , trackAlbum  track
+--                                                , trackTitle  track
+--                                                ]
 
-    clean :: String -> String
-    clean = id
+-- --------------------------------------------------------------------------------
+-- radio :: TrackInfo -> Maybe String
+-- radio track = if isInfixOf "SomaFM" name
+--                 then Just (clean name) else Nothing
+--   where
+--     name :: String
+--     name = intercalate " " $ catMaybes [ trackTitle  track
+--                                        , trackArtist track
+--                                        , trackAlbum  track
+--                                        ]
+
+--     clean :: String -> String
+--     clean = id
