@@ -10,8 +10,11 @@
 scripts/dependencies.sh
 
 # Build everything:
-override=scripts/build.nix
-# FIXME: need to call out to nix-hs-build
+derivation=$PWD/scripts/build.nix
+builder=$PWD/util/bin/hsbuild
+
+util/nix/bin/nix-hs-derivation
+nix-shell -I pwd=$PWD --pure --command $builder $derivation
 
 # Install/restart:
 scripts/install.sh "$@"
