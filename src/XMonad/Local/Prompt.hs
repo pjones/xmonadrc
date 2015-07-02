@@ -8,15 +8,34 @@ the LICENSE file. -}
 
 --------------------------------------------------------------------------------
 -- | XMonad.Prompt configuration and utilities.
-module XMonad.Local.Prompt (promptConfig) where
+module XMonad.Local.Prompt
+       ( promptConfig
+       , listCompFunc
+       , aListCompFunc
+       ) where
 
 --------------------------------------------------------------------------------
 -- XMonad contrib (Prompt)
 import XMonad.Prompt
+import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
 
 --------------------------------------------------------------------------------
 promptConfig :: XPConfig
 promptConfig = def
-  { position = Bottom
-  , font     = "xft:dejavu sans mono:size=9"
+  { position        = Bottom
+  , font            = "xft:dejavu sans mono:size=9"
+  , alwaysHighlight = True
+  , searchPredicate = fuzzyMatch
+  , sorter          = fuzzySort
   }
+
+--------------------------------------------------------------------------------
+-- | Build a completion function for a list of strings using the
+-- search predicate stored in the @XPConfig@.
+listCompFunc :: XPConfig -> [String] -> String -> IO [String]
+listCompFunc c xs s = return (filter (searchPredicate c s) xs)
+
+--------------------------------------------------------------------------------
+-- | Like @listCompFunc@ but expects an association list.
+aListCompFunc :: XPConfig -> [(String, a)] -> String -> IO [String]
+aListCompFunc c xs s = listCompFunc c (map fst xs) s

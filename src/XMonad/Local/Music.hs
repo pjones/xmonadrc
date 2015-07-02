@@ -25,6 +25,7 @@ import System.FilePath ((</>))
 import Text.ParserCombinators.Parsec (parseFromFile)
 import Text.Playlist
 import XMonad.Core
+import XMonad.Local.Prompt (listCompFunc)
 import XMonad.Prompt
 
 --------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ radioPrompt :: XPConfig -> X ()
 radioPrompt c = do
   playlist <- io $ radioStationPlaylist `catch` econst []
   let titles = map T.unpack $ playlistTitles playlist
-  mkXPrompt RadioStream c (mkComplFunFromList' titles) $ playStream playlist
+  mkXPrompt RadioStream c (listCompFunc c titles) $ playStream playlist
 
 --------------------------------------------------------------------------------
 playStream :: Playlist -> String -> X ()

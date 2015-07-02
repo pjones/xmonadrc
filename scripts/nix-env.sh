@@ -15,6 +15,3 @@ builder=$PWD/util/bin/hsbuild
 
 util/nix/bin/nix-hs-derivation
 nix-shell -I pwd=$PWD --pure --command $builder $derivation
-
-# Install/restart:
-scripts/install.sh "$@"

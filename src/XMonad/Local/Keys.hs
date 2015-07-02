@@ -23,7 +23,6 @@ import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
-import XMonad.Actions.GridSelect
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.OnScreen (onlyOnScreen)
@@ -95,7 +94,6 @@ changeFocus f = f >> updatePointer (0.98, 0.01) (0, 0)
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 --
 -- TODO: spawn "xmonad --recompile && xmonad --restart"
--- TODO: ("C-z C-z", return ()) -- FIXME: replace with jumpToPrevWS
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
   [ ("C-z z",   sendKey controlMask xK_z) -- Send C-z to application.
@@ -120,7 +118,7 @@ windowKeys _ =
   , ("C-z C-b",   changeFocus $ windowGo L True)
   , ("C-z C-n",   changeFocus $ windowGo D True)
   , ("C-z C-p",   changeFocus $ windowGo U True)
-  , ("C-z o",     changeFocus $ goToSelected gridSelectConf)
+  , ("C-z o",     changeFocus $ windowPromptGoto Local.promptConfig)
   , ("C-z S-f",   changeFocus $ windowSwap R True)
   , ("C-z S-b",   changeFocus $ windowSwap L True)
   , ("C-z S-n",   changeFocus $ windowSwap D True)
@@ -128,7 +126,6 @@ windowKeys _ =
   , ("C-z m",     changeFocus $ windows W.focusMaster)
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
   , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z w",     changeFocus $ windowPromptGoto Local.promptConfig)
   , ("C-z S-k",   kill) -- Kill the current window.
   , ("C-z u",     changeFocus $ focusUrgent)
   , ("M--",       changeFocus $ sendResize Expand_L)
@@ -213,7 +210,7 @@ workspaceOtherKeys _ =
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys _ =
   [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
-  , ("C-z C-<Space>", selectLayoutByName gridSelectConf)
+  , ("C-z C-<Space>", selectLayoutByName Local.promptConfig)
   , ("C-z s",         sendMessage ToggleStruts)
   ]
 
@@ -223,6 +220,7 @@ screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("M-<Up>",    changeFocus $ onPrevNeighbour W.view)
   , ("M-<Down>",  changeFocus $ onNextNeighbour W.view)
+  , ("C-z d",     changeFocus $ onNextNeighbour W.view)
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
   , ("M-S-<F12>", spawn "xbacklight -set 80")
@@ -307,28 +305,3 @@ toggleWindowTag :: String -> Window -> X ()
 toggleWindowTag tag win = do
   tagged <- hasTag tag win
   (if tagged then delTag else addTag) tag win
-
---------------------------------------------------------------------------------
--- | Keys for moving around in GridSelect.
-gridSelectNavKeys :: TwoD a (Maybe a)
-gridSelectNavKeys = makeXEventhandler (shadowWithKeymap gsKeys gsSearch)
-  where
-    gsKeys = M.fromList
-      [ ((controlMask, xK_g),      cancel)
-      , ((0, xK_Return),           select)
-      , ((controlMask, xK_Return), select)
-      , ((0, xK_BackSpace),        gsErase      >> gridSelectNavKeys)
-      , ((controlMask, xK_b),      move (-1, 0) >> gridSelectNavKeys)
-      , ((controlMask, xK_f),      move (1,  0) >> gridSelectNavKeys)
-      , ((controlMask, xK_n),      move (0,  1) >> gridSelectNavKeys)
-      , ((controlMask, xK_p),      move (0, -1) >> gridSelectNavKeys)
-      ]
-
-    -- Unknown keys fall through to search.
-    gsSearch (_,s,_) = transformSearchString (++ s) >> gridSelectNavKeys
-    gsErase = transformSearchString (\s -> if (s == "") then "" else init s)
-
---------------------------------------------------------------------------------
-gridSelectConf :: HasColorizer a => GSConfig a
-gridSelectConf = def { gs_navigate = gridSelectNavKeys
-                     }
