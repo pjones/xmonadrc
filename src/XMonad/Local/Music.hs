@@ -26,7 +26,6 @@ import Text.ParserCombinators.Parsec (parseFromFile)
 import Text.Playlist
 import XMonad.Core
 import XMonad.Prompt
-import XMonad.Prompt.MPD (addAndPlay)
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -47,10 +46,6 @@ radioStationPlaylist = do
   path   <- radioStationFile
   parsed <- parseFromFile simplePlaylist path
   either (fail . show) return parsed
-
---------------------------------------------------------------------------------
-albumPrompt :: XPConfig -> X ()
-albumPrompt c = addAndPlay MPD.withMPD c [MPD.Artist, MPD.Album]
 
 --------------------------------------------------------------------------------
 radioPrompt :: XPConfig -> X ()
