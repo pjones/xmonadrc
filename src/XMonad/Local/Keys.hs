@@ -45,7 +45,7 @@ import XMonad.Util.Paste (sendKey)
 
 --------------------------------------------------------------------------------
 -- Local modules.
-import XMonad.Local.Music (albumPrompt, radioPrompt)
+import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Workspaces (asKey, viewPrevWS)
 import XMonad.Local.Layout (selectLayoutByName)
@@ -269,7 +269,6 @@ musicKeys _ =
 
     -- Prompt to change radio stations.
   , ("M4-<Space>",     radioPrompt Local.promptConfig)
-  , ("C-z M4-<Space>", albumPrompt Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------

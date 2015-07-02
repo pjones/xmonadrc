@@ -4,7 +4,7 @@
 # Helper script to install a custom xmonad in the correct location.
 ARCH=`uname -m`
 OS=`uname -s | tr '[A-Z]' '[a-z]'`
-XMONAD_BIN=`${HOME}/.xmonad/xmonad-${ARCH}-${OS}`
+XMONAD_BIN=${HOME}/.xmonad/xmonad-${ARCH}-${OS}
 XMONAD_SRC=dist/build/xmonadrc/xmonadrc
 CHECK_BIN=dist/build/checkrc/checkrc
 TAFFYBAR_SRC=dist/build/taffybarrc/taffybarrc
@@ -14,12 +14,13 @@ TAFFYBAR_WRAPPER=taffybar.sh
 BIN_DIR=$HOME/bin
 
 ################################################################################
-install () {
+do_install () {
   $CHECK_BIN
-  mkdir -p $BIN_DIR `dirname $XMONAD_BIN` $HOME/.config/taffybar
-  if [ -r $XMONAD_BIN ]; then mv $XMONAD_BIN $XMONAD_BIN.prev; fi
 
-  install -m 0755 $XMONAD_SRC $XMONAD_BIN
+  mkdir -p $BIN_DIR `dirname $XMONAD_BIN` $HOME/.config/taffybar
+  if [ -r $XMONAD_BIN ]; then mv $XMONAD_BIN ${XMONAD_BIN}.prev; fi
+
+  install -m 0755 $XMONAD_SRC       $XMONAD_BIN
   install -m 0755 $XMONAD_SRC       $BIN_DIR/xmonad
   install -m 0755 $TAFFYBAR_SRC     $BIN_DIR/taffybarrc
   install -m 0755 $TAFFYBAR_WRAPPER $BIN_DIR/taffybar.sh
@@ -29,7 +30,7 @@ install () {
 }
 
 ################################################################################
-restart () {
+do_restart () {
   $XMONAD_BIN --restart
   $BIN_DIR/$TAFFYBAR_WRAPPER restart > /dev/null 2>&1 &
 }
@@ -37,12 +38,12 @@ restart () {
 ################################################################################
 case ${1:-install} in
   install)
-    install
+    do_install
     ;;
 
   restart)
-    install
-    restart
+    do_install
+    do_restart
     ;;
 
   *)
