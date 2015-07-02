@@ -24,6 +24,7 @@ CABAL_FLAGS="--enable-optimization"
 TEST_DIR=test
 SRC_DIR=src
 VENDOR_DIR=vendor
+ADDED_VENDOR_DIRS=NO
 
 if [ -d "$TEST_DIR" ]; then
   CABAL_FLAGS="$CABAL_FLAGS --enable-tests"
@@ -31,25 +32,29 @@ fi
 
 ################################################################################
 # Create a sandbox just in case cabal needs to install something.
-if [ ! -d .cabal-sandbox ]; then
+if [ ! -r cabal.sandbox.config ]; then
   cabal sandbox init
+
+  # Register any local packages.
+  for dir in `ls "$VENDOR_DIR"`; do
+    if [ -r $VENDOR_DIR/$dir/$dir.cabal ]; then
+      ADDED_VENDOR_DIRS=YES
+      echo "==> add-source $VENDOR_DIR/$dir"
+      cabal sandbox add-source $VENDOR_DIR/$dir
+    fi
+  done
+
+  cabal install --only-dependencies $CABAL_FLAGS
 fi
-
-################################################################################
-# Register any local packages.
-for dir in `ls "$VENDOR_DIR"`; do
-  if [ -r $VENDOR_DIR/$dir/$dir.cabal ]; then
-    echo "==> add-source $VENDOR_DIR/$dir"
-    cabal sandbox add-source $VENDOR_DIR/$dir
-  fi
-done
-
-cabal install --only-dependencies $CABAL_FLAGS
 
 ################################################################################
 # Build the project.
 cabal configure -fmaintainer $CABAL_FLAGS
-cabal build
+
+if ! cabal build; then
+  [ $ADDED_VENDOR_DIRS = 'YES' ] && rm cabal.sandbox.config
+  exit 1
+fi
 
 ################################################################################
 # Optionally run the tests.
