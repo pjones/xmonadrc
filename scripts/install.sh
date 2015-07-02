@@ -8,7 +8,7 @@ XMONAD_BIN=${HOME}/.xmonad/xmonad-${ARCH}-${OS}
 XMONAD_SRC=dist/build/xmonadrc/xmonadrc
 CHECK_BIN=dist/build/checkrc/checkrc
 TAFFYBAR_SRC=dist/build/taffybarrc/taffybarrc
-TAFFYBAR_WRAPPER=taffybar.sh
+TAFFYBAR_WRAPPER=scripts/taffybar.sh
 
 ################################################################################
 BIN_DIR=$HOME/bin
@@ -23,8 +23,8 @@ do_install () {
   install -m 0755 $XMONAD_SRC       $XMONAD_BIN
   install -m 0755 $XMONAD_SRC       $BIN_DIR/xmonad
   install -m 0755 $TAFFYBAR_SRC     $BIN_DIR/taffybarrc
-  install -m 0755 $TAFFYBAR_WRAPPER $BIN_DIR/taffybar.sh
-  install -m 0644 taffybar.gtk      $HOME/.config/taffybar/taffybar.rc
+  install -m 0755 $TAFFYBAR_WRAPPER $BIN_DIR/`basename $TAFFYBAR_WRAPPER`
+  install -m 0644 etc/taffybar.gtk  $HOME/.config/taffybar/taffybar.rc
 
   cd `dirname $XMONAD_BIN` && ln -nfs `basename $XMONAD_BIN` xmonadrc
 }
@@ -32,7 +32,7 @@ do_install () {
 ################################################################################
 do_restart () {
   $XMONAD_BIN --restart
-  $BIN_DIR/$TAFFYBAR_WRAPPER restart > /dev/null 2>&1 &
+  $BIN_DIR/`basename $TAFFYBAR_WRAPPER` restart > /dev/null 2>&1 &
 }
 
 ################################################################################
