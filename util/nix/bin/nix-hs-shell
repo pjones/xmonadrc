@@ -1,0 +1,21 @@
+#!/bin/sh -eu
+
+################################################################################
+# Calls `nix-hs-derivation' then starts a nix-shell.
+
+################################################################################
+# This file is part of the package hsutils. It is subject to the
+# license terms in the LICENSE file found in the top-level directory
+# of this distribution and at:
+#
+#   https://github.com/pjones/hsutils/blob/master/LICENSE
+#
+# No part of the byline package, including this file, may be copied,
+# modified, propagated, or distributed except according to the terms
+# contained in the LICENSE file.
+
+################################################################################
+override=~/.nixpkgs/envs/haskell-cabal.nix
+
+nix-hs-derivation
+nix-shell -I pwd=$PWD --pure "$@" $override

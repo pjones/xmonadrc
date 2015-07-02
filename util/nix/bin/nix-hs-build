@@ -1,0 +1,18 @@
+#!/bin/sh -eu
+
+################################################################################
+# Uses `nix-hs-shell' to run `hsbuild`.
+
+################################################################################
+# This file is part of the package hsutils. It is subject to the
+# license terms in the LICENSE file found in the top-level directory
+# of this distribution and at:
+#
+#   https://github.com/pjones/hsutils/blob/master/LICENSE
+#
+# No part of the byline package, including this file, may be copied,
+# modified, propagated, or distributed except according to the terms
+# contained in the LICENSE file.
+
+################################################################################
+nix-hs-shell --command ${HOME}/bin/hsbuild "$@"

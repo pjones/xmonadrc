@@ -1,0 +1,61 @@
+#!/bin/sh -eu
+
+################################################################################
+# This is a simple wrapper around cabal to build Haskell projects.
+
+################################################################################
+# This file is part of the package hsutils. It is subject to the
+# license terms in the LICENSE file found in the top-level directory
+# of this distribution and at:
+#
+#   https://github.com/pjones/hsutils/blob/master/LICENSE
+#
+# No part of the byline package, including this file, may be copied,
+# modified, propagated, or distributed except according to the terms
+# contained in the LICENSE file.
+
+################################################################################
+# Keep cabal from being affected by local configuration.
+export HOME="$(mktemp -d)"
+
+################################################################################
+# Some flags that can be overridden.
+CABAL_FLAGS="--enable-optimization"
+TEST_DIR=test
+SRC_DIR=src
+VENDOR_DIR=vendor
+
+if [ -d "$TEST_DIR" ]; then
+  CABAL_FLAGS="$CABAL_FLAGS --enable-tests"
+fi
+
+################################################################################
+# Create a sandbox just in case cabal needs to install something.
+if [ ! -d .cabal-sandbox ]; then
+  cabal sandbox init
+fi
+
+################################################################################
+# Register any local packages.
+for dir in `ls "$VENDOR_DIR"`; do
+  if [ -r $VENDOR_DIR/$dir/$dir.cabal ]; then
+    echo "==> add-source $VENDOR_DIR/$dir"
+    cabal sandbox add-source $VENDOR_DIR/$dir
+  fi
+done
+
+cabal install --only-dependencies $CABAL_FLAGS
+
+################################################################################
+# Build the project.
+cabal configure -fmaintainer $CABAL_FLAGS
+cabal build
+
+################################################################################
+# Optionally run the tests.
+[ -d "$TEST_DIR" ] && cabal test
+
+################################################################################
+# Scan the source code for suggestions.
+hlint lint src
+[ -d "$TEST_DIR" ] && hlint lint $TEST_DIR
