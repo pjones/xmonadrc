@@ -37,7 +37,7 @@ import XMonad.Layout.Hidden (hideWindow, popOldestHiddenWindow)
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Prompt.Shell (shellPrompt)
-import XMonad.Prompt.Window (windowPromptGoto)
+import XMonad.Prompt.Window (windowPromptGoto, windowPromptBring)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Paste (sendKey)
@@ -118,7 +118,8 @@ windowKeys _ =
   , ("C-z C-b",   changeFocus $ windowGo L True)
   , ("C-z C-n",   changeFocus $ windowGo D True)
   , ("C-z C-p",   changeFocus $ windowGo U True)
-  , ("C-z o",     changeFocus $ windowPromptGoto Local.promptConfig)
+  , ("C-z o",     changeFocus $ windowPromptGoto  Local.promptConfig)
+  , ("C-z C-o",   changeFocus $ windowPromptBring Local.promptConfig)
   , ("C-z S-f",   changeFocus $ windowSwap R True)
   , ("C-z S-b",   changeFocus $ windowSwap L True)
   , ("C-z S-n",   changeFocus $ windowSwap D True)
@@ -139,16 +140,16 @@ windowKeys _ =
   , ("C-z r",     changeFocus $ sendMessage Rotate)
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
-  , ("C-z h",     withFocused hideWindow)
-  , ("C-z M-h",   popOldestHiddenWindow)
+  , ("C-z C-k",   withFocused hideWindow)
+  , ("C-z C-y",   popOldestHiddenWindow)
   ]
 
 --------------------------------------------------------------------------------
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("C-z M-j",   setInteresting)
-  , ("C-z j",     changeFocus (focusDownTaggedGlobal interestingWindowTag))
+  [ ("C-z C-u C-j", setInteresting)
+  , ("C-z C-j",     changeFocus (focusDownTaggedGlobal interestingWindowTag))
   ] ++ numberedTags
   where
     -- Removes the interesting tag from all windows, then sets it on
@@ -236,7 +237,7 @@ appKeys c =
   , ("M-l",       spawn "i3lock -dc 444444")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
-  , ("M-<Space>", shellPrompt Local.promptConfig)
+  , ("M-<Space>", shellPrompt Local.runPromptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.

@@ -10,6 +10,7 @@ the LICENSE file. -}
 -- | XMonad.Prompt configuration and utilities.
 module XMonad.Local.Prompt
        ( promptConfig
+       , runPromptConfig
        , listCompFunc
        , aListCompFunc
        ) where
@@ -25,8 +26,15 @@ promptConfig = def
   { position        = Bottom
   , font            = "xft:dejavu sans mono:size=9"
   , alwaysHighlight = True
+  , promptKeymap    = emacsLikeXPKeymap
   , searchPredicate = fuzzyMatch
   , sorter          = fuzzySort
+  }
+
+--------------------------------------------------------------------------------
+runPromptConfig :: XPConfig
+runPromptConfig = promptConfig
+  { alwaysHighlight  = False
   }
 
 --------------------------------------------------------------------------------
