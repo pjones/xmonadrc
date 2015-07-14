@@ -15,6 +15,7 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Hooks.ManageDocks (avoidStruts)
+import XMonad.Layout.Accordion (Accordion(..))
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
 import XMonad.Layout.Hidden (hiddenWindows)
 import XMonad.Layout.LayoutCombinators
@@ -40,13 +41,14 @@ layoutHook = avoidStruts layouts
 layouts =  floatF12 . maxToggle . hiddenMod $ allLays  where
   tall      = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
   two       = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
+  accordion = renamed [Replace "Acc"]   $ Mirror Accordion
   full      = renamed [Replace "Full"]  $ noBorders Full
   float     = renamed [Replace "Float"] simplestFloat
   bspace    = renamed [Replace "BSP"] emptyBSP
   floatF12  = onWorkspace "F12" float
   maxToggle = renamed [CutWordsLeft 1] . maximizeWithPadding 0
   hiddenMod = renamed [CutWordsLeft 1] . hiddenWindows
-  allLays   = bspace ||| tall ||| two ||| full
+  allLays   = bspace ||| tall ||| two ||| full ||| accordion
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -68,7 +70,8 @@ selectLayoutByName conf =
                     Nothing   -> return ()
 
     layoutNames :: [(String, String)]
-    layoutNames = [ ("Tall",                   "Tall")
+    layoutNames = [ ("Accordion",              "Acc")
+                  , ("Tall",                   "Tall")
                   , ("Two Column",             "2Col")
                   , ("Full Screen",            "Full")
                   , ("Full Float",             "Float")
