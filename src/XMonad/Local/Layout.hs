@@ -39,16 +39,17 @@ layoutHook = avoidStruts layouts
 -- documentation for @layoutHook@ above for information about the type
 -- signature.
 layouts =  floatF12 . maxToggle . hiddenMod $ allLays  where
-  tall      = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
-  two       = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
-  accordion = renamed [Replace "Acc"]   $ Mirror Accordion
-  full      = renamed [Replace "Full"]  $ noBorders Full
-  float     = renamed [Replace "Float"] simplestFloat
-  bspace    = renamed [Replace "BSP"] emptyBSP
-  floatF12  = onWorkspace "F12" float
-  maxToggle = renamed [CutWordsLeft 1] . maximizeWithPadding 0
-  hiddenMod = renamed [CutWordsLeft 1] . hiddenWindows
-  allLays   = bspace ||| tall ||| two ||| full ||| accordion
+  tall       = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
+  two        = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
+  accordion  = renamed [Replace "Acc"]     Accordion
+  raccordion = renamed [Replace "RAcc"]  $ Mirror Accordion
+  full       = renamed [Replace "Full"]  $ noBorders Full
+  float      = renamed [Replace "Float"]   simplestFloat
+  bspace     = renamed [Replace "BSP"]     emptyBSP
+  floatF12   = onWorkspace "F12" float
+  maxToggle  = renamed [CutWordsLeft 1] . maximizeWithPadding 0
+  hiddenMod  = renamed [CutWordsLeft 1] . hiddenWindows
+  allLays    = bspace ||| tall ||| two ||| full ||| accordion ||| raccordion
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -71,6 +72,7 @@ selectLayoutByName conf =
 
     layoutNames :: [(String, String)]
     layoutNames = [ ("Accordion",              "Acc")
+                  , ("Rotated Accordion",      "RAcc")
                   , ("Tall",                   "Tall")
                   , ("Two Column",             "2Col")
                   , ("Full Screen",            "Full")
