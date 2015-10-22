@@ -36,13 +36,16 @@ if [ ! -r cabal.sandbox.config ]; then
   cabal sandbox init
 
   # Register any local packages.
-  for dir in `ls "$VENDOR_DIR"`; do
-    if [ -r $VENDOR_DIR/$dir/$dir.cabal ]; then
-      ADDED_VENDOR_DIRS=YES
-      echo "==> add-source $VENDOR_DIR/$dir"
-      cabal sandbox add-source $VENDOR_DIR/$dir
-    fi
-  done
+  if [ -d $VENDOR_DIR ]; then
+    for dir in `ls "$VENDOR_DIR"`; do
+      if [ -r $VENDOR_DIR/$dir/$dir.cabal ]; then
+        ADDED_VENDOR_DIRS=YES
+        echo "==> add-source $VENDOR_DIR/$dir"
+        cabal sandbox add-source $VENDOR_DIR/$dir
+        cabal install --reinstall $dir
+      fi
+    done
+  fi
 
   cabal install --only-dependencies $CABAL_FLAGS
 fi
@@ -62,5 +65,5 @@ fi
 
 ################################################################################
 # Scan the source code for suggestions.
-hlint lint src
-[ -d "$TEST_DIR" ] && hlint lint $TEST_DIR
+if [ -d "$SRC_DIR"  ]; then hlint lint $SRC_DIR;  fi
+if [ -d "$TEST_DIR" ]; then hlint lint $TEST_DIR; fi
