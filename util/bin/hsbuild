@@ -42,7 +42,6 @@ if [ ! -r cabal.sandbox.config ]; then
         ADDED_VENDOR_DIRS=YES
         echo "==> add-source $VENDOR_DIR/$dir"
         cabal sandbox add-source $VENDOR_DIR/$dir
-        cabal install --reinstall $dir
       fi
     done
   fi
