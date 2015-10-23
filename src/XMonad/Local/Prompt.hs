@@ -18,7 +18,6 @@ module XMonad.Local.Prompt
 --------------------------------------------------------------------------------
 -- XMonad contrib (Prompt)
 import XMonad.Prompt
-import XMonad.Prompt.FuzzyMatch (fuzzyMatch, fuzzySort)
 
 --------------------------------------------------------------------------------
 promptConfig :: XPConfig
@@ -27,8 +26,6 @@ promptConfig = def
   , font            = "xft:dejavu sans mono:size=9"
   , alwaysHighlight = True
   , promptKeymap    = emacsLikeXPKeymap
-  , searchPredicate = fuzzyMatch
-  , sorter          = fuzzySort
   }
 
 --------------------------------------------------------------------------------

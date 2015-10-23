@@ -13,7 +13,6 @@ the LICENSE file. -}
 module XMonad.Local.Music (radioPrompt) where
 
 --------------------------------------------------------------------------------
-import Control.Applicative
 import Control.Exception
 import Control.Monad (when, void)
 import qualified Data.ByteString as B

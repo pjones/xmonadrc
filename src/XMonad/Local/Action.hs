@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 --------------------------------------------------------------------------------
 {- This file is part of the xmonadrc package. It is subject to the
 license terms in the LICENSE file found in the top-level directory of
@@ -19,6 +21,7 @@ import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook, tileWindow)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
 import XMonad.Hooks.FadeWindows (fadeWindowsEventHook)
+import XMonad.Hooks.InsertPosition (Focus(Newer), Position(Below), insertPosition)
 import XMonad.Hooks.ManageDocks (manageDocks)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
@@ -32,7 +35,7 @@ import qualified XMonad.StackSet as W
 -- Use the `xprop' tool to get the info you need for these matches.
 -- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
-manageHook = manageDocks <> composeAll
+manageHook = insertPosition Below Newer <> manageDocks <> composeAll
   [ -- HandBrake file dialog asks for crazy sizes.
     className =? "Handbrake" <&&> isDialog     --> forceCenterFloat
 
