@@ -22,6 +22,6 @@ main = do
     { startWidgets  = leftWidgets  host
     , endWidgets    = rightWidgets host
     , monitorNumber = primaryMonitorNum host
-    , barHeight     = 22
+    , barHeight     = 20
     , barPosition   = Top
     }
