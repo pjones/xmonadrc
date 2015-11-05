@@ -18,55 +18,48 @@ module XMonad.Local.Action
 --------------------------------------------------------------------------------
 import qualified Data.Map as M
 import Data.Monoid
-import XMonad hiding (manageHook, handleEventHook, tileWindow)
+import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
-import XMonad.Hooks.FadeWindows (fadeWindowsEventHook)
+import XMonad.Hooks.FadeWindows (isFloating)
 import XMonad.Hooks.InsertPosition (Focus(Newer), Position(Below), insertPosition)
 import XMonad.Hooks.ManageDocks (manageDocks)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
--- | Manipulate windows as they are created.  All elements given to
--- @composeAll@ are composed together so multiple matches can act on
--- the window set.  Therefore actions higher in the list to
--- @composeAll@ will have final say.
---
--- Use the `xprop' tool to get the info you need for these matches.
--- For className, use the second value that xprop gives you.
+-- | Manipulate windows as they are created.  Only one of the
+-- following rules is allowed to run.  The first one that runs
+-- prevents others.  They are run from the bottom to the top.
 manageHook :: ManageHook
-manageHook = insertPosition Below Newer <> manageDocks <> composeAll
-  [ -- HandBrake file dialog asks for crazy sizes.
-    className =? "Handbrake" <&&> isDialog     --> forceCenterFloat
+manageHook =
+    manageDocks <> place <> configure
+  where
+    normalTile = insertPosition Below Newer
 
-    -- Password Safe Entry Dialog (new entries only).
-  , className =? "Pwsafe" <&&> title =? "Add Entry" --> tileWindow
+    configure = composeAll
+      [ -- Force dialog windows and pop-ups to be floating.
+        isDialog                                    --> doCenterFloat
+      , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat
+      , className =? "Gcr-prompter"                 --> doCenterFloat
+      , isFloating                                  --> doCenterFloat
 
-    -- Force dialog windows and pop-ups to be floating.
-  , isDialog                                    --> doCenterFloat
-  , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat
-  , className =? "Gcr-prompter"                 --> doCenterFloat
+        -- HandBrake file dialog asks for crazy sizes.
+      , className =? "Handbrake" <&&> isDialog --> forceCenterFloat
 
-    -- Some application windows ask to be floating (I'm guessing) but
-    -- it's stupid to float them.
-  , title =? "HandBrake" --> tileWindow
+        -- Some application windows ask to be floating (I'm guessing) but
+        -- it's stupid to float them.
+      , title =? "HandBrake" --> normalTile
+      ]
 
-    -- XFCE notification daemon windows steal the focus.
-  , title =? "xfce4-notifyd" --> doIgnore
-
-    -- Virtual Keyboard.
-  , className =? "XVkbd" --> doFloat
-  ]
-
---------------------------------------------------------------------------------
--- | Helper function to force a window to be tiled.
-tileWindow :: ManageHook
-tileWindow = ask >>= doF . W.sink
+    place = composeOne
+      [ isFloating -?> doCenterFloat
+      , pure True  -?> normalTile
+      ]
 
 --------------------------------------------------------------------------------
 -- | Useful when a floating window requests stupid dimensions.  There
 -- was a bug in Handbrake that would pop up the file dialog with
--- almost no height do to one of my rotated monitors.
+-- almost no height due to one of my rotated monitors.
 forceCenterFloat :: ManageHook
 forceCenterFloat = doFloatDep move
   where
@@ -81,8 +74,7 @@ forceCenterFloat = doFloatDep move
 
 --------------------------------------------------------------------------------
 handleEventHook :: Event -> X All
-handleEventHook = mconcat [ fadeWindowsEventHook
-                          , focusFollowsTiledOnly
+handleEventHook = mconcat [ focusFollowsTiledOnly
                           , fullscreenEventHook
                           ]
 
