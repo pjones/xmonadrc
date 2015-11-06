@@ -20,41 +20,35 @@ import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
-import XMonad.Hooks.FadeWindows (isFloating)
 import XMonad.Hooks.InsertPosition (Focus(Newer), Position(Below), insertPosition)
 import XMonad.Hooks.ManageDocks (manageDocks)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
--- | Manipulate windows as they are created.  Only one of the
--- following rules is allowed to run.  The first one that runs
--- prevents others.  They are run from the bottom to the top.
+-- | Manipulate windows as they are created.  The list given to
+-- @composeOne@ is processed from top to bottom.  The first matching
+-- rule wins.
 manageHook :: ManageHook
-manageHook =
-    manageDocks <> place <> configure
+manageHook = manageDocks <> composeOne
+    [ -- Some application windows ask to be floating (I'm guessing) but
+      -- it's stupid to float them.
+      title =? "HandBrake" -?> normalTile
+
+      -- HandBrake file dialog asks for crazy sizes.
+    , className =? "Handbrake" <&&> isDialog -?> forceCenterFloat
+
+      -- Force dialog windows and pop-ups to be floating.
+    , isDialog                                    -?> doCenterFloat
+    , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
+    , className =? "Gcr-prompter"                 -?> doCenterFloat
+    , transience -- Move transient windows to their parent.
+
+      -- Tile all other windows using insertPosition.
+    , pure True -?> normalTile
+    ]
   where
     normalTile = insertPosition Below Newer
-
-    configure = composeAll
-      [ -- Force dialog windows and pop-ups to be floating.
-        isDialog                                    --> doCenterFloat
-      , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doCenterFloat
-      , className =? "Gcr-prompter"                 --> doCenterFloat
-      , isFloating                                  --> doCenterFloat
-
-        -- HandBrake file dialog asks for crazy sizes.
-      , className =? "Handbrake" <&&> isDialog --> forceCenterFloat
-
-        -- Some application windows ask to be floating (I'm guessing) but
-        -- it's stupid to float them.
-      , title =? "HandBrake" --> normalTile
-      ]
-
-    place = composeOne
-      [ isFloating -?> doCenterFloat
-      , pure True  -?> normalTile
-      ]
 
 --------------------------------------------------------------------------------
 -- | Useful when a floating window requests stupid dimensions.  There
