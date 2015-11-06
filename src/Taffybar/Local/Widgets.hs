@@ -75,7 +75,7 @@ weather = weatherNew weatherConfig 15
     withColor = wrap "<span fgcolor='#859900'>" "</span>" template
 
     template :: String
-    template  = "°F:$tempF$ °C:$tempC$ H:$humidity$%"
+    template  = "$tempF$℉ $tempC$℃ $humidity$%H"
 
 --------------------------------------------------------------------------------
 mpris :: IO Widget
