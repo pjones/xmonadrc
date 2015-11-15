@@ -46,7 +46,7 @@ import XMonad.Util.Paste (sendKey)
 -- Local modules.
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
-import XMonad.Local.Workspaces (asKey, viewPrevWS)
+import XMonad.Local.Workspaces (asKey, viewPrevWS, switchTopic)
 import XMonad.Local.Layout (selectLayoutByName)
 
 --------------------------------------------------------------------------------
@@ -203,7 +203,8 @@ workspaceMovementKeys c = do
 -- Other operations on workspaces not covered in 'workspaceMovementKeys'.
 workspaceOtherKeys :: XConfig Layout -> [(String, X ())]
 workspaceOtherKeys _ =
-  [ ("C-z C-z", changeFocus viewPrevWS)
+  [ ("C-z C-z",   changeFocus viewPrevWS)
+  , ("M-<Space>", switchTopic)
   ]
 
 --------------------------------------------------------------------------------
@@ -232,12 +233,11 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
-  , ("C-z C-t",   spawn $ terminal c ++ " -name BigTerm")
-  , ("C-z M-t",   spawn $ terminal c ++ " -name BigTermP")
+  , ("C-z M-t",   spawn $ terminal c ++ " -name BigTerm")
   , ("M-l",       spawn "i3lock -dc 444444")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
-  , ("M-<Space>", shellPrompt Local.runPromptConfig)
+  , ("C-z C-r",   shellPrompt Local.runPromptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
