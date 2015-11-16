@@ -43,4 +43,4 @@ listCompFunc c xs s = return (filter (searchPredicate c s) xs)
 --------------------------------------------------------------------------------
 -- | Like @listCompFunc@ but expects an association list.
 aListCompFunc :: XPConfig -> [(String, a)] -> String -> IO [String]
-aListCompFunc c xs s = listCompFunc c (map fst xs) s
+aListCompFunc c xs = listCompFunc c (map fst xs)

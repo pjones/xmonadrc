@@ -50,7 +50,7 @@ projects =
 --------------------------------------------------------------------------------
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names = ["scratch"]
+names = ["scratch", "browser", "mail"]
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for
