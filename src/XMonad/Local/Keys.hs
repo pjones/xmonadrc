@@ -23,6 +23,7 @@ import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
+import XMonad.Actions.DynamicProjects (switchProjectPrompt, shiftToProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.OnScreen (onlyOnScreen)
@@ -46,7 +47,7 @@ import XMonad.Util.Paste (sendKey)
 -- Local modules.
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
-import XMonad.Local.Workspaces (asKey, viewPrevWS, switchTopic)
+import XMonad.Local.Workspaces (asKey, viewPrevWS)
 import XMonad.Local.Layout (selectLayoutByName)
 
 --------------------------------------------------------------------------------
@@ -204,7 +205,8 @@ workspaceMovementKeys c = do
 workspaceOtherKeys :: XConfig Layout -> [(String, X ())]
 workspaceOtherKeys _ =
   [ ("C-z C-z",   changeFocus viewPrevWS)
-  , ("M-<Space>", switchTopic)
+  , ("C-z C-s",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
+  , ("M-<Space>", changeFocus $ switchProjectPrompt  Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
