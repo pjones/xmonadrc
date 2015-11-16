@@ -5,11 +5,9 @@ share it with the rest of the world because I'm doing a few
 interesting things:
 
   1. I use `cabal` sandboxes to build XMonad and compile my
-     configuration into an executable (`xmonadrc`).  This means I
-     don't have to rely on packages from my operating system vendor
-     and I also don't have to install any packages in `~/.cabal`,
-     which I'm likely to delete at some point when I get into cabal
-     hell.
+     configuration into an executable (`xmonadrc`).  This allows me to
+     easily use my custom xmonad and xmonad-contrib sources (in
+     `vendor`).
 
      This presents an interesting challenge since XMonad by default
      tries to compile your `~/.xmonad/xmonad.hs` file when it starts.
@@ -18,11 +16,12 @@ interesting things:
      running XMonad.  I've also updated my `~/.xinitrc` to exec my
      `xmonadrc` directly without using the `xmonad` binary.
 
-     All the details for this process are in the `GNUmakefile`.
+     All the details for this process are in the `scripts/install.sh`
+     script.
 
   2. The `checkrc` executable that is built with `cabal` boots a mini
-     XMoand environment in order to test my configuration before
-     restarting XMonad.  Right now it's only testing the key bindings.
+     XMonad environment in order to test my configuration before
+     restarting.  Right now it's only testing the key bindings.
 
   3. The majority of my key bindings are underneath a prefix key:
      `C-z`.  Being a long time user of tools like GNU screen, tmux,
@@ -45,8 +44,7 @@ interesting things:
 
   * `src/XMonad/Local/Layout.hs`: Layout rules.
 
-  * `src/XMonad/Local/Log.hs`: Log hook, window fading, writing XMonad
-    status information to xmobar.
+  * `src/XMonad/Local/Log.hs`: Log hook,
 
   * `src/XMonad/Local/Music.hs`: Functions to switch radio stations
     and select albums to play in MPD.
@@ -54,8 +52,7 @@ interesting things:
   * `src/XMonad/Local/Prompt.hs`: XPrompt configuration.
 
   * `src/XMonad/Local/Workspaces.hs`: The names of my workspaces plus
-    some functions that decide if the workspace name should show up in
-    xmobar and to convert workspace names into key bindings.
+     project configuration for `XMonad.Actions.DynamicProjects`.
 
 ## Using this Configuration
 
@@ -70,19 +67,14 @@ outline of the steps I take to build, install, and restart XMonad.
         $ cabal update
         $ cabal install cabal-install
 
-  3. Use the `GNUmakefile` and `xmonadrc.cabal` files in this
+  3. Use the `scrips/build.sh` and `xmonadrc.cabal` files in this
      directory to build your XMonad configuration.
 
-        $ make
+        $ scripts/build.sh
 
   4. Install and restart XMonad (assumes XMonad is currently running):
 
-        $ make restart
-
-The details about how this works are in the `GNUmakefile` (correctly
-naming the xmonad executable, installing, restarting) and
-`xmonadrc.cabal` (which source files are included, build dependencies,
-etc.)
+        $ scripts/install.sh restart
 
 ## Screenshots
 
