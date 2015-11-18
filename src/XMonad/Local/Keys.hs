@@ -71,8 +71,8 @@ data TagAction = ToggleTag String
                | AddTagAndJump String
 
 --------------------------------------------------------------------------------
-newtype CurrentJumpTag = CurrentJumpTag String
-                         deriving (Typeable, Read, Show)
+data CurrentJumpTag = CurrentJumpTag !String
+                    deriving (Typeable, Read, Show)
 
 instance ExtensionClass CurrentJumpTag where
   initialValue = CurrentJumpTag "0"
@@ -169,7 +169,7 @@ windowTagKeys _ =
     jumpToInteresting :: X ()
     jumpToInteresting = do
       CurrentJumpTag name <- XS.get
-      changeFocus (focusDownTagged name)
+      changeFocus (focusDownTaggedGlobal name)
 
     numberedTags :: [(String, X ())]
     numberedTags = do
