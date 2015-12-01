@@ -25,7 +25,7 @@ import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
-import XMonad.Actions.DynamicProjects (switchProjectPrompt, shiftToProjectPrompt)
+import XMonad.Actions.DynamicProjects (switchProjectPrompt, shiftToProjectPrompt, renameProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 -- import XMonad.Actions.OnScreen (onlyOnScreen)
@@ -191,6 +191,8 @@ workspaceKeys _ =
   [ ("C-z C-z",   changeFocus viewPrevWS)
   , ("C-z C-s",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
   , ("M-<Space>", changeFocus $ switchProjectPrompt  Local.promptConfig)
+  , ("C-z a",     changeFocus $ switchProjectPrompt  Local.promptConfig)
+  , ("C-z C-u a", changeFocus $ renameProjectPrompt  Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
