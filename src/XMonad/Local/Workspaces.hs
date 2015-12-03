@@ -29,7 +29,7 @@ projects =
             , projectStartHook = Nothing
             }
 
-  , Project { projectName      = "browser"
+  , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
             , projectStartHook = Just $ do spawn "conkeror"
                                            spawn "chromium"
@@ -50,7 +50,7 @@ projects =
 --------------------------------------------------------------------------------
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names = ["scratch", "browser", "mail"]
+names = ["scratch", "browsers", "mail"]
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for
