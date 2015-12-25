@@ -17,15 +17,16 @@ import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Layout.Accordion (Accordion(..))
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
+import XMonad.Layout.Column
 import XMonad.Layout.Hidden (hiddenWindows)
+import XMonad.Layout.LayoutBuilder
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders (noBorders)
-import XMonad.Layout.PerWorkspace (onWorkspace)
+import XMonad.Layout.Reflect (reflectHoriz)
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
-import XMonad.Layout.SimplestFloat (simplestFloat)
-import XMonad.Layout.TwoPane (TwoPane(..))
+import XMonad.Layout.Tabbed
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Prompt
 
@@ -38,18 +39,29 @@ layoutHook = avoidStruts layouts
 -- | All of the layouts and layout modifiers that I use.  See the
 -- documentation for @layoutHook@ above for information about the type
 -- signature.
-layouts =  floatF12 . maxToggle . hiddenMod $ allLays  where
-  tall       = renamed [Replace "Tall"]  $ ResizableTall 1 (1.5/100) (3/5) []
-  two        = renamed [Replace "2Col"]  $ TwoPane (3/100) (3/5)
-  accordion  = renamed [Replace "Acc"]     Accordion
-  raccordion = renamed [Replace "RAcc"]  $ Mirror Accordion
-  full       = renamed [Replace "Full"]  $ noBorders Full
-  float      = renamed [Replace "Float"]   simplestFloat
-  bspace     = renamed [Replace "BSP"]     emptyBSP
-  floatF12   = onWorkspace "F12" float
+layouts = maxToggle . hiddenMod $ allLays  where
+  tall       = renamed [Replace "Tall"]  (ResizableTall 1 (1.5/100) (3/5) [])
+  two        = renamed [Replace "2Col"]  twoWins
+  rtwo       = renamed [Replace "R2Col"] (reflectHoriz twoWins)
+  accordion  = renamed [Replace "Acc"]   Accordion
+  raccordion = renamed [Replace "RAcc"]  (Mirror Accordion)
+  full       = renamed [Replace "Full"]  (noBorders Full)
+  bspace     = renamed [Replace "BSP"]   emptyBSP
   maxToggle  = renamed [CutWordsLeft 1] . maximizeWithPadding 0
   hiddenMod  = renamed [CutWordsLeft 1] . hiddenWindows
-  allLays    = bspace ||| tall ||| two ||| full ||| accordion ||| raccordion
+  allLays    = tall  ||| bspace    ||| two        ||| rtwo |||
+               full  ||| accordion ||| raccordion
+
+--------------------------------------------------------------------------------
+-- | Only allow two visible windows.  The screen is split into two
+-- layouts, the left side holds a single window, the right holds the
+-- remaining windows in tabs.
+twoWins = layoutLeft layoutRight where
+  leftHalf    = relBox 0.0 0.0 0.5 1.0
+  rightHalf   = relBox 0.5 0.0 1.0 1.0
+  fullScreen  = relBox 0.0 0.0 1.0 1.0
+  layoutLeft  = layoutN 1 leftHalf (Just fullScreen) (Column 1.6)
+  layoutRight = layoutAll rightHalf simpleTabbed
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -75,7 +87,7 @@ selectLayoutByName conf =
                   , ("Rotated Accordion",      "RAcc")
                   , ("Tall",                   "Tall")
                   , ("Two Column",             "2Col")
+                  , ("Rotated Two Column",     "R2Col")
                   , ("Full Screen",            "Full")
-                  , ("Full Float",             "Float")
                   , ("Binary Space Partition", "BSP")
                   ]

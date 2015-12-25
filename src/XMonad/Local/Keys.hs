@@ -28,7 +28,6 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.DynamicProjects (switchProjectPrompt, shiftToProjectPrompt, renameProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
--- import XMonad.Actions.OnScreen (onlyOnScreen)
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Actions.TagWindows
@@ -117,11 +116,9 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("M-<Left>",  changeFocus $ windows W.focusUp)
-  , ("M-<Right>", changeFocus $ windows W.focusDown)
-  , ("C-z l",     changeFocus $ nextMatch History (return True))
-  , ("C-z f",     changeFocus $ windowGo R True)
-  , ("C-z b",     changeFocus $ windowGo L True)
+  [ ("C-z l",     changeFocus $ nextMatch History (return True))
+  , ("C-z f",     changeFocus $ windows W.focusUp)
+  , ("C-z b",     changeFocus $ windows W.focusDown)
   , ("C-z n",     changeFocus $ windowGo D True)
   , ("C-z p",     changeFocus $ windowGo U True)
   , ("C-z C-f",   changeFocus $ windowGo R True)
