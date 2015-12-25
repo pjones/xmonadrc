@@ -28,6 +28,7 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Local.Prompt (aListCompFunc)
+import XMonad.Local.Theme
 import XMonad.Prompt
 
 --------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ twoWins = layoutLeft layoutRight where
   rightHalf   = relBox 0.5 0.0 1.0 1.0
   fullScreen  = relBox 0.0 0.0 1.0 1.0
   layoutLeft  = layoutN 1 leftHalf (Just fullScreen) (Column 1.6)
-  layoutRight = layoutAll rightHalf simpleTabbed
+  layoutRight = layoutAll rightHalf (tabbedBottom shrinkText tabColors)
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.

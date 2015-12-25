@@ -8,10 +8,14 @@ the LICENSE file. -}
 
 --------------------------------------------------------------------------------
 -- | Color theme.
-module XMonad.Local.Theme (xmonadColors) where
+module XMonad.Local.Theme
+       ( xmonadColors
+       , tabColors
+       ) where
 
 --------------------------------------------------------------------------------
 import XMonad
+import XMonad.Layout.Decoration
 
 --------------------------------------------------------------------------------
 xmonadColors :: XConfig a -> XConfig a
@@ -19,3 +23,21 @@ xmonadColors x = x { normalBorderColor  = "#111111"
                    , focusedBorderColor = "#6c71c4"
                    , borderWidth        = 4
                    }
+
+--------------------------------------------------------------------------------
+tabColors :: Theme
+tabColors = Theme { activeColor         = "#6c71c4"
+                  , inactiveColor       = "#111111"
+                  , urgentColor         = "#ff0000"
+                  , activeBorderColor   = "#6c71c4"
+                  , inactiveBorderColor = "#111111"
+                  , urgentBorderColor   = "#ff0000"
+                  , activeTextColor     = "#111111"
+                  , inactiveTextColor   = "#888888"
+                  , urgentTextColor     = "#111111"
+                  , fontName            = "xft:Dejavu Sans Mono-9"
+                  , decoWidth           = 200
+                  , decoHeight          = 18
+                  , windowTitleAddons   = []
+                  , windowTitleIcons    = []
+                  }
