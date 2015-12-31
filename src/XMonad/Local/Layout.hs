@@ -42,8 +42,8 @@ layoutHook = avoidStruts layouts
 -- signature.
 layouts = maxToggle . hiddenMod $ allLays  where
   tall       = renamed [Replace "Tall"]  (ResizableTall 1 (1.5/100) (3/5) [])
-  two        = renamed [Replace "2Col"]  twoWins
-  rtwo       = renamed [Replace "R2Col"] (reflectHoriz twoWins)
+  two        = renamed [Replace "2Col"]  twoCols
+  rtwo       = renamed [Replace "R2Col"] (reflectHoriz twoCols)
   accordion  = renamed [Replace "Acc"]   Accordion
   raccordion = renamed [Replace "RAcc"]  (Mirror Accordion)
   full       = renamed [Replace "Full"]  (noBorders Full)
@@ -57,7 +57,7 @@ layouts = maxToggle . hiddenMod $ allLays  where
 -- | Only allow two visible windows.  The screen is split into two
 -- layouts, the left side holds a single window, the right holds the
 -- remaining windows in tabs.
-twoWins = layoutLeft layoutRight where
+twoCols = layoutLeft layoutRight where
   leftHalf    = relBox 0.0 0.0 0.5 1.0
   rightHalf   = relBox 0.5 0.0 1.0 1.0
   fullScreen  = relBox 0.0 0.0 1.0 1.0
