@@ -29,6 +29,9 @@ import qualified XMonad.StackSet as W
 -- | Manipulate windows as they are created.  The list given to
 -- @composeOne@ is processed from top to bottom.  The first matching
 -- rule wins.
+--
+-- Use the `xprop' tool to get the info you need for these matches.
+-- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
 manageHook = manageDocks <> composeOne
     [ -- Some application windows ask to be floating (I'm guessing) but
