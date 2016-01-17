@@ -117,8 +117,8 @@ baseKeys _ =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   [ ("C-z l",     changeFocus $ nextMatch History (return True))
-  , ("C-z f",     changeFocus $ windows W.focusUp)
-  , ("C-z b",     changeFocus $ windows W.focusDown)
+  , ("C-z b",     changeFocus $ windows W.focusUp)
+  , ("C-z f",     changeFocus $ windows W.focusDown)
   , ("C-z n",     changeFocus $ windowGo D True)
   , ("C-z p",     changeFocus $ windowGo U True)
   , ("C-z C-f",   changeFocus $ windowGo R True)

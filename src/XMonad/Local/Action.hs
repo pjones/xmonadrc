@@ -21,7 +21,7 @@ import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
 import XMonad.Hooks.InsertPosition (Focus(Newer), Position(Below), insertPosition)
-import XMonad.Hooks.ManageDocks (manageDocks)
+import XMonad.Hooks.ManageDocks (manageDocks, docksEventHook)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
 
@@ -73,6 +73,7 @@ forceCenterFloat = doFloatDep move
 handleEventHook :: Event -> X All
 handleEventHook = mconcat [ focusFollowsTiledOnly
                           , fullscreenEventHook
+                          , docksEventHook
                           ]
 
 --------------------------------------------------------------------------------
