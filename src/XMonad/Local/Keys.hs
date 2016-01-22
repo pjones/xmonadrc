@@ -209,6 +209,7 @@ screenKeys _ =
   [ ("M-<Up>",    changeFocus $ onPrevNeighbour W.view)
   , ("M-<Down>",  changeFocus $ onNextNeighbour W.view)
   , ("C-z d",     changeFocus $ onNextNeighbour W.view)
+  , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
   , ("M-S-<F12>", spawn "xbacklight -set 80")
@@ -219,7 +220,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
-  , ("C-z M-t",   spawn $ terminal c ++ " -name BigTerm")
+  , ("C-z C-t",   spawn $ terminal c ++ " -name BigTerm")
   , ("M-l",       spawn "i3lock -dc 444444")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
