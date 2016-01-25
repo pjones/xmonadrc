@@ -47,10 +47,10 @@ import XMonad.Util.Paste (sendKey)
 
 --------------------------------------------------------------------------------
 -- Local modules.
+import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Workspaces (asKey, viewPrevWS)
-import XMonad.Local.Layout (selectLayoutByName)
 
 --------------------------------------------------------------------------------
 -- General purpose resize commands.
