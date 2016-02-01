@@ -3,12 +3,13 @@
 ################################################################################
 #
 # Helper script to run taffybarrc with the correct args.
+TAFFYBAR=$HOME/.xmonad/taffybar
 
 ################################################################################
 if [ "$1" = restart ]; then
-  killall --wait taffybarrc
+  killall --wait taffybar
 fi
 
 ################################################################################
 cd $HOME
-exec taffybarrc +RTS -I0 -V0
+exec $TAFFYBAR +RTS -I0 -V0

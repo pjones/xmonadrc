@@ -8,16 +8,17 @@ stdenv.mkDerivation {
     haskell.packages.lts-4_2.ghc
 
     # Non-Haskell Dependencies:
-    libX11
-    libXext
-    libXinerama
-    libXrandr
-    libXrender
+    pkgconfig
+    xorg.libX11
+    xorg.libXext
+    xorg.libXinerama
+    xorg.libXrandr
+    xorg.libXrender
+    xorg.libXft
+    libxml2
+    gnome.gtk
+    gnome.pango
+    cairo
+    glib
   ];
-
-  # # Work around a bug in GHC:
-  # # https://ghc.haskell.org/trac/ghc/ticket/11042
-  # shellHook = ''
-  #   export LD_LIBRARY_PATH=${zlib}/lib
-  # '';
 }

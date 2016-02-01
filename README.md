@@ -1,26 +1,20 @@
-# XMonad Configuration
+# xmonad Configuration
 
-This repository contains my [XMonad] [] configuration.  I thought I'd
+This repository contains my [xmonad] [] configuration.  I thought I'd
 share it with the rest of the world because I'm doing a few
 interesting things:
 
-  1. I use `cabal` sandboxes to build XMonad and compile my
-     configuration into an executable (`xmonadrc`).  This allows me to
-     easily use my custom xmonad and xmonad-contrib sources (in
-     `vendor`).
+  1. I use [stack][] to build xmonad and compile my configuration into
+     an executable (`xmonadrc`).  This allows me to easily use my
+     custom `xmonad` and `xmonad-contrib` sources (in `vendor`).
 
-     This presents an interesting challenge since XMonad by default
+     This presents an interesting challenge since xmonad by default
      tries to compile your `~/.xmonad/xmonad.hs` file when it starts.
-     Therefore I install my generated `xmonadrc` binary where XMonad
-     expects it and use `.cabal-sandbox/bin/xmonad` to restart the
-     running XMonad.  I've also updated my `~/.xinitrc` to exec my
-     `xmonadrc` directly without using the `xmonad` binary.
+     Therefore I install my generated `xmonadrc` binary where xmonad
+     expects it and use it to restart the running xmonad instance.
 
-     All the details for this process are in the `scripts/install.sh`
-     script.
-
-  2. The `checkrc` executable that is built with `cabal` boots a mini
-     XMonad environment in order to test my configuration before
+  2. The `checkrc` executable that is built with [stack][] and boots a
+     mini xmonad environment in order to test my configuration before
      restarting.  Right now it's only testing the key bindings.
 
   3. The majority of my key bindings are underneath a prefix key:
@@ -56,25 +50,23 @@ interesting things:
 
 ## Using this Configuration
 
-If you are interested in using `cabal` to build your XMonad
+If you are interested in using `stack` to build your xmonad
 configuration then you might also be interested in the following
-outline of the steps I take to build, install, and restart XMonad.
+outline of the steps I take to build, install, and restart xmonad.
 
-  1. Install the [Haskell Platform] [].
+  1. Install [stack][]
 
-  2. Install `cabal-install >= 0.18`:
+  3. Use [stack][] via the makefile to build the xmonad configuration:
 
-        $ cabal update
-        $ cabal install cabal-install
+        $ make
 
-  3. Use the `scrips/build.sh` and `xmonadrc.cabal` files in this
-     directory to build your XMonad configuration.
+  4. Install and restart xmonad (assumes xmonad is currently running):
 
-        $ scripts/build.sh
+        $ make restart
 
-  4. Install and restart XMonad (assumes XMonad is currently running):
-
-        $ scripts/install.sh restart
+If you use [Nixpkgs][] or [NixOS][] you may be interested in the
+`build/nixpkgs.nix` file which is used by [stack][] to install
+non-Haskell dependencies.
 
 ## Screenshots
 
@@ -86,4 +78,6 @@ outline of the steps I take to build, install, and restart XMonad.
 
 
 [xmonad]: http://xmonad.org/
-[haskell platform]: http://www.haskell.org/platform/
+[stack]: http://docs.haskellstack.org/en/stable/README.html
+[nixpkgs]: http://nixos.org/nixpkgs/
+[nixos]: http://nixos.org/
