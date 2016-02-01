@@ -29,6 +29,7 @@ TAFFYBARWP_DEST = $(dir $(XMONADRC_DEST))/taffybar-wrapper.sh
 all: $(TMP_DUMMY)
 	stack $(STACK_OPTS) setup
 	stack $(STACK_OPTS) build
+	hlint src *.hs
 
 ################################################################################
 test:
