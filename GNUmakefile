@@ -23,12 +23,16 @@ TAFFYBARWP_SRC  = scripts/taffybar.sh
 TAFFYBARWP_DEST = $(dir $(XMONADRC_DEST))/taffybar-wrapper.sh
 
 ################################################################################
-.PHONY: all install
+.PHONY: all install restart clean
 
 ################################################################################
 all: $(TMP_DUMMY)
 	stack $(STACK_OPTS) setup
 	stack $(STACK_OPTS) build
+
+################################################################################
+clean:
+	stack $(STACK_OPTS) clean
 
 ################################################################################
 install: all
