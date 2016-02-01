@@ -224,6 +224,7 @@ appKeys c =
   , ("M-l",       spawn "i3lock -dc 444444")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
+  , ("C-z C-e",   spawn "e -c") -- Start per-workspace Emacs.
   , ("C-z C-r",   shellPrompt Local.runPromptConfig)
 
     -- Laptops and keyboards with media/meta keys.

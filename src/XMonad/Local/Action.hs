@@ -81,7 +81,7 @@ handleEventHook = mconcat [ focusFollowsTiledOnly
 -- work you need to turn off 'focusFollowsMouse' in your configuration
 -- and then add this function to your 'handleEventHook'.
 focusFollowsTiledOnly :: Event -> X All
-focusFollowsTiledOnly e@(CrossingEvent {ev_window = w, ev_event_type = t})
+focusFollowsTiledOnly e@CrossingEvent {ev_window = w, ev_event_type = t}
   | isNormalEnter = whenX bothTiled (focus w) >> mempty
   where isNormalEnter   = t == enterNotify && ev_mode e == notifyNormal
         bothTiled       = notFloating w <&&> currentIsTiled
