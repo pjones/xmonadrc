@@ -41,7 +41,7 @@ clean:
 
 ################################################################################
 install: all
-	$(CHECKRC_SRC) # Confirm valid configuration.
+	if [ -n "$$DISPLAY" ]; then $(CHECKRC_SRC); else :; fi
 	mkdir -p $(dir $(XMONADRC_DEST))
 	install -m 0755 $(XMONADRC_SRC) $(XMONADRC_DEST)
 	install -m 0755 $(XMONAD) $(dir $(XMONADRC_DEST))/xmonad
