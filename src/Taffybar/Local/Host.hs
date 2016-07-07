@@ -39,7 +39,7 @@ getHostConfig = do
 -- | Default configuration (for my desktop).
 hostDefault :: Host
 hostDefault =  Host
-  { primaryMonitorNum = 0
+  { primaryMonitorNum = 1
   , leftWidgets       = [pager (pagerConfig 50)]
   , rightWidgets      = [tray, clock, weather]
   }
