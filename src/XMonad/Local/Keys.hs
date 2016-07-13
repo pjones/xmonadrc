@@ -238,25 +238,36 @@ appKeys c =
 -- Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-  [ ("M-<F1>",  spawn "mpc-pause")
-  , ("M-<F2>",  spawn "mpc prev")
-  , ("M-<F3>",  spawn "mpc next")
-  , ("M-<F4>",  spawn "mpc clear")
-  , ("M4-<F1>", spawn "amixer set Master toggle")
-  , ("M4-<F2>", spawn "amixer set Master 5%-")
-  , ("M4-<F3>", spawn "amixer set Master 5%+")
+    [ ("M-<F1>",  playPause)
+    , ("M-<F2>",  prevTrack)
+    , ("M-<F3>",  nextTrack)
+    , ("M-<F4>",  clearPlaylist)
+    , ("M4-<F1>", audioMute)
+    , ("M4-<F2>", audioLower)
+    , ("M4-<F3>", audioRaise)
 
-    -- Keys for my laptop and keyboards with media keys.
-  , ("M-<XF86AudioMute>",        spawn "mpc-pause")
-  , ("M-<XF86AudioLowerVolume>", spawn "mpc prev")
-  , ("M-<XF86AudioRaiseVolume>", spawn "mpc next")
-  , ("<XF86AudioMute>",          spawn "amixer set Master toggle")
-  , ("<XF86AudioLowerVolume>",   spawn "amixer set Master 5%-")
-  , ("<XF86AudioRaiseVolume>",   spawn "amixer set Master 5%+")
+      -- Keys for my laptop and keyboards with media keys.
+    , ("M-<XF86AudioMute>",        playPause)
+    , ("M-<XF86AudioLowerVolume>", prevTrack)
+    , ("M-<XF86AudioRaiseVolume>", nextTrack)
+    , ("<XF86AudioPlay>",          playPause)
+    , ("<XF86AudioPrev>",          prevTrack)
+    , ("<XF86AudioNext>",          nextTrack)
+    , ("<XF86AudioMute>",          audioMute)
+    , ("<XF86AudioLowerVolume>",   audioLower)
+    , ("<XF86AudioRaiseVolume>",   audioRaise)
 
-    -- Prompt to change radio stations.
-  , ("M4-<Space>",     radioPrompt Local.promptConfig)
-  ]
+      -- Prompt to change radio stations.
+    , ("M4-<Space>",     radioPrompt Local.promptConfig)
+    ]
+  where
+    playPause     = spawn "mpc-pause"
+    nextTrack     = spawn "mpc next"
+    prevTrack     = spawn "mpc prev"
+    clearPlaylist = spawn "mpc clear"
+    audioMute     = spawn "amixer set Master toggle"
+    audioLower    = spawn "amixer set Master 5%-"
+    audioRaise    = spawn "amixer set Master 5%+"
 
 --------------------------------------------------------------------------------
 sendResize :: GPResize -> X ()
