@@ -221,7 +221,7 @@ appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("C-z t",     spawn $ terminal c)
   , ("C-z C-t",   spawn $ terminal c ++ " -name BigTerm")
-  , ("M-l",       spawn "i3lock -dc 444444")
+  , ("M-l",       spawn "slock")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
   , ("C-z C-e",   spawn "e -c") -- Start per-workspace Emacs.
@@ -238,13 +238,13 @@ appKeys c =
 -- Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-    [ ("M-<F1>",  playPause)
-    , ("M-<F2>",  prevTrack)
-    , ("M-<F3>",  nextTrack)
-    , ("M-<F4>",  clearPlaylist)
-    , ("M4-<F1>", audioMute)
-    , ("M4-<F2>", audioLower)
-    , ("M4-<F3>", audioRaise)
+    [ ("M-<F1>",   playPause)
+    , ("M-<F2>",   prevTrack)
+    , ("M-<F3>",   nextTrack)
+    , ("M-S-<F4>", clearPlaylist)
+    , ("M4-<F1>",  audioMute)
+    , ("M4-<F2>",  audioLower)
+    , ("M4-<F3>",  audioRaise)
 
       -- Keys for my laptop and keyboards with media keys.
     , ("M-<XF86AudioMute>",        playPause)
