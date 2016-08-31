@@ -12,7 +12,6 @@ module Taffybar.Local.Widgets
        ( clock
        , pager
        , battery
-       , weather
        , mpris
        , notifications
        , tray
@@ -29,7 +28,6 @@ import System.Taffybar.Pager
 import System.Taffybar.SimpleClock
 import System.Taffybar.Systray
 import System.Taffybar.TaffyPager
-import System.Taffybar.Weather
 import System.Taffybar.Widgets.PollingBar (BarConfig (..), defaultBarConfig)
 
 -- To remind me for future tweaking.
@@ -63,19 +61,6 @@ battery = batteryBarNew barCfg 60
     colorFun pct | pct > 0.99 = (0.521568627451, 0.6, 0.0)
                  | pct < 0.2  = (0.862745098039, 0.360784313725, 0.352941176471)
                  | otherwise  = borderColor
-
---------------------------------------------------------------------------------
-weather :: IO Widget
-weather = weatherNew weatherConfig 15
-  where
-    weatherConfig :: WeatherConfig
-    weatherConfig = (defaultWeatherConfig "KBJC") {weatherTemplate = withColor}
-
-    withColor :: String
-    withColor = wrap "<span fgcolor='#859900'>" "</span>" template
-
-    template :: String
-    template  = "$tempF$℉ $tempC$℃ $humidity$%H"
 
 --------------------------------------------------------------------------------
 mpris :: IO Widget
