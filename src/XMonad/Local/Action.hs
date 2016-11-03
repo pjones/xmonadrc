@@ -20,6 +20,7 @@ import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
+import XMonad.Hooks.InsertPosition (Focus(..), Position(..), insertPosition)
 import XMonad.Hooks.ManageDocks (manageDocks, docksEventHook)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
@@ -45,7 +46,19 @@ manageHook = manageDocks <> composeOne
     , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
     , className =? "Gcr-prompter"                 -?> doCenterFloat
     , transience -- Move transient windows to their parent.
+
+      -- Certain windows shouldn't steal the master pane.
+    , className =? "URxvt"                        -?> tileBelow
+    , appName   =? "eterm"                        -?> tileBelow
+    , appName   =? "emacs-popup"                  -?> tileBelowNoFocus
+
+      -- Tile all other windows using insertPosition.
+    , pure True -?> normalTile
     ]
+  where
+    normalTile       = insertPosition Above Newer
+    tileBelow        = insertPosition Below Newer
+    tileBelowNoFocus = insertPosition Below Older
 
 --------------------------------------------------------------------------------
 -- | Useful when a floating window requests stupid dimensions.  There
