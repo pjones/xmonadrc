@@ -1,5 +1,47 @@
 # Change Log / Release Notes
 
+## 0.13
+
+### Breaking Changes
+
+  * The type of `completionKey` (of `XPConfig` record) has been
+    changed from `KeySym` to `(KeyMask, KeySym)`. The default value
+    for this is still binded to `Tab` key.
+
+  * New constructor `CenteredAt Rational Rational` added for
+    `XMonad.Prompt.XPPosition`.
+
+### New Modules
+
+  * `XMonad.Layout.SortedLayout`
+
+    A new LayoutModifier that sorts a given layout by a list of
+    properties. The order of properties in the list determines
+    the order of windows in the final layout. Any unmatched windows
+    go to the end of the order.
+
+  * `XMonad.Prompt.Unicode`
+
+    A prompt to search a unicode character by its name, and put it into the
+    clipboard.
+
+  * `XMonad.Util.Ungrab`
+
+    Release xmonad's keyboard and pointer grabs immediately, so
+    screen grabbers and lock utilities, etc. will work. Replaces
+    the short sleep hackaround.
+
+  * `XMonad.Util.Loggers.NamedScratchpad`
+
+    A collection of Loggers (see `XMonad.Util.Loggers`) for NamedScratchpads
+    (see `XMonad.Util.NamedScratchpad`).
+
+  * `XMonad.Util.NoTaskbar`
+
+    Utility function and `ManageHook` to mark a window to be ignored by
+    EWMH taskbars and pagers. Useful for `NamedScratchpad` windows, since
+    you will usually be taken to the `NSP` workspace by them.
+
 ## 0.12 (December 14, 2015)
 
 ### Breaking Changes
@@ -12,7 +54,7 @@
     | < 0.12                              |   >= 0.12                        |
     |-------------------------------------|----------------------------------|
     | `updatePointer Nearest`             | `updatePointer (0.5, 0.5) (1,1)` |
-    | `updatePointer (Relative x y)`      | `updatePointer (x,y) (1,1)`      |
+    | `updatePointer (Relative x y)`      | `updatePointer (x,y) (0,0)`      |
     | `updatePointer (TowardsCentre x y)` | `updatePointer (0.5,0.5) (x,y)`  |
 
 ### New Modules

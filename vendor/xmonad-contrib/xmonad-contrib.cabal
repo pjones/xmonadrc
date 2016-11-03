@@ -55,6 +55,7 @@ flag testing
 
 library
     build-depends: base >= 4.5 && < 5,
+                   bytestring >= 0.10 && < 0.11,
                    containers >= 0.5 && < 0.6,
                    directory,
                    extensible-exceptions,
@@ -133,6 +134,7 @@ library
                         XMonad.Actions.SwapWorkspaces
                         XMonad.Actions.TagWindows
                         XMonad.Actions.TopicSpace
+                        XMonad.Actions.TreeSelect
                         XMonad.Actions.UpdateFocus
                         XMonad.Actions.UpdatePointer
                         XMonad.Actions.Warp
@@ -264,6 +266,7 @@ library
                         XMonad.Layout.SimpleFloat
                         XMonad.Layout.Simplest
                         XMonad.Layout.SimplestFloat
+                        XMonad.Layout.SortedLayout
                         XMonad.Layout.Spacing
                         XMonad.Layout.Spiral
                         XMonad.Layout.Square
@@ -296,6 +299,7 @@ library
                         XMonad.Prompt.Shell
                         XMonad.Prompt.Ssh
                         XMonad.Prompt.Theme
+                        XMonad.Prompt.Unicode
                         XMonad.Prompt.Window
                         XMonad.Prompt.Workspace
                         XMonad.Prompt.XMonad
@@ -310,9 +314,11 @@ library
                         XMonad.Util.Image
                         XMonad.Util.Invisible
                         XMonad.Util.Loggers
+                        XMonad.Util.Loggers.NamedScratchpad
                         XMonad.Util.NamedActions
                         XMonad.Util.NamedScratchpad
                         XMonad.Util.NamedWindows
+                        XMonad.Util.NoTaskbar
                         XMonad.Util.Paste
                         XMonad.Util.PositionStore
                         XMonad.Util.RemoteWindows
@@ -325,7 +331,9 @@ library
                         XMonad.Util.StringProp
                         XMonad.Util.Themes
                         XMonad.Util.Timer
+                        XMonad.Util.TreeZipper
                         XMonad.Util.Types
+                        XMonad.Util.Ungrab
                         XMonad.Util.WindowProperties
                         XMonad.Util.WindowState
                         XMonad.Util.WorkspaceCompare
