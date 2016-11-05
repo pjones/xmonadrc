@@ -16,16 +16,30 @@ module XMonad.Local.Prompt
        ) where
 
 --------------------------------------------------------------------------------
+-- Library Imports
+import Data.Char (toLower)
+import Data.List (isInfixOf)
+
+--------------------------------------------------------------------------------
 -- XMonad contrib (Prompt)
 import XMonad.Prompt
 
 --------------------------------------------------------------------------------
 promptConfig :: XPConfig
 promptConfig = def
-  { position        = Bottom
-  , font            = "xft:dejavu sans mono:size=9"
-  , alwaysHighlight = True
-  , promptKeymap    = emacsLikeXPKeymap
+  { position          = CenteredAt (1/3) 0.4
+  , height            = 45
+  , font              = "xft:dejavu sans mono:size=18"
+  , bgColor           = "#002b36"
+  , fgColor           = "#93a1a1"
+  , fgHLight          = "#d33682"
+  , bgHLight          = "#073642"
+  , borderColor       = "#053542"
+  , promptBorderWidth = 5
+  , maxComplRows      = Just 6
+  , alwaysHighlight   = True
+  , promptKeymap      = emacsLikeXPKeymap
+  , searchPredicate   = predicateFunction
   }
 
 --------------------------------------------------------------------------------
@@ -44,3 +58,8 @@ listCompFunc c xs s = return (filter (searchPredicate c s) xs)
 -- | Like @listCompFunc@ but expects an association list.
 aListCompFunc :: XPConfig -> [(String, a)] -> String -> IO [String]
 aListCompFunc c xs = listCompFunc c (map fst xs)
+
+--------------------------------------------------------------------------------
+-- | A case-insensitive substring predicate function.
+predicateFunction :: String -> String -> Bool
+predicateFunction x y = lc x `isInfixOf` lc y where lc = map toLower
