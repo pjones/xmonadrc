@@ -38,13 +38,11 @@ manageHook = manageDocks <> composeOne
       -- it's stupid to float them.
       title =? "HandBrake" -?> (ask >>= doF . W.sink)
 
-      -- HandBrake file dialog asks for crazy sizes.
-    , className =? "Handbrake" <&&> isDialog -?> forceCenterFloat
-
       -- Force dialog windows and pop-ups to be floating.
-    , isDialog                                    -?> doCenterFloat
     , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
+    , stringProperty "WM_WINDOW_ROLE" =? gtkFile  -?> forceCenterFloat
     , className =? "Gcr-prompter"                 -?> doCenterFloat
+    , isDialog                                    -?> doCenterFloat
     , transience -- Move transient windows to their parent.
 
       -- Certain windows shouldn't steal the master pane.
@@ -56,6 +54,7 @@ manageHook = manageDocks <> composeOne
     , pure True -?> normalTile
     ]
   where
+    gtkFile          = "GtkFileChooserDialog"
     normalTile       = insertPosition Above Newer
     tileBelow        = insertPosition Below Newer
     tileBelowNoFocus = insertPosition Below Older
