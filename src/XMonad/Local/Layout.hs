@@ -50,8 +50,8 @@ layouts = maxToggle . hiddenMod $ allLays  where
   bspace     = renamed [Replace "BSP"]   emptyBSP
   maxToggle  = renamed [CutWordsLeft 1] . maximizeWithPadding 0
   hiddenMod  = renamed [CutWordsLeft 1] . hiddenWindows
-  allLays    = tall  ||| bspace    ||| two        ||| rtwo |||
-               full  ||| accordion ||| raccordion
+  allLays    = bspace ||| tall      ||| two        ||| rtwo |||
+               full   ||| accordion ||| raccordion
 
 --------------------------------------------------------------------------------
 -- | Only allow two visible windows.  The screen is split into two
