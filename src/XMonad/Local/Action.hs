@@ -16,9 +16,11 @@ module XMonad.Local.Action
        ) where
 
 --------------------------------------------------------------------------------
+import Control.Monad (when)
 import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
+import XMonad.Actions.TagWindows (addTag)
 import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
 import XMonad.Hooks.InsertPosition (Focus(..), Position(..), insertPosition)
 import XMonad.Hooks.ManageDocks (manageDocks, docksEventHook)
@@ -34,9 +36,12 @@ import qualified XMonad.StackSet as W
 -- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
 manageHook = manageDocks <> composeOne
-    [ -- Some application windows ask to be floating (I'm guessing) but
+    [ -- Start by tagging new windows:
+      className =? "chromium-browser" `addTagAndContinue` "browser"
+
+      -- Some application windows ask to be floating (I'm guessing) but
       -- it's stupid to float them.
-      title =? "HandBrake" -?> (ask >>= doF . W.sink)
+    , title =? "HandBrake" -?> (ask >>= doF . W.sink)
 
       -- Force dialog windows and pop-ups to be floating.
     , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
@@ -58,6 +63,16 @@ manageHook = manageDocks <> composeOne
     normalTile       = insertPosition Above Newer
     tileBelow        = insertPosition Below Newer
     tileBelowNoFocus = insertPosition Below Older
+
+--------------------------------------------------------------------------------
+-- | If the given condition is 'True' then add the given tag name to
+-- the window being mapped.  Always returns 'Nothing' to continue
+-- processing other manage hooks.
+addTagAndContinue :: Query Bool -> String -> MaybeManageHook
+addTagAndContinue p tag = do
+  x <- p
+  when x (liftX . addTag tag =<< ask)
+  return Nothing
 
 --------------------------------------------------------------------------------
 -- | Useful when a floating window requests stupid dimensions.  There

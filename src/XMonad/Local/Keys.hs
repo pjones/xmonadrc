@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-
 --------------------------------------------------------------------------------
 {- This file is part of the xmonadrc package. It is subject to the
 license terms in the LICENSE file found in the top-level directory of
@@ -42,14 +40,15 @@ import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (windowPromptGoto, windowPromptBring)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
-import qualified XMonad.Util.ExtensibleState as XS
 import XMonad.Util.Paste (sendKey)
+import XMonad.Actions.CopyWindow (kill1)
 
 --------------------------------------------------------------------------------
 -- Local modules.
 import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
+import XMonad.Local.Tagging
 import XMonad.Local.Workspaces (asKey, viewPrevWS)
 
 --------------------------------------------------------------------------------
@@ -62,20 +61,6 @@ data GPResize = GPExpandL
               | GPShrinkR
               | GPShrinkU
               | GPShrinkD
-
---------------------------------------------------------------------------------
--- Actions for tagging windows.
-data TagAction = ToggleTag String
-               | FocusTag String
-               | AddTagAndJump String
-
---------------------------------------------------------------------------------
-data CurrentJumpTag = CurrentJumpTag !String
-                    deriving (Typeable, Read, Show)
-
-instance ExtensionClass CurrentJumpTag where
-  initialValue = CurrentJumpTag "0"
-  extensionType = PersistentExtension
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -134,7 +119,7 @@ windowKeys _ =
   , ("C-z m",     changeFocus $ windows W.focusMaster)
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
   , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z S-k",   kill) -- Kill the current window.
+  , ("C-z S-k",   kill1) -- Kill the current window.
   , ("C-z u",     changeFocus focusUrgent)
   , ("M--",       changeFocus $ sendResize GPExpandL)
   , ("M-=",       changeFocus $ sendResize GPShrinkL)
@@ -155,19 +140,18 @@ windowKeys _ =
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("C-z C-u C-j", setInteresting)
-  , ("C-z C-j",     jumpToInteresting)
+  [ ("M-j",       setPrimaryJumpTag)
+  , ("M-<Left>",  changeFocus primaryJumpTagDown)
+  , ("M-<Right>", changeFocus primaryJumpTagUp)
+  , ("C-z C-j",   changeFocus primaryJumpTagDown)
+  , ("C-z j",     changeFocus secondaryJumpTagDown)
+  , ("M-t",       toggleTagOnCurrentWindow)
+  , ("C-z M-t",   deleteTag)
+  , ("C-z C-t",   changeFocus selectAndFocusTag)
+  , ("C-z c",     changeFocus bringTaggedWindowsHere)
+  , ("C-z S-c",   changeFocus deleteTaggedWindowsFromHere)
   ] ++ numberedTags
   where
-    setInteresting :: X ()
-    setInteresting = tagPrompt Local.promptConfig $ \s ->
-      XS.put (CurrentJumpTag s)
-
-    jumpToInteresting :: X ()
-    jumpToInteresting = do
-      CurrentJumpTag name <- XS.get
-      changeFocus (focusDownTaggedGlobal name)
-
     numberedTags :: [(String, X ())]
     numberedTags = do
       key              <- map show ([0 .. 9] :: [Int]) ++
@@ -177,8 +161,8 @@ windowTagKeys _ =
 
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
-      [ ("C-z ",     withFocused . performTagAction . FocusTag)
-      , ("C-z C-u ", withFocused . performTagAction . ToggleTag)
+      [ ("C-z ",   changeFocus . focusDownTaggedGlobal)
+      , ("C-z M-", withFocused . addTag)
       ]
 
 --------------------------------------------------------------------------------
@@ -218,9 +202,8 @@ screenKeys _ =
 --------------------------------------------------------------------------------
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
-appKeys c =
-  [ ("C-z t",     spawn $ terminal c)
-  , ("C-z C-t",   spawn $ terminal c ++ " -name BigTerm")
+appKeys _ =
+  [ ("C-z t",     spawn "eterm")
   , ("M-l",       spawn "slock")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
@@ -292,16 +275,3 @@ sendResize movement = do
     (_,     GPShrinkR) -> sendMessage Shrink
     (_,     GPShrinkU) -> sendMessage MirrorExpand
     (_,     GPShrinkD) -> sendMessage MirrorShrink
-
---------------------------------------------------------------------------------
-performTagAction :: TagAction -> Window -> X ()
-performTagAction action win = case action of
-  ToggleTag tag     -> toggleWindowTag tag win
-  FocusTag tag      -> changeFocus (focusDownTaggedGlobal tag)
-  AddTagAndJump tag -> addTag tag win >> performTagAction (FocusTag tag) win
-
---------------------------------------------------------------------------------
-toggleWindowTag :: String -> Window -> X ()
-toggleWindowTag tag win = do
-  tagged <- hasTag tag win
-  (if tagged then delTag else addTag) tag win
