@@ -29,6 +29,18 @@ projects =
             , projectStartHook = Nothing
             }
 
+  , Project { projectName      = "tasks"
+            , projectDirectory = "~/"
+            , projectStartHook = Just $ do spawn "urxvtc -e ncmpcpp"
+                                           spawn "chromium --app=http://rememberthemilk.com"
+            }
+
+  , Project { projectName      = "clocks"
+            , projectDirectory = "~/"
+            , projectStartHook = Just $ do spawn "urxvtc -name BigTerm -e tty-clock -c -C 4 -f '%b. %d, %Y'"
+                                           spawn "urxvtc -name BigTerm -e env TZ=America/New_York tty-clock -C 0 -c -f 'South Carolina'"
+            }
+
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
             , projectStartHook = Just $ do spawn "conkeror"
@@ -45,12 +57,22 @@ projects =
             , projectDirectory = "~/core/xmonad"
             , projectStartHook = Nothing
             }
+
+  , Project { projectName      = "training"
+            , projectDirectory = "~/training/courses"
+            , projectStartHook = Nothing
+            }
+
+  , Project { projectName      = "rfa"
+            , projectDirectory = "~/develop/rfa"
+            , projectStartHook = Nothing
+            }
   ]
 
 --------------------------------------------------------------------------------
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names = ["scratch", "browsers", "mail"]
+names = ["scratch", "tasks", "clocks", "browsers", "mail"]
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for
