@@ -204,7 +204,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
   [ ("C-z t",     spawn "eterm")
-  , ("M-l",       spawn "slock")
+  , ("M-l",       spawn "lockscreen.sh")
   , ("<Print>",   spawn "screenshot.sh root")
   , ("M-<Print>", spawn "screenshot.sh window")
   , ("C-z C-e",   spawn "e -c") -- Start per-workspace Emacs.

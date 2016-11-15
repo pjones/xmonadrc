@@ -21,9 +21,7 @@ import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Actions.TagWindows (addTag)
-import XMonad.Hooks.EwmhDesktops (fullscreenEventHook)
 import XMonad.Hooks.InsertPosition (Focus(..), Position(..), insertPosition)
-import XMonad.Hooks.ManageDocks (manageDocks, docksEventHook)
 import XMonad.Hooks.ManageHelpers
 import qualified XMonad.StackSet as W
 
@@ -35,7 +33,7 @@ import qualified XMonad.StackSet as W
 -- Use the `xprop' tool to get the info you need for these matches.
 -- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
-manageHook = manageDocks <> composeOne
+manageHook = composeOne
     [ -- Start by tagging new windows:
       className =? "chromium-browser" `addTagAndContinue` "browser"
 
@@ -93,8 +91,6 @@ forceCenterFloat = doFloatDep move
 --------------------------------------------------------------------------------
 handleEventHook :: Event -> X All
 handleEventHook = mconcat [ focusFollowsTiledOnly
-                          , fullscreenEventHook
-                          , docksEventHook
                           ]
 
 --------------------------------------------------------------------------------

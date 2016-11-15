@@ -16,8 +16,11 @@ import System.Taffybar.Hooks.PagerHints (pagerHints)
 import XMonad hiding (config)
 import XMonad.Actions.DynamicProjects (dynamicProjects)
 import XMonad.Actions.Navigation2D (withNavigation2DConfig)
-import XMonad.Hooks.EwmhDesktops (ewmh)
+import XMonad.Config.Desktop (desktopConfig)
+import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
+
+--------------------------------------------------------------------------------
 import qualified XMonad.Local.Action as Local
 import qualified XMonad.Local.Keys   as Local
 import qualified XMonad.Local.Layout as Local
@@ -29,22 +32,21 @@ import qualified XMonad.Local.Workspaces as Workspaces
 -- Damn you XMonad and your crazy type signatures!
 --
 -- config :: XConfig a
-config = def
+config = desktopConfig
   { terminal           = "urxvtc"
-  , layoutHook         = Local.layoutHook
-  , manageHook         = Local.manageHook
-  , handleEventHook    = Local.handleEventHook
+  , layoutHook         = avoidStruts Local.layoutHook
+  , manageHook         = Local.manageHook      <+> manageHook desktopConfig
+  , handleEventHook    = Local.handleEventHook <+> handleEventHook desktopConfig
+  , logHook            = Local.logHook         <+> logHook desktopConfig
   , workspaces         = Workspaces.names
   , modMask            = mod3Mask
   , keys               = Local.keys
-  , logHook            = Local.logHook
   , focusFollowsMouse  = False
   }
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = xmonad (ewmh .
-               dynamicProjects Workspaces.projects .
+main = xmonad (dynamicProjects Workspaces.projects .
                pagerHints .
                withUrgencyHookC urgencyStyle urgencyConfig .
                withNavigation2DConfig def .
