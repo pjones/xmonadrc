@@ -12,6 +12,7 @@ the LICENSE file. -}
 module Main where
 
 --------------------------------------------------------------------------------
+import Data.Monoid
 import System.Taffybar.Hooks.PagerHints (pagerHints)
 import XMonad hiding (config)
 import XMonad.Actions.DynamicProjects (dynamicProjects)
@@ -35,9 +36,9 @@ import qualified XMonad.Local.Workspaces as Workspaces
 config = desktopConfig
   { terminal           = "urxvtc"
   , layoutHook         = avoidStruts Local.layoutHook
-  , manageHook         = Local.manageHook      <+> manageHook desktopConfig
-  , handleEventHook    = Local.handleEventHook <+> handleEventHook desktopConfig
-  , logHook            = Local.logHook         <+> logHook desktopConfig
+  , manageHook         = manageHook desktopConfig <> Local.manageHook
+  , handleEventHook    = handleEventHook desktopConfig <> Local.handleEventHook
+  , logHook            = logHook desktopConfig <> Local.logHook
   , workspaces         = Workspaces.names
   , modMask            = mod3Mask
   , keys               = Local.keys
