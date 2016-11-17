@@ -16,8 +16,8 @@ stdenv.mkDerivation {
     xorg.libXrender
     xorg.libXft
     libxml2
-    gnome.gtk
-    gnome.pango
+    gtk2
+    pango
     cairo
     glib
   ];
