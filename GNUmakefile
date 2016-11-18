@@ -1,5 +1,6 @@
 ################################################################################
-export TMPDIR = $(HOME)/tmp
+export TMPDIR   = $(HOME)/tmp
+export NIX_PATH = nixpkgs=$(realpath vendor/nixpkgs)
 
 ################################################################################
 TMP_DUMMY     = $(TMPDIR)/.dummy
@@ -37,7 +38,8 @@ test:
 
 ################################################################################
 clean:
-	stack $(STACK_OPTS) clean
+	rm -rf .stack-work build/.stack-work
+	rm -rf dist dist-newstyle
 
 ################################################################################
 install: all

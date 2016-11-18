@@ -1,11 +1,17 @@
 with (import <nixpkgs> {});
 
+let ghc = haskell.packages.ghc7103.ghcWithPackages (p: with p; [
+            cabal-install
+            glib
+            gtk
+          ]);
+in
 stdenv.mkDerivation {
   name = "xmonadrc";
 
   buildInputs = [
-    # GHC:
-    haskell.packages.lts-4_2.ghc
+    # GHC and some Haskell packages:
+    ghc
 
     # Non-Haskell Dependencies:
     pkgconfig

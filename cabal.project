@@ -1,0 +1,4 @@
+packages: ./
+          vendor/xmonad/
+          vendor/xmonad-contrib
+          vendor/taffybar
