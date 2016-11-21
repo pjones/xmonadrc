@@ -19,7 +19,6 @@ library
     Taffybar.Local.MPRIS
     Taffybar.Local.Pager
     Taffybar.Local.Widgets
-    Text.Playlist
     XMonad.Local.Action
     XMonad.Local.Keys
     XMonad.Local.Layout
@@ -42,13 +41,19 @@ library
                , bytestring     >= 0.9  && < 0.11
                , containers     >= 0.4  && < 0.6
                , directory      >= 1.1  && < 1.3
+               , either         >= 4.4   && < 4.5
                , filepath       >= 1.3  && < 1.5
                , gtk            >= 0.12 && < 0.15
+               , http-client    >= 0.4  && < 0.6
                , hostname       >= 1.0  && < 1.1
                , libmpd         >= 0.8  && < 0.10
+               , MonadRandom    >= 0.4  && < 0.5
                , parsec         >= 3.1  && < 3.2
+               , playlists      >= 0.4  && < 1.0
+               , playlists-http >= 0.1  && < 1.0
                , setlocale      >= 1.0  && < 1.1
                , text           >= 0.11 && < 1.3
+               , transformers   >= 0.4  && < 1.0
                , taffybar       == 0.4.6
                , xmonad         == 0.12
                , xmonad-contrib == 0.12

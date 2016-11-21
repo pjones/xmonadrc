@@ -15,14 +15,21 @@ module XMonad.Local.Music (radioPrompt) where
 --------------------------------------------------------------------------------
 import Control.Exception
 import Control.Monad (when, void)
-import qualified Data.ByteString as B
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Random (evalRandIO, uniform)
+import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Either
+import qualified Data.ByteString as ByteString
+import Data.List (find)
+import Data.Maybe (mapMaybe)
 import Data.String (fromString)
-import qualified Data.Text as T
+import Data.Text (Text)
+import qualified Data.Text as Text
+import Network.HTTP.Client
 import qualified Network.MPD as MPD
 import System.Directory (getHomeDirectory)
 import System.FilePath ((</>))
-import Text.ParserCombinators.Parsec (parseFromFile)
-import Text.Playlist
+import Text.Playlist.HTTP.Full
 import XMonad.Core
 import XMonad.Local.Prompt (listCompFunc)
 import XMonad.Prompt
@@ -37,41 +44,76 @@ instance XPrompt RadioStream where
 --------------------------------------------------------------------------------
 -- | Full @FilePath@ to where I keep my radio station list.
 radioStationFile :: IO FilePath
-radioStationFile = (</> "documents/playlists/streams") <$> getHomeDirectory
+radioStationFile = (</> "documents/playlists/streams.m3u") <$> getHomeDirectory
 
 --------------------------------------------------------------------------------
 -- | Parse the radio station file and return the resulting playlist.
-radioStationPlaylist :: IO Playlist
+radioStationPlaylist :: IO (Either String Playlist)
 radioStationPlaylist = do
-  path   <- radioStationFile
-  parsed <- parseFromFile simplePlaylist path
-  either (fail . show) return parsed
+  filepath <- radioStationFile
+
+  case fileNameToFormat filepath of
+    Nothing  -> return (Left "Invalid radio file.")
+    Just fmt -> parsePlaylist fmt <$> ByteString.readFile filepath
 
 --------------------------------------------------------------------------------
 radioPrompt :: XPConfig -> X ()
 radioPrompt c = do
-  playlist <- io $ radioStationPlaylist `catch` econst []
-  let titles = map T.unpack $ playlistTitles playlist
-  mkXPrompt RadioStream c (listCompFunc c titles) $ playStream playlist
+  playlist' <- io $ radioStationPlaylist `catch` econst (Left "fail")
+
+  case playlist' of
+    Left _         -> return ()
+    Right playlist -> go playlist
+
+
+  where
+    go :: Playlist -> X ()
+    go playlist = mkXPrompt RadioStream c (comp playlist) (playStream playlist)
+
+    comp :: Playlist -> ComplFunction
+    comp = listCompFunc c . titles
+
+    titles :: Playlist -> [String]
+    titles = mapMaybe (fmap Text.unpack . trackTitle)
 
 --------------------------------------------------------------------------------
 playStream :: Playlist -> String -> X ()
-playStream pl title = maybe (return ()) playURL $ playlistLookup pl $ T.pack title
+playStream playlist title = void $ runEitherT $ do
+    url <- findTrack (Text.pack title)
+    manager <- liftIO (newManager defaultManagerSettings)
+    streams <- hoistEither =<< download (env manager) url
+    track   <- pickTrack streams
+    lift (playURL $ trackURL track)
+  where
+    findTrack :: Text -> EitherT Error X Text
+    findTrack name =
+      case find (\t -> trackTitle t == Just name) playlist of
+        Nothing    -> left (InvalidURL name)
+        Just track -> return (trackURL track)
+
+    pickTrack :: Playlist -> EitherT Error X Track
+    pickTrack = liftIO . evalRandIO . uniform
+
+    env :: Manager -> Environment
+    env m = Environment m under5MB
+
+    under5MB :: Int -> ByteStatus
+    under5MB n = if n < 5242880 then Continue else LimitReached
 
 --------------------------------------------------------------------------------
-playURL :: T.Text -> X ()
+playURL :: Text -> X ()
 playURL url = io . void . MPD.withMPD $ do
   current <- MPD.currentSong
   when (isStream current) $ deleteSong current
-  MPD.addId (fromString $ T.unpack url) Nothing >>= MPD.playId
+  MPD.addId (fromString $ Text.unpack url) Nothing >>= MPD.playId
 
 --------------------------------------------------------------------------------
 isStream :: Maybe MPD.Song -> Bool
 isStream Nothing = False
 isStream (Just song) = http || https where
-  path  = MPD.toUtf8 (MPD.sgFilePath song)
-  http  = "http://"  `B.isPrefixOf` path
-  https = "https://" `B.isPrefixOf` path
+  url   = MPD.toUtf8 (MPD.sgFilePath song)
+  http  = "http://"  `ByteString.isPrefixOf` url
+  https = "https://" `ByteString.isPrefixOf` url
 
 --------------------------------------------------------------------------------
 deleteSong :: Maybe MPD.Song -> MPD.MPD ()
