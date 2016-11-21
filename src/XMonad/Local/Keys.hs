@@ -118,7 +118,7 @@ windowKeys _ =
   , ("C-z S-p",   changeFocus $ windowSwap U True)
   , ("C-z m",     changeFocus $ windows W.focusMaster)
   , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
-  , ("C-z S-t",   changeFocus $ withFocused $ windows . W.sink) -- Tile window.
+  , ("M-t",       changeFocus $ withFocused $ windows . W.sink) -- Tile window.
   , ("C-z S-k",   kill1) -- Kill the current window.
   , ("C-z u",     changeFocus focusUrgent)
   , ("M--",       changeFocus $ sendResize GPExpandL)
@@ -145,9 +145,9 @@ windowTagKeys _ =
   , ("M-<Right>", changeFocus primaryJumpTagUp)
   , ("C-z C-j",   changeFocus primaryJumpTagDown)
   , ("C-z j",     changeFocus secondaryJumpTagDown)
-  , ("M-t",       toggleTagOnCurrentWindow)
   , ("C-z M-t",   deleteTag)
-  , ("C-z C-t",   changeFocus selectAndFocusTag)
+  , ("C-z t",     changeFocus selectAndFocusTag)
+  , ("C-z S-t",   toggleTagOnCurrentWindow)
   , ("C-z c",     changeFocus bringTaggedWindowsHere)
   , ("C-z S-c",   changeFocus deleteTaggedWindowsFromHere)
   ] ++ numberedTags
@@ -170,10 +170,9 @@ windowTagKeys _ =
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys c =
   [ ("C-z C-z",   changeFocus viewPrevWS)
-  , ("C-z C-s",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
-  , ("M-<Space>", changeFocus $ switchProjectPrompt  Local.promptConfig)
   , ("C-z a",     changeFocus $ switchProjectPrompt  Local.promptConfig)
   , ("C-z C-u a", changeFocus $ renameProjectPrompt  Local.promptConfig)
+  , ("C-z S-a",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
   , ("M-q",       changeFocus $ setLayout (layoutHook c))
   ]
 
@@ -203,12 +202,12 @@ screenKeys _ =
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
-  [ ("C-z t",     spawn "eterm")
-  , ("M-l",       spawn "lockscreen.sh")
-  , ("<Print>",   spawn "screenshot.sh root")
-  , ("M-<Print>", spawn "screenshot.sh window")
-  , ("C-z C-e",   spawn "e -c") -- Start per-workspace Emacs.
-  , ("C-z C-r",   shellPrompt Local.runPromptConfig)
+  [ ("C-z <Return>", spawn "eterm")
+  , ("M-l",          spawn "lockscreen.sh")
+  , ("<Print>",      spawn "screenshot.sh root")
+  , ("M-<Print>",    spawn "screenshot.sh window")
+  , ("C-z C-e",      spawn "e -c") -- Start per-workspace Emacs.
+  , ("M-<Space>",    shellPrompt Local.runPromptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
