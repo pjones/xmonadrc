@@ -33,7 +33,6 @@ import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import XMonad.Layout.BinarySpacePartition
-import XMonad.Layout.Hidden (hideWindow, popOldestHiddenWindow)
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Prompt.Shell (shellPrompt)
@@ -132,8 +131,8 @@ windowKeys _ =
   , ("C-z r",     changeFocus $ sendMessage Rotate)
   , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
   , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
-  , ("C-z C-k",   withFocused hideWindow)
-  , ("C-z C-y",   popOldestHiddenWindow)
+  , ("C-z C-k",   changeFocus   killWindowToBury)
+  , ("C-z C-y",   changeFocus   yankWindowFromBury)
   ]
 
 --------------------------------------------------------------------------------

@@ -34,13 +34,18 @@ module XMonad.Local.Tagging
   , deleteTag
   , bringTaggedWindowsHere
   , deleteTaggedWindowsFromHere
+  , killWindowToBury
+  , yankWindowFromBury
   ) where
 
 --------------------------------------------------------------------------------
 -- Library Imports:
 import Control.Monad (when)
+import Data.List (find)
+import Data.Maybe (listToMaybe)
 import XMonad
 import XMonad.Actions.CopyWindow
+import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.TagWindows
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
@@ -56,6 +61,10 @@ data JumpTags = JumpTags !String !String
 instance ExtensionClass JumpTags where
   initialValue = JumpTags "browser" "browser"
   extensionType = PersistentExtension
+
+--------------------------------------------------------------------------------
+buryTag :: String
+buryTag = "bury"
 
 --------------------------------------------------------------------------------
 -- | Get the recorded tags.
@@ -153,3 +162,26 @@ deleteTaggedWindowsFromHere = tagPrompt promptConfig (`withTagged` go) where
 
   notWindow :: (Eq a) => a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
   notWindow win = W.modify Nothing (W.filter (/= win))
+
+--------------------------------------------------------------------------------
+-- | "Kill" a window by sending it to a bury workspace.
+killWindowToBury :: X ()
+killWindowToBury = do
+  addHiddenWorkspace buryTag
+  windows (W.shift buryTag)
+
+--------------------------------------------------------------------------------
+-- | Yank a window from the bury workspace to the current workspace.
+yankWindowFromBury :: X ()
+yankWindowFromBury = do
+  here <- gets (W.tag . W.workspace . W.current . windowset)
+  wses <- gets (W.workspaces . windowset)
+
+  let win' = do workspace <- find (\ws -> W.tag ws == buryTag) wses
+                stack <- W.stack workspace
+                listToMaybe (reverse $ W.integrate stack)
+
+  case win' of
+    Nothing  -> return ()
+    Just win -> do windows (W.shiftWin here win)
+                   removeEmptyWorkspaceByTag buryTag
