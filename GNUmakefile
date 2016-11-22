@@ -1,6 +1,6 @@
 ################################################################################
 export TMPDIR   = $(HOME)/tmp
-export NIX_PATH = nixpkgs=$(realpath vendor/nixpkgs)
+export NIX_PATH = nixpkgs=$(shell realpath vendor/nixpkgs)
 
 ################################################################################
 TMP_DUMMY     = $(TMPDIR)/.dummy

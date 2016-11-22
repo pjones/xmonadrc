@@ -168,11 +168,11 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys c =
-  [ ("C-z C-z",   changeFocus viewPrevWS)
-  , ("C-z a",     changeFocus $ switchProjectPrompt  Local.promptConfig)
-  , ("C-z C-u a", changeFocus $ renameProjectPrompt  Local.promptConfig)
-  , ("C-z S-a",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
-  , ("M-q",       changeFocus $ setLayout (layoutHook c))
+  [ ("C-z C-z",       changeFocus viewPrevWS)
+  , ("C-z <Tab>",     changeFocus $ switchProjectPrompt  Local.promptConfig)
+  , ("C-z C-u <Tab>", changeFocus $ renameProjectPrompt  Local.promptConfig)
+  , ("C-z S-<Tab>",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
+  , ("M-q",           changeFocus $ setLayout (layoutHook c))
   ]
 
 --------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ screenKeys _ =
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
-  [ ("C-z <Return>", spawn "eterm")
+  [ ("C-z <Return>", spawn "urxvtc")
   , ("M-l",          spawn "lockscreen.sh")
   , ("<Print>",      spawn "screenshot.sh root")
   , ("M-<Print>",    spawn "screenshot.sh window")
