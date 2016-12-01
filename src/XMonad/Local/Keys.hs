@@ -168,11 +168,11 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys c =
-  [ ("C-z C-z",          changeFocus viewPrevWS)
-  , ("C-z <Return>",     changeFocus $ switchProjectPrompt  Local.promptConfig)
-  , ("C-z C-u <Return>", changeFocus $ renameProjectPrompt  Local.promptConfig)
-  , ("C-z S-<Return>",   changeFocus $ shiftToProjectPrompt Local.promptConfig)
-  , ("M-q",              changeFocus $ setLayout (layoutHook c))
+  [ ("C-z C-z", changeFocus viewPrevWS)
+  , ("C-z w",   changeFocus $ switchProjectPrompt  Local.promptConfig)
+  , ("C-z M-w", changeFocus $ renameProjectPrompt  Local.promptConfig)
+  , ("C-z S-w", changeFocus $ shiftToProjectPrompt Local.promptConfig)
+  , ("M-q",     changeFocus $ setLayout (layoutHook c))
   ]
 
 --------------------------------------------------------------------------------
