@@ -4,6 +4,3 @@
 [submodule "vendor/xmonad-contrib"]
 	path = vendor/xmonad-contrib
 	url = https://github.com/pjones/xmonad-contrib.git
-[submodule "vendor/nixpkgs"]
-	path = vendor/nixpkgs
-	url = https://github.com/pjones/nixpkgs.git
