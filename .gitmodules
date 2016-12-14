@@ -1,3 +1,9 @@
-[submodule "util"]
-	path = util
-	url = git://pmade.com/haskell-util.git
+[submodule "vendor/xmonad"]
+	path = vendor/xmonad
+	url = https://github.com/pjones/xmonad.git
+[submodule "vendor/xmonad-contrib"]
+	path = vendor/xmonad-contrib
+	url = https://github.com/pjones/xmonad-contrib.git
+[submodule "vendor/nixpkgs"]
+	path = vendor/nixpkgs
+	url = https://github.com/pjones/nixpkgs.git
