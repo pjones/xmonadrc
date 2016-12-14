@@ -1,4 +1,6 @@
 packages: ./
+          vendor/playlists
+          vendor/playlists-http
           vendor/xmonad/
           vendor/xmonad-contrib
           vendor/taffybar

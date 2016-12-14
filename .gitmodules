@@ -4,3 +4,9 @@
 [submodule "vendor/xmonad-contrib"]
 	path = vendor/xmonad-contrib
 	url = https://github.com/pjones/xmonad-contrib.git
+[submodule "vendor/playlists"]
+	path = vendor/playlists
+	url = git://pmade.com/playlists
+[submodule "vendor/playlists-http"]
+	path = vendor/playlists-http
+	url = git://pmade.com/playlists-http
