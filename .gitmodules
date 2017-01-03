@@ -10,3 +10,6 @@
 [submodule "vendor/playlists-http"]
 	path = vendor/playlists-http
 	url = git://pmade.com/playlists-http
+[submodule "vendor/x11"]
+	path = vendor/x11
+	url = https://github.com/xmonad/X11.git
