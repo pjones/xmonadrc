@@ -6,10 +6,10 @@
 	url = https://github.com/pjones/xmonad-contrib.git
 [submodule "vendor/playlists"]
 	path = vendor/playlists
-	url = git://pmade.com/playlists
+	url = git://git.devalot.com/playlists
 [submodule "vendor/playlists-http"]
 	path = vendor/playlists-http
-	url = git://pmade.com/playlists-http
+	url = git://git.devalot.com/playlists-http
 [submodule "vendor/x11"]
 	path = vendor/x11
 	url = https://github.com/xmonad/X11.git
