@@ -92,6 +92,7 @@ baseKeys _ =
   [ ("C-z z",   sendKey controlMask xK_z) -- Send C-z to application.
   , ("C-z C-g", return ()) -- No-op to cancel the prefix key.
   , ("C-z g",   return ()) -- Same as above.
+  , ("C-z q",   restart "xmonadrc" True)
   , ("C-z S-q", io exitSuccess)
   , ("C-z x",   xmonadPrompt Local.promptConfig)
   ]

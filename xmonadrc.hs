@@ -47,7 +47,7 @@ config = desktopConfig
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = xmonad (dynamicProjects Workspaces.projects .
+main = launch (dynamicProjects Workspaces.projects .
                pagerHints .
                withUrgencyHookC urgencyStyle urgencyConfig .
                withNavigation2DConfig def .
