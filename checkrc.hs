@@ -11,12 +11,18 @@ the LICENSE file. -}
 module Main where
 
 --------------------------------------------------------------------------------
+import Control.Monad (void)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import XMonad
-import XMonad.Local.Keys (rawKeys)
+import XMonad.Prompt
 import XMonad.StackSet (new)
 import XMonad.Util.EZConfig (checkKeymap)
+import XMonad.Util.Font
+
+--------------------------------------------------------------------------------
+import XMonad.Local.Keys (rawKeys)
+import XMonad.Local.Prompt (promptConfig)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -47,6 +53,14 @@ main = do
                   , extensibleState = M.empty
                   }
 
-  -- Check key bindings, errors go to xmessage.
-  _ <- runX cf st $ checkKeymap xmc (rawKeys xmc)
-  return ()
+  void $ runX cf st $ do
+    -- Check key bindings, errors go to xmessage.
+    checkKeymap xmc (rawKeys xmc)
+
+    -- Make sure font rendering works.
+    xmf <- initXMF (font promptConfig)
+
+    case xmf of
+      Core _ -> io (putStrLn "Font: core")
+      Utf8 _ -> io (putStrLn "Font: utf8")
+      Xft  _ -> io (putStrLn "Font: xft")
