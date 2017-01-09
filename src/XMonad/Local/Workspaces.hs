@@ -43,8 +43,7 @@ projects =
 
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
-            , projectStartHook = Just $ do spawn "conkeror"
-                                           spawn "chromium"
+            , projectStartHook = Just $ spawn "chromium"
             }
 
   , Project { projectName      = "mail"
@@ -54,7 +53,7 @@ projects =
             }
 
   , Project { projectName      = "xmonad"
-            , projectDirectory = "~/core/xmonad"
+            , projectDirectory = "~/develop/pmade/xmonadrc"
             , projectStartHook = Nothing
             }
 
