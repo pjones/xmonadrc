@@ -13,3 +13,6 @@
 [submodule "vendor/x11"]
 	path = vendor/x11
 	url = https://github.com/xmonad/X11.git
+[submodule "vendor/x11-xft"]
+	path = vendor/x11-xft
+	url = https://github.com/csstaub/X11-xft.git
