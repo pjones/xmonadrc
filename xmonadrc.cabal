@@ -29,6 +29,9 @@ library
     XMonad.Local.Theme
     XMonad.Local.Workspaces
 
+  other-modules:
+    Paths_xmonadrc
+
   hs-source-dirs: src
   ghc-options: -Wall -Werror
 
