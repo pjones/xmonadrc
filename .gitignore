@@ -3,3 +3,4 @@
 /build/.stack-work
 /vendor/taffybar/.stack-work
 /dist-newstyle
+/cabal.project.local
