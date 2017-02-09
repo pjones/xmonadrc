@@ -26,7 +26,7 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
-import XMonad.Actions.DynamicProjects (switchProjectPrompt, shiftToProjectPrompt, renameProjectPrompt)
+import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
@@ -74,7 +74,7 @@ keys c = mkKeymap c (rawKeys c)
 --------------------------------------------------------------------------------
 -- | Access the unprocessed key meant to be fed into @mkKeymap@.
 rawKeys :: XConfig Layout -> [(String, X ())]
-rawKeys c = concatMap ($ c) keymaps where
+rawKeys c = withUpdatePointer $ concatMap ($ c) keymaps where
   keymaps = [ baseKeys
             , windowKeys
             , windowTagKeys
@@ -86,9 +86,15 @@ rawKeys c = concatMap ($ c) keymaps where
             ]
 
 --------------------------------------------------------------------------------
--- | Change focus and update the mouse pointer.
-changeFocus :: X () -> X ()
-changeFocus f = f >> updatePointer (0.98, 0.01) (0, 0)
+-- | Modify all keybindings so that after they finish their action the
+-- mouse pointer is moved to the corner of the focused window.  This
+-- is a bit of a hack to work around some issues I have with
+-- @UpdatePointer@.
+withUpdatePointer :: [(String, X ())] -> [(String, X ())]
+withUpdatePointer = map addAction
+  where
+    addAction :: (String, X ()) -> (String, X ())
+    addAction (key, action) = (key, action >> updatePointer (0.98, 0.01) (0, 0))
 
 --------------------------------------------------------------------------------
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
@@ -107,39 +113,39 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z l",     changeFocus $ nextMatch History (return True))
-  , ("C-z b",     changeFocus $ windows W.focusUp)
-  , ("C-z f",     changeFocus $ windows W.focusDown)
-  , ("C-z n",     changeFocus $ windowGo D True)
-  , ("C-z p",     changeFocus $ windowGo U True)
-  , ("C-z C-f",   changeFocus $ windowGo R True)
-  , ("C-z C-b",   changeFocus $ windowGo L True)
-  , ("C-z C-n",   changeFocus $ windowGo D True)
-  , ("C-z C-p",   changeFocus $ windowGo U True)
-  , ("C-z o",     changeFocus $ windowPromptGoto  Local.promptConfig)
-  , ("C-z C-o",   changeFocus $ windowPromptBring Local.promptConfig)
-  , ("C-z S-f",   changeFocus $ windowSwap R True)
-  , ("C-z S-b",   changeFocus $ windowSwap L True)
-  , ("C-z S-n",   changeFocus $ windowSwap D True)
-  , ("C-z S-p",   changeFocus $ windowSwap U True)
-  , ("C-z m",     changeFocus $ windows W.focusMaster)
-  , ("C-z S-m",   changeFocus promote) -- Promote current window to master.
-  , ("M-t",       changeFocus $ withFocused $ windows . W.sink) -- Tile window.
+  [ ("C-z l",     nextMatch History (return True))
+  , ("C-z b",     windows W.focusUp)
+  , ("C-z f",     windows W.focusDown)
+  , ("C-z n",     windowGo D True)
+  , ("C-z p",     windowGo U True)
+  , ("C-z C-f",   windowGo R True)
+  , ("C-z C-b",   windowGo L True)
+  , ("C-z C-n",   windowGo D True)
+  , ("C-z C-p",   windowGo U True)
+  , ("C-z o",     windowPromptGoto  Local.promptConfig)
+  , ("C-z C-o",   windowPromptBring Local.promptConfig)
+  , ("C-z S-f",   windowSwap R True)
+  , ("C-z S-b",   windowSwap L True)
+  , ("C-z S-n",   windowSwap D True)
+  , ("C-z S-p",   windowSwap U True)
+  , ("C-z m",     windows W.focusMaster)
+  , ("C-z S-m",   promote) -- Promote current window to master.
+  , ("M-t",       withFocused $ windows . W.sink) -- Tile window.
   , ("C-z S-k",   kill1) -- Kill the current window.
-  , ("C-z u",     changeFocus focusUrgent)
-  , ("M--",       changeFocus $ sendResize GPExpandL)
-  , ("M-=",       changeFocus $ sendResize GPShrinkL)
-  , ("M-S--",     changeFocus $ sendResize GPExpandU)
-  , ("M-S-=",     changeFocus $ sendResize GPShrinkU)
-  , ("M-M4--",    changeFocus $ sendResize GPShrinkR)
-  , ("M-M4-=",    changeFocus $ sendResize GPExpandR)
-  , ("M-M4-S--",  changeFocus $ sendResize GPExpandD)
-  , ("M-M4-S-=",  changeFocus $ sendResize GPShrinkD)
-  , ("C-z r",     changeFocus $ sendMessage Rotate)
-  , ("C-z -",     changeFocus $ sendMessage $ IncMasterN (-1))
-  , ("C-z =",     changeFocus $ sendMessage $ IncMasterN 1)
-  , ("C-z C-k",   changeFocus   killWindowToBury)
-  , ("C-z C-y",   changeFocus   yankWindowFromBury)
+  , ("C-z u",     focusUrgent)
+  , ("M--",       sendResize GPExpandL)
+  , ("M-=",       sendResize GPShrinkL)
+  , ("M-S--",     sendResize GPExpandU)
+  , ("M-S-=",     sendResize GPShrinkU)
+  , ("M-M4--",    sendResize GPShrinkR)
+  , ("M-M4-=",    sendResize GPExpandR)
+  , ("M-M4-S--",  sendResize GPExpandD)
+  , ("M-M4-S-=",  sendResize GPShrinkD)
+  , ("C-z r",     sendMessage Rotate)
+  , ("C-z -",     sendMessage $ IncMasterN (-1))
+  , ("C-z =",     sendMessage $ IncMasterN 1)
+  , ("C-z C-k",   killWindowToBury)
+  , ("C-z C-y",   yankWindowFromBury)
   ]
 
 --------------------------------------------------------------------------------
@@ -147,15 +153,15 @@ windowKeys _ =
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-j",       setPrimaryJumpTag)
-  , ("M-<Left>",  changeFocus primaryJumpTagDown)
-  , ("M-<Right>", changeFocus primaryJumpTagUp)
-  , ("C-z C-j",   changeFocus primaryJumpTagDown)
-  , ("C-z j",     changeFocus secondaryJumpTagDown)
-  , ("C-z t",     changeFocus selectAndFocusTag)
+  , ("M-<Left>",  primaryJumpTagDown)
+  , ("M-<Right>", primaryJumpTagUp)
+  , ("C-z C-j",   primaryJumpTagDown)
+  , ("C-z j",     secondaryJumpTagDown)
+  , ("C-z t",     selectAndFocusTag)
   , ("C-z M-t",   toggleTagOnCurrentWindow)
   , ("C-z M-S-t", deleteTag)
-  , ("C-z c",     changeFocus bringTaggedWindowsHere)
-  , ("C-z S-c",   changeFocus deleteTaggedWindowsFromHere)
+  , ("C-z c",     bringTaggedWindowsHere)
+  , ("C-z S-c",   deleteTaggedWindowsFromHere)
   ] ++ numberedTags
   where
     numberedTags :: [(String, X ())]
@@ -167,7 +173,7 @@ windowTagKeys _ =
 
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
-      [ ("C-z ",   changeFocus . focusDownTaggedGlobal)
+      [ ("C-z ",   focusDownTaggedGlobal)
       , ("C-z M-", withFocused . addTag)
       ]
 
@@ -175,11 +181,9 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys c =
-  [ ("C-z C-z", changeFocus viewPrevWS)
-  , ("C-z w",   changeFocus $ switchProjectPrompt  Local.promptConfig)
-  , ("C-z M-w", changeFocus $ renameProjectPrompt  Local.promptConfig)
-  , ("C-z S-w", changeFocus $ shiftToProjectPrompt Local.promptConfig)
-  , ("M-r",     changeFocus $ setLayout (layoutHook c))
+  [ ("C-z C-z",       viewPrevWS)
+  , ("M-<Space>",     switchProjectPrompt  Local.promptConfig)
+  , ("M-r",           setLayout (layoutHook c)) -- Reset to default layout.
   ]
 
 --------------------------------------------------------------------------------
@@ -195,9 +199,9 @@ layoutKeys _ =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-<Up>",    changeFocus $ onPrevNeighbour W.view)
-  , ("M-<Down>",  changeFocus $ onNextNeighbour W.view)
-  , ("C-z d",     changeFocus $ onNextNeighbour W.view)
+  [ ("M-<Up>",    onPrevNeighbour W.view)
+  , ("M-<Down>",  onNextNeighbour W.view)
+  , ("C-z d",     onNextNeighbour W.view)
   , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
@@ -213,7 +217,7 @@ appKeys _ =
   , ("<Print>",    spawn "screenshot.sh root")
   , ("M-<Print>",  spawn "screenshot.sh window")
   , ("C-z C-e",    spawn "e -c") -- Start per-workspace Emacs.
-  , ("M-<Space>",  shellPrompt Local.runPromptConfig)
+  , ("C-z C-r",    shellPrompt Local.runPromptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
@@ -290,7 +294,7 @@ restartIntoDebugging = do
 
   -- Path to my xmonad (as generated by `cabal new-build'):
   let path = foldl (\x y -> x ++ "/" ++ y) home
-               [ "develop/pmade/xmonadrc/dist-newstyle/build"
+               [ "core/xmonadrc/dist-newstyle/build"
                , "xmonadrc-" ++ showVersion version
                , "build/xmonadrc/xmonadrc"
                ]
