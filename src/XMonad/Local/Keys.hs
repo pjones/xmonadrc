@@ -40,7 +40,7 @@ import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import XMonad.Prompt.Shell (shellPrompt)
-import XMonad.Prompt.Window (windowPromptGoto, windowPromptBring)
+import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.Paste (sendKey)
@@ -122,8 +122,8 @@ windowKeys _ =
   , ("C-z C-b",   windowGo L True)
   , ("C-z C-n",   windowGo D True)
   , ("C-z C-p",   windowGo U True)
-  , ("C-z o",     windowPromptGoto  Local.promptConfig)
-  , ("C-z C-o",   windowPromptBring Local.promptConfig)
+  , ("C-z o",     windowPromptGoto)
+  , ("C-z C-o",   windowPrompt Local.promptConfig BringCopy allWindows)
   , ("C-z S-f",   windowSwap R True)
   , ("C-z S-b",   windowSwap L True)
   , ("C-z S-n",   windowSwap D True)
@@ -217,7 +217,7 @@ appKeys _ =
   , ("<Print>",    spawn "screenshot.sh root")
   , ("M-<Print>",  spawn "screenshot.sh window")
   , ("C-z C-e",    spawn "e -c") -- Start per-workspace Emacs.
-  , ("C-z C-r",    shellPrompt Local.runPromptConfig)
+  , ("C-z C-r",    shellPrompt Local.promptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
@@ -307,3 +307,8 @@ restartIntoDebugging = do
             confirmPrompt promptConfig
               "xmonad.errors for bad path"
               (return ())
+
+--------------------------------------------------------------------------------
+windowPromptGoto :: X ()
+windowPromptGoto = windowMultiPrompt Local.promptConfig modes
+  where modes = [(Goto, allWindows), (Goto, wsWindows)]
