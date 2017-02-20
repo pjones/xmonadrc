@@ -11,49 +11,60 @@ the LICENSE file. -}
 module XMonad.Local.Workspaces
        ( projects
        , names
+       , scratchPads
        , asKey
        , viewPrevWS
        ) where
 
 --------------------------------------------------------------------------------
-import XMonad.Actions.DynamicProjects
 import Control.Monad (unless)
 import XMonad
+import XMonad.Actions.DynamicProjects
+import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import qualified XMonad.StackSet as StackSet
+import XMonad.Util.NamedScratchpad
 
 --------------------------------------------------------------------------------
 projects :: [Project]
 projects =
   [ Project { projectName      = "scratch"
             , projectDirectory = "~/"
-            , projectStartHook = Nothing
+            , projectStartHook = Just $ do
+                spawn "e -c"
+                spawn "urxvtc"
             }
 
   , Project { projectName      = "tasks"
             , projectDirectory = "~/"
-            , projectStartHook = Just $ do spawn "urxvtc -e ncmpcpp"
-                                           spawn "chromium --app=http://rememberthemilk.com"
+            , projectStartHook = Just $ spawn "urxvtc -e ncmpcpp"
             }
 
   , Project { projectName      = "clocks"
             , projectDirectory = "~/"
-            , projectStartHook = Just $ do spawn "urxvtc -name BigTerm -e tty-clock -c -C 4 -f '%b. %d, %Y'"
-                                           spawn "urxvtc -name BigTerm -e env TZ=America/New_York tty-clock -C 0 -c -f 'South Carolina'"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "BSP")
+                spawn "urxvtc -name BigTerm -e tty-clock -c -C 4 -f '%b. %d, %Y'"
+                spawn "urxvtc -name BigTerm -e env TZ=America/New_York tty-clock -C 0 -c -f 'South Carolina'"
             }
 
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
-            , projectStartHook = Just $ spawn "chromium"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "BSP")
+                spawn "chromium"
+                spawn "chromium"
             }
 
   , Project { projectName      = "mail"
             , projectDirectory = "~/"
-            , projectStartHook = Just $ do spawn "e -cs irc"
-                                           spawn "e -cs gnus"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "3C")
+                spawn "e -cs irc -- -F '((name . \"[irc]\"))'"
+                spawn "e -cs gnus"
             }
 
   , Project { projectName      = "xmonad"
-            , projectDirectory = "~/develop/pmade/xmonadrc"
+            , projectDirectory = "~/core/xmonadrc"
             , projectStartHook = Nothing
             }
 
@@ -68,10 +79,28 @@ projects =
             }
   ]
 
+
 --------------------------------------------------------------------------------
 -- | Names of my workspaces.
 names :: [WorkspaceId]
 names = ["scratch", "tasks", "clocks", "browsers", "mail"]
+
+--------------------------------------------------------------------------------
+scratchPads :: NamedScratchpads
+scratchPads =
+  [ NS { name  = "calc"
+       , cmd   = "e -c -s calc -e '(full-calc)' -- -F '((name . \"*Calculator*\"))'"
+       , query = title =? "*Calculator*"
+       , hook  = floatOnRight
+       }
+  , NS { name  = "todoist"
+       , cmd   = "chromium --app=https://todoist.com/app"
+       , query = appName =? "todoist.com__app"
+       , hook  = floatOnRight
+       }
+  ]
+  where
+    floatOnRight = customFloating $ StackSet.RationalRect (2/3) 0 (1/3) 0.98
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for

@@ -29,20 +29,23 @@ import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
-import XMonad.Actions.PhysicalScreens (onPrevNeighbour, onNextNeighbour)
+import XMonad.Actions.PhysicalScreens (onNextNeighbour)
 import XMonad.Actions.Promote (promote)
-import XMonad.Actions.TagWindows
+import XMonad.Actions.TagWindows (addTag, delTag, withTaggedGlobal)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
-import XMonad.Layout.BinarySpacePartition
-import XMonad.Layout.Maximize (maximizeRestore)
+import XMonad.Layout.BinarySpacePartition hiding (Swap)
+import XMonad.Layout.Gaps (GapMessage(..))
+import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
+import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 import XMonad.Util.Paste (sendKey)
 
 --------------------------------------------------------------------------------
@@ -53,7 +56,7 @@ import XMonad.Local.Music (radioPrompt)
 import XMonad.Local.Prompt (promptConfig)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
-import XMonad.Local.Workspaces (asKey, viewPrevWS)
+import XMonad.Local.Workspaces (asKey, viewPrevWS, scratchPads)
 
 --------------------------------------------------------------------------------
 -- General purpose resize commands.
@@ -65,6 +68,9 @@ data GPResize = GPExpandL
               | GPShrinkR
               | GPShrinkU
               | GPShrinkD
+
+data LayoutType = BSP    -- ^ Binary Space Partition
+                | Other  -- ^ Other (generic) layout
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -101,6 +107,7 @@ withUpdatePointer = map addAction
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
   [ ("C-z z",   sendKey controlMask xK_z) -- Send C-z to application.
+  , ("M-z",     sendKey controlMask xK_z) -- Send C-z to application.
   , ("C-z C-g", return ()) -- No-op to cancel the prefix key.
   , ("C-z g",   return ()) -- Same as above.
   , ("C-z q",   restart "xmonadrc" True)
@@ -113,55 +120,58 @@ baseKeys _ =
 -- Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
-  [ ("C-z l",     nextMatch History (return True))
-  , ("C-z b",     windows W.focusUp)
-  , ("C-z f",     windows W.focusDown)
-  , ("C-z n",     windowGo D True)
-  , ("C-z p",     windowGo U True)
-  , ("C-z C-f",   windowGo R True)
-  , ("C-z C-b",   windowGo L True)
-  , ("C-z C-n",   windowGo D True)
-  , ("C-z C-p",   windowGo U True)
-  , ("C-z o",     windowPromptGoto)
-  , ("C-z C-o",   windowPrompt Local.promptConfig BringCopy allWindows)
-  , ("C-z S-f",   windowSwap R True)
-  , ("C-z S-b",   windowSwap L True)
-  , ("C-z S-n",   windowSwap D True)
-  , ("C-z S-p",   windowSwap U True)
-  , ("C-z m",     windows W.focusMaster)
-  , ("C-z S-m",   promote) -- Promote current window to master.
-  , ("M-t",       withFocused $ windows . W.sink) -- Tile window.
-  , ("C-z S-k",   kill1) -- Kill the current window.
-  , ("C-z u",     focusUrgent)
-  , ("M--",       sendResize GPExpandL)
-  , ("M-=",       sendResize GPShrinkL)
-  , ("M-S--",     sendResize GPExpandU)
-  , ("M-S-=",     sendResize GPShrinkU)
-  , ("M-M4--",    sendResize GPShrinkR)
-  , ("M-M4-=",    sendResize GPExpandR)
-  , ("M-M4-S--",  sendResize GPExpandD)
-  , ("M-M4-S-=",  sendResize GPShrinkD)
-  , ("C-z r",     sendMessage Rotate)
-  , ("C-z -",     sendMessage $ IncMasterN (-1))
-  , ("C-z =",     sendMessage $ IncMasterN 1)
-  , ("C-z C-k",   killWindowToBury)
-  , ("C-z C-y",   yankWindowFromBury)
+  -- Focusing Windows:
+  [ ("C-z l",      nextMatch History (return True))
+  , ("C-z b",      windows W.focusUp)
+  , ("C-z f",      windows W.focusDown)
+  , ("C-z n",      windowGo D True)
+  , ("C-z p",      windowGo U True)
+  , ("C-z C-f",    windowGo R True)
+  , ("C-z C-b",    windowGo L True)
+  , ("C-z C-n",    windowGo D True)
+  , ("C-z C-p",    windowGo U True)
+  , ("C-z u",      focusUrgent)
+  , ("C-z o",      windowPromptGoto)
+  , ("C-z C-o",    windowPrompt Local.promptConfig BringCopy allWindows)
+
+  -- Moving Windows:
+  , ("C-z S-f",    windowSwap R False)
+  , ("C-z S-b",    windowSwap L False)
+  , ("C-z S-n",    windowSwap D False)
+  , ("C-z S-p",    windowSwap U False)
+  , ("C-z S-m",    windows W.focusMaster)
+  , ("C-z m",      promote) -- Promote current window to master.
+
+  -- Resizing Windows:
+  , ("M--",        sendResize GPExpandL)
+  , ("M-=",        sendResize GPShrinkL)
+  , ("M-S--",      sendResize GPExpandU)
+  , ("M-S-=",      sendResize GPShrinkU)
+  , ("M-M4--",     sendResize GPShrinkR)
+  , ("M-M4-=",     sendResize GPExpandR)
+  , ("M-M4-S--",   sendResize GPExpandD)
+  , ("M-M4-S-=",   sendResize GPShrinkD)
+  , ("C-z -",      sendMessage $ IncMasterN (-1))
+  , ("C-z =",      sendMessage $ IncMasterN 1)
+
+  -- Window Layers and Killing and Yanking:
+  , ("M-s",           withFocused $ windows . W.sink) -- Tile window.
+  , ("M-<Backspace>", kill1) -- Kill the current window.
+  , ("C-z C-k",       killWindowToBury)
+  , ("C-z C-y",       yankWindowFromBury)
   ]
 
 --------------------------------------------------------------------------------
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("M-j",       setPrimaryJumpTag)
-  , ("M-<Left>",  primaryJumpTagDown)
-  , ("M-<Right>", primaryJumpTagUp)
-  , ("C-z C-j",   primaryJumpTagDown)
-  , ("C-z j",     secondaryJumpTagDown)
-  , ("C-z t",     selectAndFocusTag)
-  , ("C-z M-t",   toggleTagOnCurrentWindow)
-  , ("C-z M-S-t", deleteTag)
-  , ("C-z c",     bringTaggedWindowsHere)
-  , ("C-z S-c",   deleteTaggedWindowsFromHere)
+  [ ("M4-<Space>", tagPrompt Local.promptConfig)
+  , ("C-z C-j",    primaryJumpTagDown)
+  , ("C-z j",      primaryJumpTagDown)
+  , ("M-j",        secondaryJumpTagDown)
+  , ("M-f f",      withFocused (addTag "focus"))
+  , ("M-f r",      withTaggedGlobal "focus" (delTag "focus"))
+  , ("M-f n",      sendMessage (JumpToLayout "Focus"))
   ] ++ numberedTags
   where
     numberedTags :: [(String, X ())]
@@ -173,35 +183,41 @@ windowTagKeys _ =
 
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
-      [ ("C-z ",   focusDownTaggedGlobal)
-      , ("C-z M-", withFocused . addTag)
+      [ ("C-z ",   focusTag')
+      , ("C-z M-", toggleTagOnCurrentWindow)
       ]
 
 --------------------------------------------------------------------------------
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
-workspaceKeys c =
-  [ ("C-z C-z",       viewPrevWS)
-  , ("M-<Space>",     switchProjectPrompt  Local.promptConfig)
-  , ("M-r",           setLayout (layoutHook c)) -- Reset to default layout.
+workspaceKeys _ =
+  [ ("C-z C-z",   viewPrevWS)
+  , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
-layoutKeys _ =
-  [ ("C-z <Space>",   withFocused (sendMessage . maximizeRestore))
-  , ("C-z C-<Space>", selectLayoutByName Local.promptConfig)
-  , ("C-z s",         sendMessage ToggleStruts)
+layoutKeys c =
+  [ ("C-z <Space>", sendMessage (Toggle "Full"))
+  , ("M-l <Space>", selectLayoutByName Local.promptConfig)
+  , ("M-l l",       setLayout (layoutHook c)) -- Reset to default layout.
+  , ("M-l b",       sendMessage (JumpToLayout "BSP"))
+  , ("M-l 2",       sendMessage (JumpToLayout "2C"))
+  , ("M-l 3",       sendMessage (JumpToLayout "3C"))
+  , ("M-l t",       sendMessage (JumpToLayout "Tall"))
+  , ("M-l f",       sendMessage (JumpToLayout "Focus"))
+  , ("C-z s",       sendMessage ToggleStruts)
+  , ("M-g",         sendMessage ToggleGaps)
+  , ("C-z r",       sendMessage Rotate)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-<Up>",    onPrevNeighbour W.view)
-  , ("M-<Down>",  onNextNeighbour W.view)
-  , ("C-z d",     onNextNeighbour W.view)
+  [ ("C-z d",     onNextNeighbour W.view)
+  , ("C-z M-d",   screenSwap L True)
   , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
@@ -213,7 +229,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
   [ ("M-<Return>", spawn "urxvtc")
-  , ("M-l",        spawn "lockscreen.sh")
+  , ("M-M4-l",     spawn "lockscreen.sh")
   , ("<Print>",    spawn "screenshot.sh root")
   , ("M-<Print>",  spawn "screenshot.sh window")
   , ("C-z C-e",    spawn "e -c") -- Start per-workspace Emacs.
@@ -224,6 +240,10 @@ appKeys _ =
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
   , ("M-<F6>",               spawn "tptoggle.sh")
   , ("M-<F10>",              spawn "xrandr-projector")
+
+    -- Scratch pads.
+  , ("M-c", namedScratchpadAction scratchPads "calc")
+  , ("M-t", namedScratchpadAction scratchPads "todoist")
   ]
 
 --------------------------------------------------------------------------------
@@ -250,7 +270,7 @@ musicKeys _ =
     , ("<XF86AudioRaiseVolume>",   audioRaise)
 
       -- Prompt to change radio stations.
-    , ("M4-<Space>",     radioPrompt Local.promptConfig)
+    , ("M-\\", radioPrompt Local.promptConfig)
     ]
   where
     playPause     = spawn "mpc-pause"
@@ -265,25 +285,31 @@ musicKeys _ =
 sendResize :: GPResize -> X ()
 sendResize movement = do
   winset <- gets windowset
-  let ld = description . W.layout . W.workspace . W.current $ winset
+  let lname = description . W.layout . W.workspace . W.current $ winset
+      ltype = case lname of
+              "BSP"         -> BSP
+              "Emacs Only"  -> BSP
+              "Chrome Only" -> BSP
+              "Focus"       -> BSP
+              _             -> Other
 
-  case (ld, movement) of
-    ("BSP", GPExpandL) -> sendMessage (ExpandTowards L)
-    ("BSP", GPExpandR) -> sendMessage (ExpandTowards R)
-    ("BSP", GPExpandU) -> sendMessage (ExpandTowards U)
-    ("BSP", GPExpandD) -> sendMessage (ExpandTowards D)
-    ("BSP", GPShrinkL) -> sendMessage (ShrinkFrom L)
-    ("BSP", GPShrinkR) -> sendMessage (ShrinkFrom R)
-    ("BSP", GPShrinkU) -> sendMessage (ShrinkFrom U)
-    ("BSP", GPShrinkD) -> sendMessage (ShrinkFrom D)
-    (_,     GPExpandL) -> sendMessage Shrink
-    (_,     GPExpandR) -> sendMessage Expand
-    (_,     GPExpandU) -> sendMessage MirrorShrink
-    (_,     GPExpandD) -> sendMessage MirrorExpand
-    (_,     GPShrinkL) -> sendMessage Expand
-    (_,     GPShrinkR) -> sendMessage Shrink
-    (_,     GPShrinkU) -> sendMessage MirrorExpand
-    (_,     GPShrinkD) -> sendMessage MirrorShrink
+  case (ltype, movement) of
+    (BSP,   GPExpandL) -> sendMessage (ExpandTowards L)
+    (BSP,   GPExpandR) -> sendMessage (ExpandTowards R)
+    (BSP,   GPExpandU) -> sendMessage (ExpandTowards U)
+    (BSP,   GPExpandD) -> sendMessage (ExpandTowards D)
+    (BSP,   GPShrinkL) -> sendMessage (ShrinkFrom L)
+    (BSP,   GPShrinkR) -> sendMessage (ShrinkFrom R)
+    (BSP,   GPShrinkU) -> sendMessage (ShrinkFrom U)
+    (BSP,   GPShrinkD) -> sendMessage (ShrinkFrom D)
+    (Other, GPExpandL) -> sendMessage Shrink
+    (Other, GPExpandR) -> sendMessage Expand
+    (Other, GPExpandU) -> sendMessage MirrorShrink
+    (Other, GPExpandD) -> sendMessage MirrorExpand
+    (Other, GPShrinkL) -> sendMessage Expand
+    (Other, GPShrinkR) -> sendMessage Shrink
+    (Other, GPShrinkU) -> sendMessage MirrorExpand
+    (Other, GPShrinkD) -> sendMessage MirrorShrink
 
 --------------------------------------------------------------------------------
 -- | Restart XMonad but instead of starting the XMonad in @PATH@,

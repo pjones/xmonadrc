@@ -17,6 +17,7 @@ module XMonad.Local.Action
 
 --------------------------------------------------------------------------------
 import Control.Monad (when)
+import Data.List
 import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (manageHook, handleEventHook)
@@ -35,11 +36,17 @@ import qualified XMonad.StackSet as W
 manageHook :: ManageHook
 manageHook = composeOne
     [ -- Start by tagging new windows:
-      className =? "chromium-browser" `addTagAndContinue` "browser"
+      className =? "Chromium-browser"   `addTagAndContinue` "browser"
+    , title     =* "[irc]"              `addTagAndContinue` "irc"
 
       -- Some application windows ask to be floating (I'm guessing) but
       -- it's stupid to float them.
     , title =? "HandBrake" -?> (ask >>= doF . W.sink)
+
+      -- Chrome debugging windows and application windows show up as
+      -- pop-ups so we need to deal with that before floating pop-ups.
+    , (className =? "Chromium-browser" <&&>
+       stringProperty "WM_WINDOW_ROLE" =? "pop-up") -?> normalTile
 
       -- Force dialog windows and pop-ups to be floating.
     , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
@@ -57,6 +64,10 @@ manageHook = composeOne
     , pure True -?> normalTile
     ]
   where
+    -- | Sub-string match with a 'Query'.
+    (=*) :: Query String -> String -> Query Bool
+    (=*) q s = isInfixOf s <$> q
+
     gtkFile          = "GtkFileChooserDialog"
     normalTile       = insertPosition Above Newer
     tileBelow        = insertPosition Below Newer
