@@ -30,6 +30,7 @@ import XMonad.Layout.Spacing (spacing)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.ToggleLayouts (toggleLayouts)
 import XMonad.Layout.TwoPane (TwoPane(..))
+import XMonad.Layout.WindowNavigation (configurableNavigation, noNavigateBorders)
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Local.Theme (topBarTheme)
 import XMonad.Prompt
@@ -39,7 +40,11 @@ import XMonad.Util.Types (Direction2D(..))
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook =
-    toggleLayouts fullscreen (addDeco $ addSpace allLays)
+    toggleLayouts fullscreen
+      $ configurableNavigation noNavigateBorders
+      $ addDeco
+      $ addSpace
+      $ allLays
   where
     addDeco  = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText topBarTheme
     addSpace = renamed [CutWordsLeft 2] . spacing 4
@@ -53,6 +58,7 @@ layoutHook =
     twoPane   = renamed [Replace "2P"]   (TwoPane (3/100) (1/2))
     bspace    = renamed [Replace "BSP"]  emptyBSP
     tall      = renamed [Replace "Tall"] (ResizableTall 1 (1.5/100) (3/5) [])
+    drawer'   = \p -> onTop $ drawer (1/30) (19/20) p (Mirror Accordion)
 
     -- Emacs windows on the left, everything else on the right.
     emacsCombo = renamed [Replace "Emacs Split"] $
@@ -67,17 +73,17 @@ layoutHook =
     -- Place Emacs windows into a BSP layout, all other windows go off
     -- the screen and can't be used.
     emacsDrawer = renamed [Replace "Emacs Only"] $
-                  drawer (1/10) 1 (Not $ ClassName "Emacs") Accordion `onTop` bspace
+                  drawer' (Not $ ClassName "Emacs") bspace
 
     -- Place Chrome windows into a BSP layout, all other windows go
     -- off the screen and can't be used.
     chromeDrawer = renamed [Replace "Chrome Only"] $
-                   combineTwoP (TwoPane 0 1) bspace Full (ClassName "Chromium-browser")
+                   drawer' (Not $ ClassName "Chromium-browser") bspace
 
     -- Place any windows with the "focus" tag into a BSP layout.  All
     -- other windows go into a drawer (also managed by BSP).
     focusDrawer = renamed [Replace "Focus"] $
-                  combineTwoP (TwoPane 0 1) bspace Full (Tagged "focus")
+                  drawer' (Not $ Tagged "focus") bspace
 
     -- When I'm teaching a class I start with a weird layout before
     -- focusing on specific windows using another layout.

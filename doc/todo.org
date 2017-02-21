@@ -22,7 +22,8 @@
    CLOSED: [2013-04-20 Sat 19:04]
 * Layout
 ** TODO Have decoration color change when a window has the `focus` tag
-** TODO Switch to WindowNavigation
+** DONE Switch to WindowNavigation
+   CLOSED: [2017-02-20 Mon 17:39]
    - see if it can handle navigating windows that are in a drawer.
    - Also, see if the bug with navigating 3C is resolved.
 ** TODO Write a new layout ComboMaster

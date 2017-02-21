@@ -28,7 +28,6 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
-import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onNextNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Actions.TagWindows (addTag, delTag, withTaggedGlobal)
@@ -40,6 +39,7 @@ import XMonad.Layout.Gaps (GapMessage(..))
 import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
+import XMonad.Layout.WindowNavigation (Navigate(..), Direction2D(..))
 import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
@@ -124,21 +124,21 @@ windowKeys _ =
   [ ("C-z l",      nextMatch History (return True))
   , ("C-z b",      windows W.focusUp)
   , ("C-z f",      windows W.focusDown)
-  , ("C-z n",      windowGo D True)
-  , ("C-z p",      windowGo U True)
-  , ("C-z C-f",    windowGo R True)
-  , ("C-z C-b",    windowGo L True)
-  , ("C-z C-n",    windowGo D True)
-  , ("C-z C-p",    windowGo U True)
+  , ("C-z n",      sendMessage $ Go D)
+  , ("C-z p",      sendMessage $ Go U)
+  , ("C-z C-f",    sendMessage $ Go R)
+  , ("C-z C-b",    sendMessage $ Go L)
+  , ("C-z C-n",    sendMessage $ Go D)
+  , ("C-z C-p",    sendMessage $ Go U)
   , ("C-z u",      focusUrgent)
   , ("C-z o",      windowPromptGoto)
   , ("C-z C-o",    windowPrompt Local.promptConfig BringCopy allWindows)
 
   -- Moving Windows:
-  , ("C-z S-f",    windowSwap R False)
-  , ("C-z S-b",    windowSwap L False)
-  , ("C-z S-n",    windowSwap D False)
-  , ("C-z S-p",    windowSwap U False)
+  , ("C-z S-f",    sendMessage $ Swap R)
+  , ("C-z S-b",    sendMessage $ Swap L)
+  , ("C-z S-n",    sendMessage $ Swap D)
+  , ("C-z S-p",    sendMessage $ Swap U)
   , ("C-z S-m",    windows W.focusMaster)
   , ("C-z m",      promote) -- Promote current window to master.
 
@@ -217,7 +217,7 @@ layoutKeys c =
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("C-z d",     onNextNeighbour W.view)
-  , ("C-z M-d",   screenSwap L True)
+--  , ("C-z M-d",   screenSwap L True)
   , ("M-<F11>",   spawn "xbacklight -dec 10")
   , ("M-<F12>",   spawn "xbacklight -inc 10")
   , ("M-S-<F11>", spawn "xbacklight -set 10")
