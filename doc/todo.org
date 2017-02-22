@@ -4,7 +4,8 @@
 #+startup: content
 
 * Windows
-** TODO NamedScratchPad: Add one for my password manager
+** DONE NamedScratchPad: Add one for my password manager
+   CLOSED: [2017-02-22 Wed 13:09]
 ** DONE Fix stupid file dialogs that set their size to being very skinny
    CLOSED: [2014-11-13 Thu 15:26]
 ** DONE Update pointer on keyboard focus change

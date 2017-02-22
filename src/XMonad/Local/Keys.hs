@@ -243,6 +243,7 @@ appKeys _ =
 
     -- Scratch pads.
   , ("M-c", namedScratchpadAction scratchPads "calc")
+  , ("M-p", namedScratchpadAction scratchPads "pass")
   , ("M-t", namedScratchpadAction scratchPads "todoist")
   ]
 

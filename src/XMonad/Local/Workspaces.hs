@@ -89,8 +89,13 @@ names = ["scratch", "tasks", "clocks", "browsers", "mail"]
 scratchPads :: NamedScratchpads
 scratchPads =
   [ NS { name  = "calc"
-       , cmd   = "e -c -s calc -e '(full-calc)' -- -F '((name . \"*Calculator*\"))'"
-       , query = title =? "*Calculator*"
+       , cmd   = "e -c -s calc -e '(full-calc)' -- -F '((name . \"calculator\"))'"
+       , query = appName =? "calculator"
+       , hook  = floatOnRight
+       }
+  , NS { name = "pass"
+       , cmd  = "e -c -s pass -e '(passmm-list-passwords)' -- -F '((name . \"passwords\"))'"
+       , query = appName =? "passwords"
        , hook  = floatOnRight
        }
   , NS { name  = "todoist"
