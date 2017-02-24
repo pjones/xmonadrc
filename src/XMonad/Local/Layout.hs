@@ -30,7 +30,6 @@ import XMonad.Layout.Spacing (spacing)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.ToggleLayouts (toggleLayouts)
 import XMonad.Layout.TwoPane (TwoPane(..))
-import XMonad.Layout.WindowNavigation (configurableNavigation, noNavigateBorders)
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Local.Theme (topBarTheme)
 import XMonad.Prompt
@@ -40,11 +39,7 @@ import XMonad.Util.Types (Direction2D(..))
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook =
-    toggleLayouts fullscreen
-      $ configurableNavigation noNavigateBorders
-      $ addDeco
-      $ addSpace
-      $ allLays
+    toggleLayouts fullscreen (addDeco $ addSpace allLays)
   where
     addDeco  = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText topBarTheme
     addSpace = renamed [CutWordsLeft 2] . spacing 4
