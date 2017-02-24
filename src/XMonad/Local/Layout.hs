@@ -17,13 +17,12 @@ import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Accordion (Accordion(..))
 import XMonad.Layout.BinarySpacePartition (emptyBSP)
 import XMonad.Layout.ComboP (Property(..), combineTwoP)
-import XMonad.Layout.Drawer (drawer, onTop)
 import XMonad.Layout.Gaps (Gaps, gaps)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.NoFrillsDecoration
-import XMonad.Layout.Reflect (reflectHoriz)
+import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.Spacing (spacing)
@@ -53,7 +52,13 @@ layoutHook =
     twoPane   = renamed [Replace "2P"]   (TwoPane (3/100) (1/2))
     bspace    = renamed [Replace "BSP"]  emptyBSP
     tall      = renamed [Replace "Tall"] (ResizableTall 1 (1.5/100) (3/5) [])
-    drawer'   = \p -> onTop $ drawer (1/30) (19/20) p (Mirror Accordion)
+
+    -- A layout where windows you want to focus on are specified using
+    -- @WindowProperties@.  Windows matching the given properties will
+    -- be placed into the main layout.  Other windows are pushed to
+    -- the top of the screen in a small @Accordion@.
+    only = combineTwoP (reflectVert $ Mirror $ TwoPane 0 (9/10))
+                       bspace (Mirror Accordion)
 
     -- Emacs windows on the left, everything else on the right.
     emacsCombo = renamed [Replace "Emacs Split"] $
@@ -65,20 +70,9 @@ layoutHook =
                   combineTwoP twoPane Accordion Accordion
                   (ClassName "Chromium-browser" `And` Not (Role "pop-up"))
 
-    -- Place Emacs windows into a BSP layout, all other windows go off
-    -- the screen and can't be used.
-    emacsDrawer = renamed [Replace "Emacs Only"] $
-                  drawer' (Not $ ClassName "Emacs") bspace
-
-    -- Place Chrome windows into a BSP layout, all other windows go
-    -- off the screen and can't be used.
-    chromeDrawer = renamed [Replace "Chrome Only"] $
-                   drawer' (Not $ ClassName "Chromium-browser") bspace
-
-    -- Place any windows with the "focus" tag into a BSP layout.  All
-    -- other windows go into a drawer (also managed by BSP).
-    focusDrawer = renamed [Replace "Focus"] $
-                  drawer' (Not $ Tagged "focus") bspace
+    emacsOnly  = renamed [Replace "Emacs Only"]  $ only (ClassName "Emacs")
+    chromeOnly = renamed [Replace "Chrome Only"] $ only (ClassName "Chromium-browser")
+    focusTag   = renamed [Replace "Focus"]       $ only (Tagged "focus")
 
     -- When I'm teaching a class I start with a weird layout before
     -- focusing on specific windows using another layout.
@@ -87,9 +81,9 @@ layoutHook =
       bottomHalf = combineTwoP (reflectHoriz twoPane) Full Full (ClassName ".zathura-wrapped")
 
     -- All layouts put together.
-    allLays = bspace       ||| twoCols     ||| threeCols   ||| tall    |||
-              emacsCombo   ||| chromeCombo ||| emacsDrawer ||| twoPane |||
-              chromeDrawer ||| focusDrawer ||| projector
+    allLays = bspace     ||| twoCols     ||| threeCols ||| tall    |||
+              emacsCombo ||| chromeCombo ||| emacsOnly ||| twoPane |||
+              chromeOnly ||| focusTag    ||| projector
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
