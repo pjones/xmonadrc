@@ -34,12 +34,15 @@
 ** DONE Bring in MPD prompt from xmonad-extras
    CLOSED: [2013-04-20 Sat 19:04]
 * Misc
-** TODO Update the README now that I'm installing xmonad
+** TODO Improve xrandr selection and switching
+** DONE Update the README now that I'm installing xmonad
+   CLOSED: [2017-02-27 Mon 13:49]
    - I'm installing cabal-dev/bin/xmonad to ~/bin now
    - Document features of each file like urgency hints
-** TODO Improve xrandr selection and switching
-** TODO Add workspace projects for the classes I teach
-** TODO Add workspace projects for existing workspaces
+** DONE Add workspace projects for the classes I teach
+   CLOSED: [2017-02-27 Mon 14:10]
+** DONE Add workspace projects for existing workspaces
+   CLOSED: [2017-02-27 Mon 14:10]
    - rip
    - docs
    - scratch

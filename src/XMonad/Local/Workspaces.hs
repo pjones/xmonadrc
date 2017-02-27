@@ -34,17 +34,13 @@ projects =
                 spawn "urxvtc"
             }
 
-  , Project { projectName      = "tasks"
-            , projectDirectory = "~/"
-            , projectStartHook = Just $ spawn "urxvtc -e ncmpcpp"
-            }
-
   , Project { projectName      = "clocks"
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 sendMessage (JumpToLayout "BSP")
-                spawn "urxvtc -name BigTerm -e tty-clock -c -C 4 -f '%b. %d, %Y'"
+                spawn "urxvtc -e ncmpcpp"
                 spawn "urxvtc -name BigTerm -e env TZ=America/New_York tty-clock -C 0 -c -f 'South Carolina'"
+                spawn "urxvtc -name BigTerm -e tty-clock -c -C 4 -f '%b. %d, %Y'"
             }
 
   , Project { projectName      = "browsers"
@@ -59,8 +55,18 @@ projects =
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 sendMessage (JumpToLayout "3C")
-                spawn "e -cs irc -- -F '((name . \"[irc]\"))'"
+                spawn "e -cs irc -- -F '((name . \"irc\"))'"
                 spawn "e -cs gnus"
+            }
+
+  , Project { projectName      = "emacs"
+            , projectDirectory = "~/core/emacs"
+            , projectStartHook = Nothing
+            }
+
+  , Project { projectName      = "rip"
+            , projectDirectory = "~/documents/ripping"
+            , projectStartHook = Nothing
             }
 
   , Project { projectName      = "xmonad"
@@ -68,16 +74,39 @@ projects =
             , projectStartHook = Nothing
             }
 
+  , Project { projectName      = "rfa"
+            , projectDirectory = "~/develop/rfa"
+            , projectStartHook = Nothing
+            }
+
+    -- Classes I teach:
   , Project { projectName      = "training"
             , projectDirectory = "~/training/courses"
             , projectStartHook = Nothing
             }
 
-  , Project { projectName      = "rfa"
-            , projectDirectory = "~/develop/rfa"
-            , projectStartHook = Nothing
+  , Project { projectName      = "advjs"
+            , projectDirectory = "~/training/courses/src/javascript/advjs"
+            , projectStartHook = Just workshopHook
+            }
+
+  , Project { projectName      = "corejs"
+            , projectDirectory = "~/training/courses/src/javascript/corejs"
+            , projectStartHook = Just workshopHook
+            }
+
+  , Project { projectName      = "intcss"
+            , projectDirectory = "~/training/courses/src/css/intcss"
+            , projectStartHook = Just workshopHook
             }
   ]
+  where
+    workshopHook = do
+      sendMessage (JumpToLayout "Projector")
+      spawn "e -c"
+      spawn "urxvtc -name BigTerm -e clockdown"
+      spawn "zathura"
+
 
 
 --------------------------------------------------------------------------------

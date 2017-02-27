@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------------
 name:          xmonadrc
-version:       0.2.1.0
+version:       17.02.27.00
 synopsis:      Peter's XMonad Configuration
-homepage:      http://www.pmade.com
+homepage:      https://github.com/pjones/xmonadrc
 license:       BSD3
 license-file:  LICENSE
 author:        Peter Jones <pjones@pmade.com>

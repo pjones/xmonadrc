@@ -31,7 +31,7 @@ import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onNextNeighbour)
 import XMonad.Actions.Promote (promote)
-import XMonad.Actions.TagWindows (addTag, delTag, withTaggedGlobal)
+import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
@@ -169,11 +169,18 @@ windowTagKeys _ =
   , ("C-z C-j",    primaryJumpTagDown)
   , ("C-z j",      primaryJumpTagDown)
   , ("M-j",        secondaryJumpTagDown)
-  , ("M-f f",      withFocused (addTag "focus"))
-  , ("M-f r",      withTaggedGlobal "focus" (delTag "focus"))
+  , ("M-f f",      addFocusTag)
+  , ("M-f S-f",    rmFocusTag >> addFocusTag)
+  , ("M-f r",      rmFocusTag)
   , ("M-f n",      sendMessage (JumpToLayout "Focus"))
   ] ++ numberedTags
   where
+    addFocusTag :: X ()
+    addFocusTag =  withFocused (addTag "focus")
+
+    rmFocusTag :: X ()
+    rmFocusTag = withTagged "focus" (delTag "focus")
+
     numberedTags :: [(String, X ())]
     numberedTags = do
       key              <- map show ([0 .. 9] :: [Int]) ++

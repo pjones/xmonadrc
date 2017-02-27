@@ -4,14 +4,18 @@ This repository contains my [xmonad] [] configuration.  I thought I'd
 share it with the rest of the world because I'm doing a few
 interesting things:
 
-  1. I use [stack][] to build xmonad and compile my configuration into
-     an executable (`xmonadrc`).  This allows me to easily use my
-     custom `xmonad` and `xmonad-contrib` sources (in `vendor`).
+  1. I use either [stack][] or Cabal to build xmonad and compile my
+     configuration into an executable (`xmonadrc`).  This allows me to
+     easily use my custom `xmonad` and `xmonad-contrib` sources (in
+     `vendor`).
 
-     This presents an interesting challenge since xmonad by default
-     tries to compile your `~/.xmonad/xmonad.hs` file when it starts.
-     Therefore I install my generated `xmonadrc` binary where xmonad
-     expects it and use it to restart the running xmonad instance.
+     Thanks to changes in `xmonad` version 0.13, It's really easy for
+     me to use my `xmonadrc` executable in my `~/.xinitrc` instead of
+     starting `xmonad` directly.
+
+     Note: I actually compile everything
+     using [my custom nixpkgs script] [xmonadrc.nix].  This brings in
+     all the dependencies needed to build everything in this repo.
 
   2. The `checkrc` executable that is built with [stack][] and boots a
      mini xmonad environment in order to test my configuration before
@@ -48,26 +52,6 @@ interesting things:
   * `src/XMonad/Local/Workspaces.hs`: The names of my workspaces plus
      project configuration for `XMonad.Actions.DynamicProjects`.
 
-## Using this Configuration
-
-If you are interested in using `stack` to build your xmonad
-configuration then you might also be interested in the following
-outline of the steps I take to build, install, and restart xmonad.
-
-  1. Install [stack][]
-
-  3. Use [stack][] via the makefile to build the xmonad configuration:
-
-        $ make
-
-  4. Install and restart xmonad (assumes xmonad is currently running):
-
-        $ make restart
-
-If you use [Nixpkgs][] or [NixOS][] you may be interested in the
-`build/nixpkgs.nix` file which is used by [stack][] to install
-non-Haskell dependencies.
-
 ## Screenshots
 
 <div>
@@ -81,3 +65,4 @@ non-Haskell dependencies.
 [stack]: http://docs.haskellstack.org/en/stable/README.html
 [nixpkgs]: http://nixos.org/nixpkgs/
 [nixos]: http://nixos.org/
+[xmonadrc.nix]: https://github.com/pjones/nix-utils/blob/master/pkgs/haskell/xmonadrc.nix
