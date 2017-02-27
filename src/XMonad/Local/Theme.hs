@@ -23,9 +23,9 @@ import XMonad.Layout.Decoration
 
 --------------------------------------------------------------------------------
 xmonadColors :: XConfig a -> XConfig a
-xmonadColors x = x { normalBorderColor  = black
-                   , focusedBorderColor = black
-                   , borderWidth        = 0
+xmonadColors x = x { normalBorderColor  = darkgray
+                   , focusedBorderColor = blue
+                   , borderWidth        = 2
                    }
 
 --------------------------------------------------------------------------------
@@ -52,9 +52,9 @@ topBarTheme = def
   , activeBorderColor   = blue
   , activeColor         = blue
   , activeTextColor     = blue
-  , urgentBorderColor   = red
+  , urgentBorderColor   = magenta
   , urgentTextColor     = magenta
-  , decoHeight          = 5
+  , decoHeight          = 4
   }
 
 --------------------------------------------------------------------------------
