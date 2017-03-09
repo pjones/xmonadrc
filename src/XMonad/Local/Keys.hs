@@ -278,7 +278,7 @@ musicKeys _ =
     , ("<XF86AudioRaiseVolume>",   audioRaise)
 
       -- Prompt to change radio stations.
-    , ("M-\\", radioPrompt Local.promptConfig)
+    , ("M-<Esc>", radioPrompt Local.promptConfig)
     ]
   where
     playPause     = spawn "mpc-pause"
