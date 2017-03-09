@@ -21,6 +21,7 @@ import XMonad.Layout.Gaps (Gaps, gaps)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Master (mastered)
+import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
 import XMonad.Layout.Renamed (Rename(..), renamed)
@@ -38,7 +39,9 @@ import XMonad.Util.Types (Direction2D(..))
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook =
-    toggleLayouts fullscreen (addDeco $ addSpace allLays)
+    toggleLayouts
+      (noBorders fullscreen)
+      (addDeco $ addSpace allLays)
   where
     addDeco  = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText topBarTheme
     addSpace = renamed [CutWordsLeft 2] . spacing 4
