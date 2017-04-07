@@ -148,5 +148,5 @@ asKey x        = x                 -- Any other key.
 viewPrevWS :: X ()
 viewPrevWS = do
   ws <- gets windowset
-  let hs = StackSet.hidden ws
+  let hs = filter (\w -> StackSet.tag w /= "NSP") $ StackSet.hidden ws
   unless (null hs) (windows . StackSet.view . StackSet.tag $ head hs)
