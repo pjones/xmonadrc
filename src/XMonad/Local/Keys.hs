@@ -235,12 +235,13 @@ screenKeys _ =
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
-  [ ("M-<Return>", spawn "urxvtc")
-  , ("M-M4-l",     spawn "lockscreen.sh")
-  , ("<Print>",    spawn "screenshot.sh root")
-  , ("M-<Print>",  spawn "screenshot.sh window")
-  , ("C-z C-e",    spawn "e -c") -- Start per-workspace Emacs.
-  , ("C-z C-r",    shellPrompt Local.promptConfig)
+  [ ("M-<Return>",   spawn "urxvtc -e tmux-new-terminal")
+  , ("M-S-<Return>", spawn "urxvtc -name BigTerm -e tmux-new-terminal")
+  , ("M-M4-l",       spawn "lockscreen.sh")
+  , ("<Print>",      spawn "screenshot.sh root")
+  , ("M-<Print>",    spawn "screenshot.sh window")
+  , ("C-z C-e",      spawn "e -c") -- Start per-workspace Emacs.
+  , ("C-z C-r",      shellPrompt Local.promptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
