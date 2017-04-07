@@ -52,6 +52,7 @@ manageHook = composeOne
     , stringProperty "WM_WINDOW_ROLE" =? "pop-up" -?> doCenterFloat
     , stringProperty "WM_WINDOW_ROLE" =? gtkFile  -?> forceCenterFloat
     , className =? "Gcr-prompter"                 -?> doCenterFloat
+    , className =? "Pinentry"                     -?> doCenterFloat
     , isDialog                                    -?> doCenterFloat
     , transience -- Move transient windows to their parent.
 
