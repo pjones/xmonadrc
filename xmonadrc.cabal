@@ -15,10 +15,6 @@ cabal-version: >=1.8
 ------------------------------------------------------------------------------
 library
   exposed-modules:
-    Taffybar.Local.Host
-    Taffybar.Local.MPRIS
-    Taffybar.Local.Pager
-    Taffybar.Local.Widgets
     XMonad.Local.Action
     XMonad.Local.Keys
     XMonad.Local.Layout
@@ -77,9 +73,3 @@ executable checkrc
                , xmonad
                , xmonad-contrib
                , xmonadrc
-
-------------------------------------------------------------------------------
-executable taffybarrc
-  main-is: taffybarrc.hs
-  ghc-options: -Wall -Werror -threaded -rtsopts
-  build-depends: base, taffybar, xmonadrc
