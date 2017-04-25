@@ -16,7 +16,6 @@ import qualified Data.Map as M
 import Data.Version (showVersion)
 import Graphics.X11.Xlib
 import System.Directory
-import System.Exit (exitSuccess)
 
 --------------------------------------------------------------------------------
 -- Package: xmonad.
@@ -29,7 +28,7 @@ import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
-import XMonad.Actions.PhysicalScreens (onNextNeighbour)
+import XMonad.Actions.PhysicalScreens (onNextNeighbour, onPrevNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
@@ -46,7 +45,6 @@ import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, 
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.NamedScratchpad (namedScratchpadAction)
-import XMonad.Util.Paste (sendKey)
 
 --------------------------------------------------------------------------------
 -- Local modules.
@@ -106,14 +104,10 @@ withUpdatePointer = map addAction
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
-  [ ("C-z z",   sendKey controlMask xK_z) -- Send C-z to application.
-  , ("M-z",     sendKey controlMask xK_z) -- Send C-z to application.
-  , ("C-z C-g", return ()) -- No-op to cancel the prefix key.
-  , ("C-z g",   return ()) -- Same as above.
-  , ("C-z q",   restart "xmonadrc" True)
-  , ("M-q",     restartIntoDebugging)
-  , ("C-z S-q", io exitSuccess)
-  , ("C-z x",   xmonadPrompt Local.promptConfig)
+  [ ("M-g",           return ()) -- Same as above.
+  , ("M-x M-r",       restart "xmonadrc" True)
+  , ("M-x M-d",       restartIntoDebugging)
+  , ("M-x M-<Space>", xmonadPrompt Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
@@ -121,58 +115,54 @@ baseKeys _ =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   -- Focusing Windows:
-  [ ("C-z l",      nextMatch History (return True))
-  , ("C-z b",      windows W.focusUp)
-  , ("C-z f",      windows W.focusDown)
-  , ("C-z n",      windowGo D True)
-  , ("C-z p",      windowGo U True)
-  , ("C-z C-f",    windowGo R True)
-  , ("C-z C-b",    windowGo L True)
-  , ("C-z C-n",    windowGo D True)
-  , ("C-z C-p",    windowGo U True)
-  , ("C-z u",      focusUrgent)
-  , ("C-z o",      windowPromptGoto)
-  , ("C-z C-o",    windowPrompt Local.promptConfig BringCopy allWindows)
+  [ ("M-w M-l",   nextMatch History (return True))
+  , ("M-w M-b",   windows W.focusUp)
+  , ("M-w M-f",   windows W.focusDown)
+  , ("M-w M-u",   focusUrgent)
+  , ("M-w M-o",   windowPromptGoto)
+  , ("M-w M-c",   windowPrompt Local.promptConfig BringCopy allWindows)
+  , ("M-n",       windowGo D True)
+  , ("M-p",       windowGo U True)
+  , ("M-f",       windowGo R True)
+  , ("M-b",       windowGo L True)
+  , ("M-m",       windows W.focusMaster)
 
   -- Moving Windows:
-  , ("C-z S-f",    windowSwap R False)
-  , ("C-z S-b",    windowSwap L False)
-  , ("C-z S-n",    windowSwap D False)
-  , ("C-z S-p",    windowSwap U False)
-  , ("C-z S-m",    windows W.focusMaster)
-  , ("C-z m",      promote) -- Promote current window to master.
+  , ("M-M1-f",    windowSwap R False)
+  , ("M-M1-b",    windowSwap L False)
+  , ("M-M1-n",    windowSwap D False)
+  , ("M-M1-p",    windowSwap U False)
+  , ("M-M1-m",    promote) -- Promote current window to master.
 
   -- Resizing Windows:
-  , ("M--",        sendResize GPExpandL)
-  , ("M-=",        sendResize GPShrinkL)
-  , ("M-S--",      sendResize GPExpandU)
-  , ("M-S-=",      sendResize GPShrinkU)
-  , ("M-M4--",     sendResize GPShrinkR)
-  , ("M-M4-=",     sendResize GPExpandR)
-  , ("M-M4-S--",   sendResize GPExpandD)
-  , ("M-M4-S-=",   sendResize GPShrinkD)
-  , ("C-z -",      sendMessage $ IncMasterN (-1))
-  , ("C-z =",      sendMessage $ IncMasterN 1)
+  , ("M--",       sendResize GPExpandL)
+  , ("M-=",       sendResize GPShrinkL)
+  , ("M-S--",     sendResize GPExpandU)
+  , ("M-S-=",     sendResize GPShrinkU)
+  , ("M-M4--",    sendResize GPShrinkR)
+  , ("M-M4-=",    sendResize GPExpandR)
+  , ("M-M4-S--",  sendResize GPExpandD)
+  , ("M-M4-S-=",  sendResize GPShrinkD)
+  , ("M-w -",     sendMessage $ IncMasterN (-1))
+  , ("M-w =",     sendMessage $ IncMasterN 1)
 
   -- Window Layers and Killing and Yanking:
-  , ("M-s",           withFocused $ windows . W.sink) -- Tile window.
-  , ("M-<Backspace>", kill1) -- Kill the current window.
-  , ("C-z C-k",       killWindowToBury)
-  , ("C-z C-y",       yankWindowFromBury)
+  , ("M-w M-t",   withFocused $ windows . W.sink) -- Tile window.
+  , ("M-w M-k",   kill1) -- Kill the current window.
+  , ("M-k",       killWindowToBury)
+  , ("M-y",       yankWindowFromBury)
   ]
 
 --------------------------------------------------------------------------------
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("M4-<Space>", tagPrompt Local.promptConfig)
-  , ("C-z C-j",    primaryJumpTagDown)
-  , ("C-z j",      primaryJumpTagDown)
-  , ("M-j",        secondaryJumpTagDown)
-  , ("M-f f",      addFocusTag)
-  , ("M-f S-f",    rmFocusTag >> addFocusTag)
-  , ("M-f r",      rmFocusTag)
-  , ("M-f n",      sendMessage (JumpToLayout "Focus"))
+  [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
+  , ("M-j",           primaryJumpTagDown)
+  , ("M-h",           secondaryJumpTagDown)
+  , ("M-t M-a",       addFocusTag)
+  , ("M-t M-t",       rmFocusTag >> addFocusTag)
+  , ("M-t M-r",       rmFocusTag)
   ] ++ numberedTags
   where
     addFocusTag :: X ()
@@ -190,15 +180,15 @@ windowTagKeys _ =
 
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
-      [ ("C-z ",   focusTag')
-      , ("C-z M-", toggleTagOnCurrentWindow)
+      [ ("M-",   focusTag')
+      , ("M-t ", toggleTagOnCurrentWindow)
       ]
 
 --------------------------------------------------------------------------------
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("C-z C-z",   viewPrevWS)
+  [ ("M-l",       viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   ]
 
@@ -206,63 +196,64 @@ workspaceKeys _ =
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
-  [ ("C-z <Space>", sendMessage (Toggle "Full"))
-  , ("M-l <Space>", selectLayoutByName Local.promptConfig)
-  , ("M-l l",       setLayout (layoutHook c)) -- Reset to default layout.
-  , ("M-l b",       sendMessage (JumpToLayout "BSP"))
-  , ("M-l 2",       sendMessage (JumpToLayout "2C"))
-  , ("M-l 3",       sendMessage (JumpToLayout "3C"))
-  , ("M-l t",       sendMessage (JumpToLayout "Tall"))
-  , ("M-l f",       sendMessage (JumpToLayout "Focus"))
-  , ("C-z s",       sendMessage ToggleStruts)
-  , ("M-g",         sendMessage ToggleGaps)
-  , ("C-z r",       sendMessage Rotate)
+  [ ("M4-<Space>",    sendMessage (Toggle "Full"))
+  , ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
+  , ("M-l M-l",       setLayout (layoutHook c)) -- Reset to default layout.
+  , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
+  , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
+  , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
+  , ("M-l M-t",       sendMessage (JumpToLayout "Tall"))
+  , ("M-l M-f",       sendMessage (JumpToLayout "Focus"))
+  , ("M-w M-s",       sendMessage ToggleStruts)
+  , ("M-w M-g",       sendMessage ToggleGaps)
+  , ("M-w M-r",       sendMessage Rotate)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("C-z d",     onNextNeighbour W.view)
-  , ("C-z M-d",   screenSwap L True)
-  , ("M-<F11>",   spawn "xbacklight -dec 10")
-  , ("M-<F12>",   spawn "xbacklight -inc 10")
-  , ("M-S-<F11>", spawn "xbacklight -set 10")
-  , ("M-S-<F12>", spawn "xbacklight -set 80")
+  [ ("M-s M-f",    onNextNeighbour W.view)
+  , ("M-s M-b",    onPrevNeighbour W.view)
+  , ("M-s M-s",    screenSwap L True)
+  , ("M4-<F11>",   spawn "xbacklight -dec 10")
+  , ("M4-<F12>",   spawn "xbacklight -inc 10")
+  , ("M4-S-<F11>", spawn "xbacklight -set 10")
+  , ("M4-S-<F12>", spawn "xbacklight -set 80")
   ]
 
 --------------------------------------------------------------------------------
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
-  [ ("M-<Return>",   spawn "urxvtc -e tmux-new-terminal")
-  , ("M-S-<Return>", spawn "urxvtc -name BigTerm -e tmux-new-terminal")
-  , ("M-M4-l",       spawn "lockscreen.sh")
-  , ("<Print>",      spawn "screenshot.sh root")
-  , ("M-<Print>",    spawn "screenshot.sh window")
-  , ("C-z C-e",      spawn "e -c") -- Start per-workspace Emacs.
-  , ("C-z C-r",      shellPrompt Local.promptConfig)
+  [ ("M-<Return>",     spawn "urxvtc -e tmux-new-terminal")
+  , ("M4-<Return>",    spawn "urxvtc -name BigTerm -e tmux-new-terminal")
+  , ("M-M4-l",         spawn "lockscreen.sh")
+  , ("M-<Print> M-r",  spawn "screenshot.sh root")
+  , ("M-<Print> M-w",  spawn "screenshot.sh window")
+  , ("M-e M-e",        spawn "e -c") -- Start per-workspace Emacs.
+  , ("M-e M-r",        shellPrompt Local.promptConfig)
 
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
-  , ("M-<F6>",               spawn "tptoggle.sh")
-  , ("M-<F10>",              spawn "xrandr-projector")
+  , ("M4-<F6>",              spawn "tptoggle.sh")
+  , ("M4-<F10>",             spawn "xrandr-projector")
 
     -- Scratch pads.
-  , ("M-c", namedScratchpadAction scratchPads "calc")
-  , ("M-p", namedScratchpadAction scratchPads "pass")
-  , ("M-t", namedScratchpadAction scratchPads "todoist")
+  , ("M-; M-c", namedScratchpadAction scratchPads "calc")
+  , ("M-; M-p", namedScratchpadAction scratchPads "pass")
+  , ("M-; M-t", namedScratchpadAction scratchPads "todoist")
   ]
 
 --------------------------------------------------------------------------------
 -- Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-    [ ("M-<F1>",   playPause)
-    , ("M-<F2>",   prevTrack)
-    , ("M-<F3>",   nextTrack)
-    , ("M-S-<F4>", clearPlaylist)
+    [ ("M4-1",     playPause)
+    , ("M4-2",     prevTrack)
+    , ("M4-3",     nextTrack)
+    , ("M4-5",     clearPlaylist)
     , ("M4-<F1>",  audioMute)
     , ("M4-<F2>",  audioLower)
     , ("M4-<F3>",  audioRaise)
@@ -279,7 +270,7 @@ musicKeys _ =
     , ("<XF86AudioRaiseVolume>",   audioRaise)
 
       -- Prompt to change radio stations.
-    , ("M-<Esc>", radioPrompt Local.promptConfig)
+    , ("M4-<Esc>", radioPrompt Local.promptConfig)
     ]
   where
     playPause     = spawn "mpc-pause"
