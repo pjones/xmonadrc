@@ -30,7 +30,7 @@ main = do
   dpy    <- openDisplay ""
   rootw  <- rootWindow dpy $ defaultScreen dpy
 
-  let xmc = def {layoutHook = Layout $ layoutHook def}
+  let xmc = def {layoutHook = Layout $ layoutHook def, modMask = mod3Mask}
       initialWinset = new (layoutHook xmc) (workspaces xmc) []
 
   let cf = XConf { display       = dpy
