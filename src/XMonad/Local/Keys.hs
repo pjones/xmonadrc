@@ -159,12 +159,11 @@ windowKeys _ =
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
-  , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
-  , ("M-t M-a",       addFocusTag)
-  , ("M-t M-t",       rmFocusTag >> addFocusTag)
-  , ("M-t M-r",       rmFocusTag)
-  , ("M-j",           primaryJumpTagDown)
   , ("M-h",           secondaryJumpTagDown)
+  , ("M-j",           primaryJumpTagDown)
+  , ("M-t M-a",       addFocusTag)
+  , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
+  , ("M-t M-r",       rmFocusTag >> addFocusTag)
   ] ++ numberedTags
   where
     addFocusTag :: X ()
@@ -190,7 +189,7 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-l",       viewPrevWS)
+  [ ("M-w M-w",   viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   ]
 
@@ -200,15 +199,16 @@ layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
   [ ("M4-<Space>",    sendMessage (Toggle "Full"))
   , ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
-  , ("M-l M-l",       setLayout (layoutHook c)) -- Reset to default layout.
-  , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
+  , ("M-l M-<Esc>",   setLayout (layoutHook c)) -- Reset to default layout.
   , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
   , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
-  , ("M-l M-t",       sendMessage (JumpToLayout "Tall"))
+  , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
   , ("M-l M-f",       sendMessage (JumpToLayout "Focus"))
-  , ("M-w M-s",       sendMessage ToggleStruts)
+  , ("M-l M-l",       sendMessage (Toggle "Full"))
+  , ("M-l M-t",       sendMessage (JumpToLayout "Tall"))
   , ("M-w M-g",       sendMessage ToggleGaps)
   , ("M-w M-r",       sendMessage Rotate)
+  , ("M-w M-s",       sendMessage ToggleStruts)
   ]
 
 --------------------------------------------------------------------------------
