@@ -159,11 +159,12 @@ windowKeys _ =
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
-  , ("M-j",           primaryJumpTagDown)
-  , ("M-h",           secondaryJumpTagDown)
+  , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
   , ("M-t M-a",       addFocusTag)
   , ("M-t M-t",       rmFocusTag >> addFocusTag)
   , ("M-t M-r",       rmFocusTag)
+  , ("M-j",           primaryJumpTagDown)
+  , ("M-h",           secondaryJumpTagDown)
   ] ++ numberedTags
   where
     addFocusTag :: X ()

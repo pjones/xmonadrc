@@ -24,7 +24,9 @@ the LICENSE file. -}
 -- when adding a tag to a window or jumping to a tag from a tag
 -- selection prompt.
 module XMonad.Local.Tagging
-  ( tagPrompt
+  ( TagPromptMode (..)
+  , tagPrompt
+  , tagPrompt'
   , toggleTagOnCurrentWindow
   , setPrimaryJumpTag
   , primaryJumpTagDown
@@ -114,19 +116,23 @@ buryTag = "bury"
 
 --------------------------------------------------------------------------------
 tagPrompt :: XPConfig -> X ()
-tagPrompt c = do
+tagPrompt c = tagPrompt' c modes
+  where modes = [ FocusTag
+                , ToggleTag
+                , DeleteTagInWorkspace
+                , DeleteTagGlobaly
+                , BringTaggedWindows
+                , DeleteTaggedWindows
+                , SetJumpTag
+                ]
+
+--------------------------------------------------------------------------------
+tagPrompt' :: XPConfig -> [TagPromptMode] -> X ()
+tagPrompt' c ms = do
     tags <- tagComplList
 
     let predicate = searchPredicate c
-        modes = map (\m -> XPT $ TagPrompt m tags predicate)
-          [ FocusTag
-          , ToggleTag
-          , DeleteTagInWorkspace
-          , DeleteTagGlobaly
-          , BringTaggedWindows
-          , DeleteTaggedWindows
-          , SetJumpTag
-          ]
+        modes = map (\m -> XPT $ TagPrompt m tags predicate) ms
 
     mkXPromptWithModes modes c
   where
