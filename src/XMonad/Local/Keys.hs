@@ -35,6 +35,7 @@ import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import XMonad.Layout.BinarySpacePartition hiding (Swap)
+import XMonad.Layout.ComboP (PartitionWins(..))
 import XMonad.Layout.Gaps (GapMessage(..))
 import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import XMonad.Layout.ResizableTile
@@ -162,15 +163,21 @@ windowTagKeys _ =
   , ("M-h",           secondaryJumpTagDown)
   , ("M-j",           primaryJumpTagDown)
   , ("M-t M-a",       addFocusTag)
+  , ("M-t M-d",       rmFocusTag)
   , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
-  , ("M-t M-r",       rmFocusTag >> addFocusTag)
+  , ("M-t M-r",       rmFocusTagAll >> addFocusTag)
   ] ++ numberedTags
   where
     addFocusTag :: X ()
-    addFocusTag =  withFocused (addTag "focus")
+    addFocusTag = do withFocused (addTag "focus")
+                     sendMessage PartitionWins
 
     rmFocusTag :: X ()
-    rmFocusTag = withTagged "focus" (delTag "focus")
+    rmFocusTag = do withFocused (delTag "focus")
+                    sendMessage PartitionWins
+
+    rmFocusTagAll :: X ()
+    rmFocusTagAll = withTagged "focus" (delTag "focus")
 
     numberedTags :: [(String, X ())]
     numberedTags = do
@@ -203,7 +210,7 @@ layoutKeys c =
   , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
   , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
   , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
-  , ("M-l M-f",       sendMessage (JumpToLayout "Focus"))
+  , ("M-l M-f",       sendMessage (JumpToLayout "Focus") >> sendMessage PartitionWins)
   , ("M-l M-l",       sendMessage (Toggle "Full"))
   , ("M-l M-t",       sendMessage (JumpToLayout "Tall"))
   , ("M-w M-g",       sendMessage ToggleGaps)

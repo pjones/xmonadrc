@@ -63,19 +63,7 @@ layoutHook =
     only = combineTwoP (reflectVert $ Mirror $ TwoPane 0 (9/10))
                        bspace (Mirror Accordion)
 
-    -- Emacs windows on the left, everything else on the right.
-    emacsCombo = renamed [Replace "Emacs Split"] $
-                 combineTwoP twoPane Accordion Accordion (ClassName "Emacs")
-
-    -- Chrome windows on the left, everything else on the right.
-    -- Note: Chrome pop-up windows are forced to the right.
-    chromeCombo = renamed [Replace "Chrome Split"] $
-                  combineTwoP twoPane Accordion Accordion
-                  (ClassName "Chromium-browser" `And` Not (Role "pop-up"))
-
-    emacsOnly  = renamed [Replace "Emacs Only"]  $ only (ClassName "Emacs")
-    chromeOnly = renamed [Replace "Chrome Only"] $ only (ClassName "Chromium-browser")
-    focusTag   = renamed [Replace "Focus"]       $ only (Tagged "focus")
+    focusTag = renamed [Replace "Focus"] $ only (Tagged "focus")
 
     -- When I'm teaching a class I start with a weird layout before
     -- focusing on specific windows using another layout.
@@ -84,9 +72,13 @@ layoutHook =
       bottomHalf = combineTwoP (reflectHoriz twoPane) Full Full (ClassName ".zathura-wrapped")
 
     -- All layouts put together.
-    allLays = bspace     ||| twoCols     ||| threeCols ||| tall    |||
-              emacsCombo ||| chromeCombo ||| emacsOnly ||| twoPane |||
-              chromeOnly ||| focusTag    ||| projector
+    allLays = bspace     |||
+              focusTag   |||
+              projector  |||
+              tall       |||
+              threeCols  |||
+              twoCols    |||
+              twoPane
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -113,10 +105,6 @@ selectLayoutByName conf =
                   , ("Two Columns (2C)",             "2C")
                   , ("Two Pane (2P)",                "2P")
                   , ("Three Columns (3C)",           "3C")
-                  , ("Emacs Split (E2C)",            "Emacs Split")
-                  , ("Emacs Only (EDR)",             "Emacs Only")
-                  , ("Chrome Split (C2C)",           "Chrome Split")
-                  , ("Chrome Only (CMDR)",           "Chrome Only")
                   , ("Projector",                    "Projector")
                   , ("Focus",                        "Focus")
                   ]
