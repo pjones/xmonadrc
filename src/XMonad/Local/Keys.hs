@@ -121,6 +121,7 @@ windowKeys _ =
   , ("M-w M-u",   focusUrgent)
   , ("M-w M-o",   windowPromptGoto)
   , ("M-w M-c",   windowPrompt Local.promptConfig BringCopy allWindows)
+  , ("M-o",       windowPromptGoto')
   , ("M-n",       windowGo D True)
   , ("M-p",       windowGo U True)
   , ("M-f",       windowGo R True)
@@ -338,3 +339,8 @@ restartIntoDebugging = do
 windowPromptGoto :: X ()
 windowPromptGoto = windowMultiPrompt Local.promptConfig modes
   where modes = [(Goto, allWindows), (Goto, wsWindows)]
+
+--------------------------------------------------------------------------------
+windowPromptGoto' :: X ()
+windowPromptGoto' = windowMultiPrompt Local.promptConfig modes
+  where modes = [(Goto, wsWindows), (Goto, allWindows)]
