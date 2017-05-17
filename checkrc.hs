@@ -11,9 +11,12 @@ the LICENSE file. -}
 module Main where
 
 --------------------------------------------------------------------------------
-import Control.Monad (void)
+import Control.Monad (void, unless)
 import qualified Data.Map as M
 import qualified Data.Set as S
+import Graphics.X11
+import Graphics.X11.Xinerama
+import Graphics.X11.Xrandr
 import XMonad
 import XMonad.Prompt
 import XMonad.StackSet (new)
@@ -64,3 +67,8 @@ main = do
       Core _ -> io (putStrLn "Font: core")
       Utf8 _ -> io (putStrLn "Font: utf8")
       Xft  _ -> io (putStrLn "Font: xft")
+
+    -- Test for XRandR support.
+    unless compiledWithXrandr (error "no XRandR support!")
+    io $ putStrLn ("Screens: " ++ show (screenCount dpy))
+    io (getScreenInfo dpy >>= putStrLn . show)
