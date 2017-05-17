@@ -202,13 +202,13 @@ focusTag = go where
   go tag = do
     (primary, _) <- jumpTags
     XS.put (JumpTags primary tag)
-    focusDownTaggedGlobal tag
+    focusUpTaggedGlobal tag
 
 --------------------------------------------------------------------------------
 -- | Focus a window with the given tag without updating the secondary
 -- jump tag.
 focusTag' :: String -> X ()
-focusTag' = focusDownTaggedGlobal
+focusTag' = focusUpTaggedGlobal
 
 --------------------------------------------------------------------------------
 -- | "Copy" windows with the given tag to the current workspace.

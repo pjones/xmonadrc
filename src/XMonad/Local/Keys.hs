@@ -127,24 +127,20 @@ windowKeys _ =
   , ("M-p",       windowGo U True)
   , ("M-f",       windowGo R True)
   , ("M-b",       windowGo L True)
-  , ("M-m",       windows W.focusMaster)
+  , ("M-w M-m",   windows W.focusMaster)
 
   -- Moving Windows:
-  , ("M-M1-f",    windowSwap R False)
-  , ("M-M1-b",    windowSwap L False)
-  , ("M-M1-n",    windowSwap D False)
-  , ("M-M1-p",    windowSwap U False)
-  , ("M-M1-m",    promote) -- Promote current window to master.
+  , ("M-m M-f",  windowSwap R False)
+  , ("M-m M-b",  windowSwap L False)
+  , ("M-m M-n",  windowSwap D False)
+  , ("M-m M-p",  windowSwap U False)
+  , ("M-m M-m",  promote) -- Promote current window to master.
 
   -- Resizing Windows:
-  , ("M--",       sendResize GPExpandL)
-  , ("M-=",       sendResize GPShrinkL)
-  , ("M-S--",     sendResize GPExpandU)
-  , ("M-S-=",     sendResize GPShrinkU)
-  , ("M-M4--",    sendResize GPShrinkR)
-  , ("M-M4-=",    sendResize GPExpandR)
-  , ("M-M4-S--",  sendResize GPExpandD)
-  , ("M-M4-S-=",  sendResize GPShrinkD)
+  , ("M-<Left>",  sendResize GPExpandL)
+  , ("M-<Right>", sendResize GPShrinkL)
+  , ("M-<Up>",    sendResize GPExpandU)
+  , ("M-<Down>",  sendResize GPShrinkU)
   , ("M-w -",     sendMessage $ IncMasterN (-1))
   , ("M-w =",     sendMessage $ IncMasterN 1)
 
@@ -160,8 +156,8 @@ windowKeys _ =
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
-  , ("M-h",           secondaryJumpTagDown)
-  , ("M-j",           primaryJumpTagDown)
+  , ("M-h",           secondaryJumpTagUp)
+  , ("M-j",           primaryJumpTagUp)
   , ("M-t M-a",       addFocusTag)
   , ("M-t M-d",       rmFocusTag)
   , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
@@ -204,8 +200,7 @@ workspaceKeys _ =
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
-  [ ("M4-<Space>",    sendMessage (Toggle "Full"))
-  , ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
+  [ ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
   , ("M-l M-<Esc>",   setLayout (layoutHook c)) -- Reset to default layout.
   , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
   , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
@@ -253,19 +248,21 @@ appKeys _ =
   , ("M-; M-c", namedScratchpadAction scratchPads "calc")
   , ("M-; M-p", namedScratchpadAction scratchPads "pass")
   , ("M-; M-t", namedScratchpadAction scratchPads "todoist")
+  -- FIXME: , ("M-; M-;", closeAllNamedScratchpads scratchPads)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-    [ ("M4-1",     playPause)
-    , ("M4-2",     prevTrack)
-    , ("M4-3",     nextTrack)
-    , ("M4-5",     clearPlaylist)
-    , ("M4-<F1>",  audioMute)
-    , ("M4-<F2>",  audioLower)
-    , ("M4-<F3>",  audioRaise)
+    [ ("M-S-1",  playPause)
+    , ("M-S-2",  prevTrack)
+    , ("M-S-3",  nextTrack)
+    , ("M-S-4",  radioPrompt Local.promptConfig)
+    , ("M-S-5",  clearPlaylist)
+    , ("M-S-6",  audioMute)
+    , ("M-S-7",  audioLower)
+    , ("M-S-8",  audioRaise)
 
       -- Keys for my laptop and keyboards with media keys.
     , ("M-<XF86AudioMute>",        playPause)
@@ -277,9 +274,6 @@ musicKeys _ =
     , ("<XF86AudioMute>",          audioMute)
     , ("<XF86AudioLowerVolume>",   audioLower)
     , ("<XF86AudioRaiseVolume>",   audioRaise)
-
-      -- Prompt to change radio stations.
-    , ("M4-<Esc>", radioPrompt Local.promptConfig)
     ]
   where
     playPause     = spawn "mpc-pause"
@@ -297,8 +291,6 @@ sendResize movement = do
   let lname = description . W.layout . W.workspace . W.current $ winset
       ltype = case lname of
               "BSP"         -> BSP
-              "Emacs Only"  -> BSP
-              "Chrome Only" -> BSP
               "Focus"       -> BSP
               _             -> Other
 
