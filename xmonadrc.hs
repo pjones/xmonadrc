@@ -49,7 +49,7 @@ config = desktopConfig
                          Local.logHook
 
   , workspaces         = Workspaces.names
-  , modMask            = mod3Mask
+  , modMask            = mod4Mask
   , keys               = Local.keys
   , focusFollowsMouse  = False
   }

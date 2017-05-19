@@ -156,6 +156,7 @@ windowKeys _ =
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
+  , ("M-S-t",         tagPrompt Local.promptConfig)
   , ("M-h",           secondaryJumpTagUp)
   , ("M-j",           primaryJumpTagUp)
   , ("M-t M-a",       addFocusTag)
@@ -193,6 +194,7 @@ windowTagKeys _ =
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
   [ ("M-w M-w",   viewPrevWS)
+  , ("M-S-w",     viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   ]
 
@@ -220,10 +222,10 @@ screenKeys _ =
   [ ("M-s M-f",    onNextNeighbour W.view)
   , ("M-s M-b",    onPrevNeighbour W.view)
   , ("M-s M-s",    screenSwap L True)
-  , ("M4-<F11>",   spawn "xbacklight -dec 10")
-  , ("M4-<F12>",   spawn "xbacklight -inc 10")
-  , ("M4-S-<F11>", spawn "xbacklight -set 10")
-  , ("M4-S-<F12>", spawn "xbacklight -set 80")
+  , ("M1-<F11>",   spawn "xbacklight -dec 10")
+  , ("M1-<F12>",   spawn "xbacklight -inc 10")
+  , ("M1-S-<F11>", spawn "xbacklight -set 10")
+  , ("M1-S-<F12>", spawn "xbacklight -set 80")
   ]
 
 --------------------------------------------------------------------------------
@@ -231,8 +233,8 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys _ =
   [ ("M-<Return>",     spawn "urxvtc -e tmux-new-terminal")
-  , ("M4-<Return>",    spawn "urxvtc -name BigTerm -e tmux-new-terminal")
-  , ("M-M4-l",         spawn "lockscreen.sh")
+  , ("M-M1-<Return>",  spawn "urxvtc -name BigTerm -e tmux-new-terminal")
+  , ("M-M1-l",         spawn "lockscreen.sh")
   , ("M-<Print> M-r",  spawn "screenshot.sh root")
   , ("M-<Print> M-w",  spawn "screenshot.sh window")
   , ("M-e M-e",        spawn "e -c") -- Start per-workspace Emacs.
@@ -241,8 +243,8 @@ appKeys _ =
     -- Laptops and keyboards with media/meta keys.
   , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
   , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
-  , ("M4-<F6>",              spawn "tptoggle.sh")
-  , ("M4-<F10>",             spawn "xrandr-projector")
+  , ("M1-<F6>",              spawn "tptoggle.sh")
+  , ("M1-<F10>",             spawn "xrandr-projector")
 
     -- Scratch pads.
   , ("M-; M-c", namedScratchpadAction scratchPads "calc")
