@@ -203,7 +203,7 @@ workspaceKeys _ =
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
   [ ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
-  , ("M-l M-<Esc>",   setLayout (layoutHook c)) -- Reset to default layout.
+  , ("M-l <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
   , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
   , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
   , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
