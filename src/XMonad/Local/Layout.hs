@@ -69,7 +69,7 @@ layoutHook =
     -- focusing on specific windows using another layout.
     projector = renamed [Replace "Projector"] topHalf where
       topHalf    = combineTwoP (Mirror twoPane) bspace bottomHalf (ClassName "Emacs")
-      bottomHalf = combineTwoP (reflectHoriz twoPane) Full Full (ClassName ".zathura-wrapped")
+      bottomHalf = combineTwoP (reflectHoriz twoPane) Full Full (ClassName ".zathura-wrapped_")
 
     -- All layouts put together.
     allLays = bspace     |||
