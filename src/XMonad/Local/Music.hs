@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 --------------------------------------------------------------------------------
@@ -15,10 +16,9 @@ module XMonad.Local.Music (radioPrompt) where
 --------------------------------------------------------------------------------
 import Control.Exception
 import Control.Monad (when, void)
-import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Except (MonadError(..), runExceptT, liftEither)
+import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.Random (evalRandIO, uniform)
-import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Either
 import qualified Data.ByteString as ByteString
 import Data.List (find)
 import Data.Maybe (mapMaybe)
@@ -78,20 +78,23 @@ radioPrompt c = do
 
 --------------------------------------------------------------------------------
 playStream :: Playlist -> String -> X ()
-playStream playlist title = void $ runEitherT $ do
-    url <- findTrack (Text.pack title)
-    manager <- liftIO (newManager defaultManagerSettings)
-    streams <- hoistEither =<< download (env manager) url
-    track   <- pickTrack streams
-    lift (playURL $ trackURL track)
+playStream playlist title = do
+    track <- runExceptT $ do
+      url <- findTrack (Text.pack title)
+      manager <- liftIO (newManager defaultManagerSettings)
+      streams <- liftEither =<< download (env manager) url
+      pickTrack streams
+    case track of
+      Left _  -> return ()
+      Right t -> playURL (trackURL t)
   where
-    findTrack :: Text -> EitherT Error X Text
+    findTrack :: (MonadError Error m) => Text -> m Text
     findTrack name =
       case find (\t -> trackTitle t == Just name) playlist of
-        Nothing    -> left (InvalidURL name)
+        Nothing    -> throwError (InvalidURL name)
         Just track -> return (trackURL track)
 
-    pickTrack :: Playlist -> EitherT Error X Track
+    pickTrack :: (MonadIO m) => Playlist -> m Track
     pickTrack = liftIO . evalRandIO . uniform
 
     env :: Manager -> Environment

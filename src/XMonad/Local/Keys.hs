@@ -219,8 +219,8 @@ layoutKeys c =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-s M-f",    onNextNeighbour W.view)
-  , ("M-s M-b",    onPrevNeighbour W.view)
+  [ ("M-s M-f",    onNextNeighbour def W.view)
+  , ("M-s M-b",    onPrevNeighbour def W.view)
   , ("M-s M-s",    screenSwap L True)
   , ("M1-<F11>",   spawn "xbacklight -dec 10")
   , ("M1-<F12>",   spawn "xbacklight -inc 10")

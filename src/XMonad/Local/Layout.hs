@@ -22,16 +22,13 @@ import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.NoBorders (noBorders)
-import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
-import XMonad.Layout.Spacing (spacing)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.ToggleLayouts (toggleLayouts)
 import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Local.Prompt (aListCompFunc)
-import XMonad.Local.Theme (topBarTheme)
 import XMonad.Prompt
 import XMonad.Util.Types (Direction2D(..))
 
@@ -41,10 +38,9 @@ import XMonad.Util.Types (Direction2D(..))
 layoutHook =
     toggleLayouts
       (noBorders fullscreen)
-      (addDeco $ addSpace allLays)
+      allLays
   where
-    addDeco  = renamed [CutWordsLeft 1] . noFrillsDeco shrinkText topBarTheme
-    addSpace = renamed [CutWordsLeft 2] . spacing 4
+    -- addSpace = renamed [CutWordsLeft 2] . spacingRaw 4
 
     fullscreen :: ModifiedLayout Rename (ModifiedLayout Gaps Full) Window
     fullscreen = renamed [Replace "Full"] (gaps (uniformGaps 60) Full)
