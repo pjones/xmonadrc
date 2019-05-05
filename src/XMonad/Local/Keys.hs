@@ -13,9 +13,9 @@ module XMonad.Local.Keys (keys, rawKeys) where
 --------------------------------------------------------------------------------
 -- General Haskell Packages.
 import qualified Data.Map as M
-import Data.Version (showVersion)
 import Graphics.X11.Xlib
 import System.Directory
+import System.FilePath ((</>))
 
 --------------------------------------------------------------------------------
 -- Package: xmonad.
@@ -25,6 +25,7 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
+import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
@@ -34,42 +35,23 @@ import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
-import XMonad.Layout.BinarySpacePartition hiding (Swap)
 import XMonad.Layout.ComboP (PartitionWins(..))
 import XMonad.Layout.Gaps (GapMessage(..))
-import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.Spacing (incWindowSpacing, decWindowSpacing, toggleWindowSpacingEnabled)
 import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
-import XMonad.Prompt.ConfirmPrompt (confirmPrompt)
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
-import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
 --------------------------------------------------------------------------------
 -- Local modules.
-import Paths_xmonadrc (version)
 import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
-import XMonad.Local.Prompt (promptConfig)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
-import XMonad.Local.Workspaces (asKey, viewPrevWS, scratchPads)
-
---------------------------------------------------------------------------------
--- General purpose resize commands.
-data GPResize = GPExpandL
-              | GPExpandR
-              | GPExpandU
-              | GPExpandD
-              | GPShrinkL
-              | GPShrinkR
-              | GPShrinkU
-              | GPShrinkD
-
-data LayoutType = BSP    -- ^ Binary Space Partition
-                | Other  -- ^ Other (generic) layout
+import XMonad.Local.Workspaces (asKey, viewPrevWS)
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -105,10 +87,10 @@ withUpdatePointer = map addAction
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
-  [ ("M-g",           return ()) -- Same as above.
-  , ("M-x M-r",       restart "xmonadrc" True)
-  , ("M-x M-d",       restartIntoDebugging)
-  , ("M-x M-<Space>", xmonadPrompt Local.promptConfig)
+  [ ("M-g",         return ()) -- Same as above.
+  , ("M-x r",       restartIntoDebugging)
+  , ("M-x <Space>", xmonadPrompt Local.promptConfig)
+  , ("M-x <Esc>",   spawn "systemctl --user restart compton.service")
   ]
 
 --------------------------------------------------------------------------------
@@ -116,53 +98,52 @@ baseKeys _ =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   -- Focusing Windows:
-  [ ("M-w M-l",   nextMatch History (return True))
-  , ("M-w M-b",   windows W.focusUp)
-  , ("M-w M-f",   windows W.focusDown)
-  , ("M-w M-u",   focusUrgent)
-  , ("M-w M-o",   windowPromptGoto)
-  , ("M-w M-c",   windowPrompt Local.promptConfig BringCopy allWindows)
-  , ("M-o",       windowPromptGoto')
-  , ("M-n",       windowGo D True)
-  , ("M-p",       windowGo U True)
-  , ("M-f",       windowGo R True)
-  , ("M-b",       windowGo L True)
-  , ("M-w M-m",   windows W.focusMaster)
+  [ ("M-;",     nextMatch History (return True))
+  , ("M-w k",   windows W.focusUp)
+  , ("M-w j",   windows W.focusDown)
+  , ("M-u",     focusUrgent)
+  , ("M-o",     windowPromptGoto')
+  , ("M-C-o",   windowPromptGoto)
+  , ("M-w c",   windowPrompt Local.promptConfig BringCopy allWindows)
+  , ("M-j",     windowGo D True)
+  , ("M-k",     windowGo U True)
+  , ("M-l",     windowGo R True)
+  , ("M-h",     windowGo L True)
+  , ("M-w m",   windows W.focusMaster)
 
   -- Moving Windows:
-  , ("M-m M-f",  windowSwap R False)
-  , ("M-m M-b",  windowSwap L False)
-  , ("M-m M-n",  windowSwap D False)
-  , ("M-m M-p",  windowSwap U False)
-  , ("M-m M-m",  promote) -- Promote current window to master.
+  , ("M-M1-l",  windowSwap R False)
+  , ("M-M1-h",  windowSwap L False)
+  , ("M-M1-j",  windowSwap D False)
+  , ("M-M1-k",  windowSwap U False)
+  , ("M-m",     promote) -- Promote current window to master.
 
   -- Resizing Windows:
-  , ("M-<Left>",  sendResize GPExpandL)
-  , ("M-<Right>", sendResize GPShrinkL)
-  , ("M-<Up>",    sendResize GPExpandU)
-  , ("M-<Down>",  sendResize GPShrinkU)
-  , ("M-w -",     sendMessage $ IncMasterN (-1))
-  , ("M-w =",     sendMessage $ IncMasterN 1)
+  , ("M-C-h",   sendMessage Shrink)
+  , ("M-C-l",   sendMessage Expand)
+  , ("M-C-j",   sendMessage MirrorShrink)
+  , ("M-C-k",   sendMessage MirrorExpand)
+  , ("M-w -",   sendMessage $ IncMasterN (-1))
+  , ("M-w S-=", sendMessage $ IncMasterN 1)
 
   -- Window Layers and Killing and Yanking:
-  , ("M-w M-t",   withFocused $ windows . W.sink) -- Tile window.
-  , ("M-w M-k",   kill1) -- Kill the current window.
-  , ("M-k",       killWindowToBury)
-  , ("M-y",       yankWindowFromBury)
+  , ("M-w t",   withFocused $ windows . W.sink) -- Tile window.
+  , ("M-q",     kill1) -- Kill the current window.
+  , ("M-b",     killWindowToBury)
+  , ("M-v",     yankWindowFromBury)
   ]
 
 --------------------------------------------------------------------------------
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("M-t M-<Space>", tagPrompt Local.promptConfig)
-  , ("M-S-t",         tagPrompt Local.promptConfig)
-  , ("M-h",           secondaryJumpTagUp)
-  , ("M-j",           primaryJumpTagUp)
-  , ("M-t M-a",       addFocusTag)
-  , ("M-t M-d",       rmFocusTag)
-  , ("M-t M-j",       tagPrompt' Local.promptConfig [SetJumpTag])
-  , ("M-t M-r",       rmFocusTagAll >> addFocusTag)
+  [ ("M-/",   tagPrompt Local.promptConfig)
+  , ("M-a",   primaryJumpTagUp)
+  , ("M-s",   secondaryJumpTagUp)
+  , ("M-t a", addFocusTag)
+  , ("M-t d", rmFocusTag)
+  , ("M-t j", tagPrompt' Local.promptConfig [SetJumpTag])
+  , ("M-t r", rmFocusTagAll >> addFocusTag)
   ] ++ numberedTags
   where
     addFocusTag :: X ()
@@ -193,8 +174,7 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-w M-w",   viewPrevWS)
-  , ("M-S-w",     viewPrevWS)
+  [ ("M-'",       viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   ]
 
@@ -202,117 +182,42 @@ workspaceKeys _ =
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
-  [ ("M-l M-<Space>", selectLayoutByName Local.promptConfig)
-  , ("M-l <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
-  , ("M-l M-2",       sendMessage (JumpToLayout "2C"))
-  , ("M-l M-3",       sendMessage (JumpToLayout "3C"))
-  , ("M-l M-b",       sendMessage (JumpToLayout "BSP"))
-  , ("M-l M-f",       sendMessage (JumpToLayout "Focus") >> sendMessage PartitionWins)
-  , ("M-l M-l",       sendMessage (Toggle "Full"))
-  , ("M-l M-t",       sendMessage (JumpToLayout "Tall"))
-  , ("M-w M-g",       sendMessage ToggleGaps)
-  , ("M-w M-r",       sendMessage Rotate)
+  [ ("M-[",           selectLayoutByName Local.promptConfig)
+  , ("M-]",           sendMessage NextLayout)
+  , ("M-w <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
+  , ("M-<Backspace>", sendMessage (Toggle "Full"))
+  , ("M-S-8",         cycleThroughLayouts ["Auto", "Focus"])
+  , ("M-w g",         sendMessage ToggleGaps)
+  , ("M-w s",         toggleWindowSpacingEnabled)
   , ("M-w M-s",       sendMessage ToggleStruts)
+  , ("M-C-S-=",       incWindowSpacing 5)
+  , ("M-C--",         decWindowSpacing 5)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-s M-f",    onNextNeighbour def W.view)
-  , ("M-s M-b",    onPrevNeighbour def W.view)
-  , ("M-s M-s",    screenSwap L True)
-  , ("M1-<F11>",   spawn "xbacklight -dec 10")
-  , ("M1-<F12>",   spawn "xbacklight -inc 10")
-  , ("M1-S-<F11>", spawn "xbacklight -set 10")
-  , ("M1-S-<F12>", spawn "xbacklight -set 80")
+  [ ("M-)",  onNextNeighbour def W.view)
+  , ("M-(",  onPrevNeighbour def W.view)
+  , ("M-\\", screenSwap L True)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
-appKeys _ =
-  [ ("M-<Return>",     spawn "urxvtc -e tmux-new-terminal")
-  , ("M-M1-<Return>",  spawn "urxvtc -name BigTerm -e tmux-new-terminal")
-  , ("M-M1-l",         spawn "lockscreen.sh")
-  , ("M-<Print> M-r",  spawn "screenshot.sh root")
-  , ("M-<Print> M-w",  spawn "screenshot.sh window")
-  , ("M-e M-e",        spawn "e -c") -- Start per-workspace Emacs.
-  , ("M-e M-r",        shellPrompt Local.promptConfig)
-
-    -- Laptops and keyboards with media/meta keys.
-  , ("<XF86WebCam>",         spawn "tptoggle.sh") -- Weird.
-  , ("<XF86TouchpadToggle>", spawn "tptoggle.sh")
-  , ("M1-<F6>",              spawn "tptoggle.sh")
-  , ("M1-<F10>",             spawn "xrandr-projector")
-
-    -- Scratch pads.
-  , ("M-; M-c", namedScratchpadAction scratchPads "calc")
-  , ("M-; M-p", namedScratchpadAction scratchPads "pass")
-  , ("M-; M-t", namedScratchpadAction scratchPads "todoist")
-  -- FIXME: , ("M-; M-;", closeAllNamedScratchpads scratchPads)
+appKeys c =
+  [ ("M-<Return>", spawn (terminal c))
+  , ("M-e",        spawn "e -c") -- Start per-workspace Emacs.
+  , ("M-<Esc>",    shellPrompt Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
 -- Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-    [ ("M-S-1",  playPause)
-    , ("M-S-2",  prevTrack)
-    , ("M-S-3",  nextTrack)
-    , ("M-S-4",  radioPrompt Local.promptConfig)
-    , ("M-S-5",  clearPlaylist)
-    , ("M-S-6",  audioMute)
-    , ("M-S-7",  audioLower)
-    , ("M-S-8",  audioRaise)
-
-      -- Keys for my laptop and keyboards with media keys.
-    , ("M-<XF86AudioMute>",        playPause)
-    , ("M-<XF86AudioLowerVolume>", prevTrack)
-    , ("M-<XF86AudioRaiseVolume>", nextTrack)
-    , ("<XF86AudioPlay>",          playPause)
-    , ("<XF86AudioPrev>",          prevTrack)
-    , ("<XF86AudioNext>",          nextTrack)
-    , ("<XF86AudioMute>",          audioMute)
-    , ("<XF86AudioLowerVolume>",   audioLower)
-    , ("<XF86AudioRaiseVolume>",   audioRaise)
+    [ ("M-r", radioPrompt Local.promptConfig)
     ]
-  where
-    playPause     = spawn "mpc-pause"
-    nextTrack     = spawn "mpc next"
-    prevTrack     = spawn "mpc prev"
-    clearPlaylist = spawn "mpc clear"
-    audioMute     = spawn "amixer set Master toggle"
-    audioLower    = spawn "amixer set Master 5%-"
-    audioRaise    = spawn "amixer set Master 5%+"
-
---------------------------------------------------------------------------------
-sendResize :: GPResize -> X ()
-sendResize movement = do
-  winset <- gets windowset
-  let lname = description . W.layout . W.workspace . W.current $ winset
-      ltype = case lname of
-              "BSP"         -> BSP
-              "Focus"       -> BSP
-              _             -> Other
-
-  case (ltype, movement) of
-    (BSP,   GPExpandL) -> sendMessage (ExpandTowards L)
-    (BSP,   GPExpandR) -> sendMessage (ExpandTowards R)
-    (BSP,   GPExpandU) -> sendMessage (ExpandTowards U)
-    (BSP,   GPExpandD) -> sendMessage (ExpandTowards D)
-    (BSP,   GPShrinkL) -> sendMessage (ShrinkFrom L)
-    (BSP,   GPShrinkR) -> sendMessage (ShrinkFrom R)
-    (BSP,   GPShrinkU) -> sendMessage (ShrinkFrom U)
-    (BSP,   GPShrinkD) -> sendMessage (ShrinkFrom D)
-    (Other, GPExpandL) -> sendMessage Shrink
-    (Other, GPExpandR) -> sendMessage Expand
-    (Other, GPExpandU) -> sendMessage MirrorShrink
-    (Other, GPExpandD) -> sendMessage MirrorExpand
-    (Other, GPShrinkL) -> sendMessage Expand
-    (Other, GPShrinkR) -> sendMessage Shrink
-    (Other, GPShrinkU) -> sendMessage MirrorExpand
-    (Other, GPShrinkD) -> sendMessage MirrorShrink
 
 --------------------------------------------------------------------------------
 -- | Restart XMonad but instead of starting the XMonad in @PATH@,
@@ -320,22 +225,7 @@ sendResize movement = do
 restartIntoDebugging :: X ()
 restartIntoDebugging = do
   home <- io getHomeDirectory
-
-  -- Path to my xmonad (as generated by `cabal new-build'):
-  let path = foldl (\x y -> x ++ "/" ++ y) home
-               [ "develop/rc/xmonadrc/dist-newstyle/build"
-               , "xmonadrc-" ++ showVersion version
-               , "build/xmonadrc/xmonadrc"
-               ]
-
-  exists <- io (doesFileExist path)
-
-  if exists
-    then restart path True
-    else do io (putStrLn ("bad path: " ++ path))
-            confirmPrompt promptConfig
-              "xmonad.errors for bad path"
-              (return ())
+  restart (home </> "src/rc/xmonadrc/dist/build/xmonadrc/xmonadrc")  True
 
 --------------------------------------------------------------------------------
 windowPromptGoto :: X ()

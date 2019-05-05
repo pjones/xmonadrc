@@ -15,16 +15,18 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Accordion (Accordion(..))
-import XMonad.Layout.BinarySpacePartition (emptyBSP)
-import XMonad.Layout.ComboP (Property(..), combineTwoP)
-import XMonad.Layout.Gaps (Gaps, gaps)
+import XMonad.Layout.ComboP (PartitionWins(..), Property(..), combineTwoP)
+import XMonad.Layout.Gaps (gaps)
+import XMonad.Layout.GridVariants (SplitGrid(..))
+import qualified XMonad.Layout.GridVariants as Grid
+import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.NoBorders (noBorders)
-import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
+import XMonad.Layout.Reflect (reflectVert)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
+import XMonad.Layout.Spacing (Border(..), spacingRaw)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.ToggleLayouts (toggleLayouts)
 import XMonad.Layout.TwoPane (TwoPane(..))
@@ -40,41 +42,43 @@ layoutHook =
       (noBorders fullscreen)
       allLays
   where
-    -- addSpace = renamed [CutWordsLeft 2] . spacingRaw 4
-
-    fullscreen :: ModifiedLayout Rename (ModifiedLayout Gaps Full) Window
-    fullscreen = renamed [Replace "Full"] (gaps (uniformGaps 60) Full)
     uniformGaps n = [(U, n), (D, n), (L, n), (R, n)] :: [(Direction2D,Int)]
+    uniformBorder n = Border n n n n
+    spacing = spacingRaw False (uniformBorder 10) True (uniformBorder 10) True
 
-    threeCols = renamed [Replace "3C"]   (ThreeColMid 1 (1/20) (1/2))
-    twoCols   = renamed [Replace "2C"]   (mastered (1/100) (1/2) Accordion)
-    twoPane   = renamed [Replace "2P"]   (TwoPane (3/100) (1/2))
-    bspace    = renamed [Replace "BSP"]  emptyBSP
-    tall      = renamed [Replace "Tall"] (ResizableTall 1 (1.5/100) (3/5) [])
+    fullscreen = gaps (uniformGaps 60) Full
+    threeCols  = spacing $ ThreeColMid 1 (1/20) (1/2)
+    twoCols    = spacing $ mastered (1/100) (1/2) Accordion
+    twoPane    = spacing $ TwoPane (3/100) (1/2)
+    tall       = spacing $ ResizableTall 1 (1.5/100) (3/5) []
+    focusTag   = spacing $ only (Tagged "focus")
+    grid       = spacing $ SplitGrid Grid.L 2 2 (2/3) (1/2) 1
+
+    -- One window, centered on the screen.
+    centFull  = spacingRaw False (Border 20 20 200 200)
+                           True  (Border 0 0 0 0) False Full
+
+    -- Automatically adapt to the number of open windows:
+    autoL = ifMax 1 centFull $
+            ifMax 2 twoPane threeCols
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
     -- be placed into the main layout.  Other windows are pushed to
     -- the top of the screen in a small @Accordion@.
     only = combineTwoP (reflectVert $ Mirror $ TwoPane 0 (9/10))
-                       bspace (Mirror Accordion)
-
-    focusTag = renamed [Replace "Focus"] $ only (Tagged "focus")
-
-    -- When I'm teaching a class I start with a weird layout before
-    -- focusing on specific windows using another layout.
-    projector = renamed [Replace "Projector"] topHalf where
-      topHalf    = combineTwoP (Mirror twoPane) bspace bottomHalf (ClassName "Emacs")
-      bottomHalf = combineTwoP (reflectHoriz twoPane) Full Full (ClassName ".zathura-wrapped_")
+                       twoCols (Mirror Accordion)
 
     -- All layouts put together.
-    allLays = bspace     |||
-              focusTag   |||
-              projector  |||
-              tall       |||
-              threeCols  |||
-              twoCols    |||
-              twoPane
+    allLays =
+      renamed [Replace "Auto"]  autoL     |||
+      renamed [Replace "Tall"]  tall      |||
+      renamed [Replace "3C"]    threeCols |||
+      renamed [Replace "2C"]    twoCols   |||
+      renamed [Replace "2P"]    twoPane   |||
+      renamed [Replace "Focus"] focusTag  |||
+      renamed [Replace "Grid"]  grid      |||
+      renamed [Replace "Full"]  fullscreen
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -91,16 +95,20 @@ selectLayoutByName conf =
 
   where
     go :: String -> X ()
-    go selected = case lookup selected layoutNames of
-                    Just name -> sendMessage (JumpToLayout name)
-                    Nothing   -> return ()
+    go selected =
+      case lookup selected layoutNames of
+        Nothing   -> return ()
+        Just name -> do sendMessage (JumpToLayout name)
+                        sendMessage PartitionWins
 
     layoutNames :: [(String, String)]
-    layoutNames = [ ("Tall",                         "Tall")
-                  , ("Binary Space Partition (BSP)", "BSP")
-                  , ("Two Columns (2C)",             "2C")
-                  , ("Two Pane (2P)",                "2P")
-                  , ("Three Columns (3C)",           "3C")
-                  , ("Projector",                    "Projector")
-                  , ("Focus",                        "Focus")
-                  ]
+    layoutNames =
+      [ ("Auto",               "Auto")
+      , ("Tall",               "Tall")
+      , ("Three Columns (3C)", "3C")
+      , ("Two Columns (2C)",   "2C")
+      , ("Two Pane (2P)",      "2P")
+      , ("Full",               "Full")
+      , ("Focus",              "Focus")
+      , ("Grid",               "Grid")
+      ]

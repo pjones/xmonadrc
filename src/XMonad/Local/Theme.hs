@@ -23,9 +23,9 @@ import XMonad.Layout.Decoration
 
 --------------------------------------------------------------------------------
 xmonadColors :: XConfig a -> XConfig a
-xmonadColors x = x { normalBorderColor  = darkgray
-                   , focusedBorderColor = blue
-                   , borderWidth        = 1
+xmonadColors x = x { normalBorderColor  = "#444444"
+                   , focusedBorderColor = "#ff52bb"
+                   , borderWidth        = 5
                    }
 
 --------------------------------------------------------------------------------

@@ -18,7 +18,6 @@ import XMonad.Actions.Navigation2D
 import XMonad.Config.Desktop (desktopConfig)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
-import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 
 --------------------------------------------------------------------------------
 import qualified XMonad.Local.Action as Local
@@ -33,12 +32,11 @@ import qualified XMonad.Local.Workspaces as Workspaces
 --
 -- config :: XConfig a
 config = desktopConfig
-  { terminal           = "urxvtc"
+  { terminal           = "konsole"
   , layoutHook         = avoidStruts Local.layoutHook
 
   , manageHook         = manageHook desktopConfig <>
-                         Local.manageHook <>
-                         namedScratchpadManageHook Workspaces.scratchPads
+                         Local.manageHook
 
   , handleEventHook    = handleEventHook desktopConfig <>
                          Local.handleEventHook
@@ -56,7 +54,7 @@ config = desktopConfig
 -- | Configuration for 'XMonad.Actions.Navigation2D'.
 navConf :: Navigation2DConfig
 navConf = def
-  { defaultTiledNavigation = centerNavigation
+  { defaultTiledNavigation = hybridOf sideNavigation centerNavigation
   }
 
 --------------------------------------------------------------------------------
