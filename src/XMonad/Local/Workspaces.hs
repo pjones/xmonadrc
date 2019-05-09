@@ -11,6 +11,7 @@ the LICENSE file. -}
 module XMonad.Local.Workspaces
        ( projects
        , names
+       , scratchPads
        , asKey
        , viewPrevWS
        ) where
@@ -20,6 +21,7 @@ import Control.Monad (unless)
 import XMonad
 import XMonad.Actions.DynamicProjects
 import qualified XMonad.StackSet as StackSet
+import XMonad.Util.NamedScratchpad
 
 --------------------------------------------------------------------------------
 projects :: [Project]
@@ -63,6 +65,19 @@ projects =
 -- | Names of my workspaces.
 names :: [WorkspaceId]
 names = ["scratch", "browsers", "agenda", "music", "mail", "chat"]
+
+--------------------------------------------------------------------------------
+scratchPads :: NamedScratchpads
+scratchPads =
+  [ NS { name  = "emacs"
+       , cmd   = "e -c -- -F '((name . \"scratch\"))'"
+       , query = className =? "Emacs" <&&> appName =? "scratch"
+       , hook  = floatOnRight
+       }
+  ]
+  where
+    floatOnRight = customFloating $
+      StackSet.RationalRect (2/3) (1/10) (1/3) (8/10)
 
 --------------------------------------------------------------------------------
 -- | Helper function to translate workspace names into key names for

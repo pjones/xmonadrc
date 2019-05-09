@@ -18,6 +18,7 @@ import XMonad.Actions.Navigation2D
 import XMonad.Config.Desktop (desktopConfig)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
+import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 
 --------------------------------------------------------------------------------
 import qualified XMonad.Local.Action as Local
@@ -36,6 +37,7 @@ config = desktopConfig
   , layoutHook         = avoidStruts Local.layoutHook
 
   , manageHook         = manageHook desktopConfig <>
+                         namedScratchpadManageHook Workspaces.scratchPads <>
                          Local.manageHook
 
   , handleEventHook    = handleEventHook desktopConfig <>

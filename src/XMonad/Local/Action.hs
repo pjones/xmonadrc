@@ -35,8 +35,12 @@ import qualified XMonad.StackSet as W
 -- For className, use the second value that xprop gives you.
 manageHook :: ManageHook
 manageHook = composeOne
-    [ -- Start by tagging new windows:
-      className =? "Chromium-browser"   `addTagAndContinue` "browser"
+    [ -- Windows to ignore:
+      isInProperty "_NET_WM_STATE" "_NET_WM_STATE_SKIP_TASKBAR"
+        -?> (doCenterFloat >> doIgnore)
+
+      -- Start by tagging new windows:
+    , className =? "Chromium-browser"   `addTagAndContinue` "browser"
     , title     =* "[irc]"              `addTagAndContinue` "irc"
 
       -- Some application windows ask to be floating (I'm guessing) but
@@ -53,13 +57,12 @@ manageHook = composeOne
     , stringProperty "WM_WINDOW_ROLE" =? gtkFile  -?> forceCenterFloat
     , className =? "Gcr-prompter"                 -?> doCenterFloat
     , className =? "Pinentry"                     -?> doCenterFloat
-    , isDialog                                    -?> doCenterFloat
     , transience -- Move transient windows to their parent.
+    , isDialog                                    -?> doCenterFloat
 
       -- Certain windows shouldn't steal the master pane.
-    , className =? "URxvt"                        -?> tileBelow
-    , appName   =? "eterm"                        -?> tileBelow
-    , appName   =? "emacs-popup"                  -?> tileBelowNoFocus
+    , className =? "konsole"                       -?> tileBelow
+    , className =? "Emacs" <&&> appName =? "popup" -?> tileBelowNoFocus
 
       -- Tile all other windows using insertPosition.
     , pure True -?> normalTile

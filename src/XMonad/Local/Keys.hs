@@ -44,6 +44,7 @@ import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
 import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
+import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
 --------------------------------------------------------------------------------
 -- Local modules.
@@ -51,7 +52,7 @@ import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
-import XMonad.Local.Workspaces (asKey, viewPrevWS)
+import XMonad.Local.Workspaces (asKey, viewPrevWS, scratchPads)
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -208,8 +209,10 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c))
-  , ("M-e",        spawn "e -c") -- Start per-workspace Emacs.
   , ("M-<Esc>",    shellPrompt Local.promptConfig)
+  , ("M-e",        emacs)
+  , ("M-p",        spawn "rofi-pass.sh")
+  , ("M-S-6",      namedScratchpadAction scratchPads "emacs")
   ]
 
 --------------------------------------------------------------------------------
@@ -218,6 +221,13 @@ musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
     [ ("M-r", radioPrompt Local.promptConfig)
     ]
+
+--------------------------------------------------------------------------------
+-- | Start an Emacs server for the current workspace.
+emacs :: X ()
+emacs = do
+  name <- gets (W.tag . W.workspace . W.current . windowset)
+  spawn ("e -cs " ++ name)
 
 --------------------------------------------------------------------------------
 -- | Restart XMonad but instead of starting the XMonad in @PATH@,

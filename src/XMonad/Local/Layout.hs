@@ -15,7 +15,7 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Accordion (Accordion(..))
-import XMonad.Layout.ComboP (PartitionWins(..), Property(..), combineTwoP)
+import XMonad.Layout.ComboP (PartitionWins(..), combineTwoP)
 import XMonad.Layout.Gaps (gaps)
 import XMonad.Layout.GridVariants (SplitGrid(..))
 import qualified XMonad.Layout.GridVariants as Grid
@@ -33,6 +33,7 @@ import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Prompt
 import XMonad.Util.Types (Direction2D(..))
+import XMonad.Util.WindowProperties (Property(..))
 
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
@@ -44,23 +45,20 @@ layoutHook =
   where
     uniformGaps n = [(U, n), (D, n), (L, n), (R, n)] :: [(Direction2D,Int)]
     uniformBorder n = Border n n n n
-    spacing = spacingRaw False (uniformBorder 10) True (uniformBorder 10) True
+    spacing = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
 
     fullscreen = gaps (uniformGaps 60) Full
-    threeCols  = spacing $ ThreeColMid 1 (1/20) (1/2)
+    threeCols  = spacing $ ThreeColMid 1 (1/100) (3/8)
     twoCols    = spacing $ mastered (1/100) (1/2) Accordion
-    twoPane    = spacing $ TwoPane (3/100) (1/2)
-    tall       = spacing $ ResizableTall 1 (1.5/100) (3/5) []
+    twoPane    = spacing $ TwoPane (1/100) (1/2)
+    tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing $ SplitGrid Grid.L 2 2 (2/3) (1/2) 1
+    auto       = ifMax 1 centFull $ ifMax 2 twoPane threeCols
 
     -- One window, centered on the screen.
-    centFull  = spacingRaw False (Border 20 20 200 200)
+    centFull  = spacingRaw False (Border 20 20 400 400)
                            True  (Border 0 0 0 0) False Full
-
-    -- Automatically adapt to the number of open windows:
-    autoL = ifMax 1 centFull $
-            ifMax 2 twoPane threeCols
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -71,7 +69,7 @@ layoutHook =
 
     -- All layouts put together.
     allLays =
-      renamed [Replace "Auto"]  autoL     |||
+      renamed [Replace "Auto"]  auto     |||
       renamed [Replace "Tall"]  tall      |||
       renamed [Replace "3C"]    threeCols |||
       renamed [Replace "2C"]    twoCols   |||
