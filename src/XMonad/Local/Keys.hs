@@ -26,11 +26,12 @@ import qualified XMonad.StackSet as W
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
-import XMonad.Actions.DynamicProjects (switchProjectPrompt)
+import XMonad.Actions.DynamicProjects (switchProjectPrompt, lookupProject, switchProject)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onNextNeighbour, onPrevNeighbour)
 import XMonad.Actions.Promote (promote)
+import XMonad.Actions.RotSlaves (rotSlavesUp, rotSlavesDown)
 import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
@@ -82,14 +83,13 @@ withUpdatePointer :: [(String, X ())] -> [(String, X ())]
 withUpdatePointer = map addAction
   where
     addAction :: (String, X ()) -> (String, X ())
-    addAction (key, action) = (key, action >> updatePointer (0.98, 0.01) (0, 0))
+    addAction (key, action) = (key, action >> updatePointer (0.75, 0.25) (0, 0))
 
 --------------------------------------------------------------------------------
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
-  [ ("M-g",         return ()) -- Same as above.
-  , ("M-x r",       restartIntoDebugging)
+  [ ("M-x r",       restartIntoDebugging)
   , ("M-x <Space>", xmonadPrompt Local.promptConfig)
   , ("M-x <Esc>",   spawn "systemctl --user restart compton.service")
   ]
@@ -117,6 +117,8 @@ windowKeys _ =
   , ("M-M1-h",  windowSwap L False)
   , ("M-M1-j",  windowSwap D False)
   , ("M-M1-k",  windowSwap U False)
+  , ("M-<U>",   rotSlavesUp)
+  , ("M-<D>",   rotSlavesDown)
   , ("M-m",     promote) -- Promote current window to master.
 
   -- Resizing Windows:
@@ -177,6 +179,8 @@ workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
   [ ("M-'",       viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
+  , ("M-f",       lookupProject "agenda"   >>= maybe (return ()) switchProject)
+  , ("M-g",       lookupProject "browsers" >>= maybe (return ()) switchProject)
   ]
 
 --------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.NoBorders (noBorders)
-import XMonad.Layout.Reflect (reflectVert)
+import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.Spacing (Border(..), spacingRaw)
@@ -38,17 +38,15 @@ import XMonad.Util.WindowProperties (Property(..))
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
-layoutHook =
-    toggleLayouts
-      (noBorders fullscreen)
-      allLays
+layoutHook = toggleLayouts solo allLays
   where
     uniformGaps n = [(U, n), (D, n), (L, n), (R, n)] :: [(Direction2D,Int)]
     uniformBorder n = Border n n n n
     spacing = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
 
-    fullscreen = gaps (uniformGaps 60) Full
-    threeCols  = spacing $ ThreeColMid 1 (1/100) (3/8)
+    full       = noBorders Full
+    solo       = noBorders $ gaps (uniformGaps 60) Full
+    threeCols  = spacing $ reflectHoriz $ ThreeColMid 1 (1/100) (3/8)
     twoCols    = spacing $ mastered (1/100) (1/2) Accordion
     twoPane    = spacing $ TwoPane (1/100) (1/2)
     tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
@@ -76,7 +74,7 @@ layoutHook =
       renamed [Replace "2P"]    twoPane   |||
       renamed [Replace "Focus"] focusTag  |||
       renamed [Replace "Grid"]  grid      |||
-      renamed [Replace "Full"]  fullscreen
+      renamed [Replace "Full"]  full
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.

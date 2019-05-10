@@ -34,6 +34,13 @@ projects =
                 spawn "konsole"
             }
 
+  , Project { projectName      = "agenda"
+            , projectDirectory = "~/notes"
+            , projectStartHook = Just $ do
+                spawn "firefox"
+                spawn "e -cs agenda"
+            }
+
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
             , projectStartHook = Just $ spawn "firefox"
