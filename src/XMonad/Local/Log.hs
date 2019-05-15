@@ -13,8 +13,33 @@ module XMonad.Local.Log (logHook) where
 --------------------------------------------------------------------------------
 import XMonad hiding (logHook)
 import XMonad.Actions.GroupNavigation (historyHook)
+import XMonad.Actions.SwapPromote (masterHistoryHook)
+import XMonad.Hooks.WorkspaceHistory (workspaceHistoryHook)
+
+import XMonad.Hooks.FadeWindows
+  ( FadeHook
+  , fadeWindowsLogHook
+  , transparency
+  , opaque
+  , isUnfocused
+  , isFloating
+  )
 
 --------------------------------------------------------------------------------
 -- | XMonad @logHook@.
 logHook :: X ()
-logHook = historyHook
+logHook =
+  historyHook <>
+  workspaceHistoryHook <>
+  masterHistoryHook <>
+  fadeWindowsLogHook fadeHook
+
+--------------------------------------------------------------------------------
+-- | Control the opacity of windows.  The list is processed from the
+-- bottom up.
+fadeHook :: FadeHook
+fadeHook = composeAll
+  [ opaque
+  , isUnfocused --> transparency 0.3
+  , isFloating  --> transparency 0.0
+  ]

@@ -19,6 +19,7 @@ import XMonad.Config.Desktop (desktopConfig)
 import XMonad.Hooks.ManageDocks (avoidStruts)
 import XMonad.Hooks.UrgencyHook hiding (urgencyConfig)
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
+import XMonad.Hooks.FadeWindows (fadeWindowsEventHook)
 
 --------------------------------------------------------------------------------
 import qualified XMonad.Local.Action as Local
@@ -41,6 +42,7 @@ config = desktopConfig
                          Local.manageHook
 
   , handleEventHook    = handleEventHook desktopConfig <>
+                         fadeWindowsEventHook <>
                          Local.handleEventHook
 
   , logHook            = logHook desktopConfig <>

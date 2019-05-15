@@ -26,12 +26,14 @@ import qualified XMonad.StackSet as W
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
+import XMonad.Actions.CycleWorkspaceByScreen (cycleWorkspaceOnCurrentScreen)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt, lookupProject, switchProject)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onNextNeighbour, onPrevNeighbour)
 import XMonad.Actions.Promote (promote)
 import XMonad.Actions.RotSlaves (rotSlavesUp, rotSlavesDown)
+import XMonad.Actions.SwapPromote (swapHybrid)
 import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
@@ -53,7 +55,7 @@ import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
-import XMonad.Local.Workspaces (asKey, viewPrevWS, scratchPads)
+import XMonad.Local.Workspaces (asKey, scratchPads)
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -119,7 +121,7 @@ windowKeys _ =
   , ("M-M1-k",  windowSwap U False)
   , ("M-<U>",   rotSlavesUp)
   , ("M-<D>",   rotSlavesDown)
-  , ("M-m",     promote) -- Promote current window to master.
+  , ("M-m",     whenX (swapHybrid False) promote) -- Promote current window to master.
 
   -- Resizing Windows:
   , ("M-C-h",   sendMessage Shrink)
@@ -177,7 +179,7 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-'",       viewPrevWS)
+  [ ("M-'",       cycleWorkspaceOnCurrentScreen [xK_Super_L] xK_apostrophe xK_semicolon)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   , ("M-f",       lookupProject "agenda"   >>= maybe (return ()) switchProject)
   , ("M-g",       lookupProject "browsers" >>= maybe (return ()) switchProject)
