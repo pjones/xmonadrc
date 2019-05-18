@@ -26,7 +26,6 @@ import qualified XMonad.StackSet as W
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
-import XMonad.Actions.CycleWorkspaceByScreen (cycleWorkspaceOnCurrentScreen)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt, lookupProject, switchProject)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
@@ -55,7 +54,7 @@ import XMonad.Local.Layout (selectLayoutByName)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
-import XMonad.Local.Workspaces (asKey, scratchPads)
+import XMonad.Local.Workspaces (asKey, viewPrevWS, scratchPads)
 
 --------------------------------------------------------------------------------
 -- Join all the key maps into a single list and send it through @mkKeymap@.
@@ -179,7 +178,7 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-'",       cycleWorkspaceOnCurrentScreen [xK_Super_L] xK_apostrophe xK_semicolon)
+  [ ("M-'",       viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
   , ("M-f",       lookupProject "agenda"   >>= maybe (return ()) switchProject)
   , ("M-g",       lookupProject "browsers" >>= maybe (return ()) switchProject)

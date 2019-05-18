@@ -14,7 +14,6 @@ module XMonad.Local.Log (logHook) where
 import XMonad hiding (logHook)
 import XMonad.Actions.GroupNavigation (historyHook)
 import XMonad.Actions.SwapPromote (masterHistoryHook)
-import XMonad.Hooks.WorkspaceHistory (workspaceHistoryHook)
 
 import XMonad.Hooks.FadeWindows
   ( FadeHook
@@ -30,7 +29,6 @@ import XMonad.Hooks.FadeWindows
 logHook :: X ()
 logHook =
   historyHook <>
-  workspaceHistoryHook <>
   masterHistoryHook <>
   fadeWindowsLogHook fadeHook
 
