@@ -37,14 +37,13 @@ import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
-import XMonad.Layout.ComboP (PartitionWins(..))
-import XMonad.Layout.Gaps (GapMessage(..))
+import XMonad.Layout.LayoutBuilder (IncLayoutN(..))
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing (incWindowSpacing, decWindowSpacing, toggleWindowSpacingEnabled)
 import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
+import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
-import XMonad.Prompt.XMonad (xmonadPrompt)
 import XMonad.Util.EZConfig (mkKeymap)
 import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
@@ -91,8 +90,7 @@ withUpdatePointer = map addAction
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys _ =
   [ ("M-x r",       restartIntoDebugging)
-  , ("M-x <Space>", xmonadPrompt Local.promptConfig)
-  , ("M-x <Esc>",   spawn "systemctl --user restart compton.service")
+  , ("M-x <Space>", messageMenu Local.promptConfig)
   ]
 
 --------------------------------------------------------------------------------
@@ -111,7 +109,7 @@ windowKeys _ =
   , ("M-k",     windowGo U True)
   , ("M-l",     windowGo R True)
   , ("M-h",     windowGo L True)
-  , ("M-w m",   windows W.focusMaster)
+  , ("M-C-m",   windows W.focusMaster)
 
   -- Moving Windows:
   , ("M-M1-l",  windowSwap R False)
@@ -152,11 +150,11 @@ windowTagKeys _ =
   where
     addFocusTag :: X ()
     addFocusTag = do withFocused (addTag "focus")
-                     sendMessage PartitionWins
+                     sendMessage (IncLayoutN 0)
 
     rmFocusTag :: X ()
     rmFocusTag = do withFocused (delTag "focus")
-                    sendMessage PartitionWins
+                    sendMessage (IncLayoutN 0)
 
     rmFocusTagAll :: X ()
     rmFocusTagAll = withTagged "focus" (delTag "focus")
@@ -188,12 +186,10 @@ workspaceKeys _ =
 -- Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
-  [ ("M-[",           selectLayoutByName Local.promptConfig)
-  , ("M-]",           sendMessage NextLayout)
+  [ ("M-<Backspace>", selectLayoutByName Local.promptConfig)
   , ("M-w <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
-  , ("M-<Backspace>", sendMessage (Toggle "Full"))
+  , ("M-S-1",         sendMessage ToggleLayout)
   , ("M-S-8",         cycleThroughLayouts ["Auto", "Focus"])
-  , ("M-w g",         sendMessage ToggleGaps)
   , ("M-w s",         toggleWindowSpacingEnabled)
   , ("M-w M-s",       sendMessage ToggleStruts)
   , ("M-C-S-=",       incWindowSpacing 5)
@@ -204,9 +200,9 @@ layoutKeys c =
 -- Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
-  [ ("M-)",  onNextNeighbour def W.view)
-  , ("M-(",  onPrevNeighbour def W.view)
-  , ("M-\\", screenSwap L True)
+  [ ("M-S-0", onNextNeighbour def W.view)
+  , ("M-S-9", onPrevNeighbour def W.view)
+  , ("M-\\",  screenSwap L True)
   ]
 
 --------------------------------------------------------------------------------
@@ -251,3 +247,30 @@ windowPromptGoto = windowMultiPrompt Local.promptConfig modes
 windowPromptGoto' :: X ()
 windowPromptGoto' = windowMultiPrompt Local.promptConfig modes
   where modes = [(Goto, wsWindows), (Goto, allWindows)]
+
+--------------------------------------------------------------------------------
+-- | A menu of less frequently used actions:
+data MessageMenu = MessageMenu
+
+instance XPrompt MessageMenu where
+  showXPrompt MessageMenu = "X Action: "
+
+messageMenu :: XPConfig -> X ()
+messageMenu conf =
+  mkXPrompt MessageMenu conf (Local.aListCompFunc conf actions) go
+
+  where
+    go :: String -> X ()
+    go selected =
+      case lookup selected actions of
+        Nothing   -> return ()
+        Just a    -> a
+
+    actions :: [ (String, X ()) ]
+    actions = [ ("IncLayoutN",    sendMessage (IncLayoutN 1))
+              , ("DecLayoutN",    sendMessage (IncLayoutN (-1)))
+              , ("IncMasterN",    sendMessage (IncMasterN 1))
+              , ("DecMasterN",    sendMessage (IncMasterN (-1)))
+              , ("ToggleStruts",  sendMessage ToggleStruts)
+              , ("ToggleSpacing", toggleWindowSpacingEnabled)
+              ]
