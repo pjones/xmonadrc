@@ -16,18 +16,15 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Accordion (Accordion(..))
 import XMonad.Layout.CenteredMaster (centerMaster)
-import XMonad.Layout.ComboP (PartitionWins(..), combineTwoP)
 import XMonad.Layout.Cross (Cross(..))
 import XMonad.Layout.Grid (Grid(Grid))
-import XMonad.Layout.GridVariants (SplitGrid(..))
-import qualified XMonad.Layout.GridVariants as Grid
 import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Magnifier (magnifiercz)
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.OneBig (OneBig(..))
-import XMonad.Layout.Reflect (reflectHoriz, reflectVert)
+import XMonad.Layout.Reflect (reflectHoriz)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.Spacing (Border(..), spacingRaw)
@@ -67,11 +64,12 @@ layoutHook = toggleLayouts oneCol allLays
     tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing Grid
-    sgrid      = spacing $ SplitGrid Grid.L 2 2 (2/3) (1/2) 1
     cross      = spacing $ Cross (4/5) (1/100)
     ten80      = centered 2560 (1930, 1090) -- Account for border width
     cgrid      = layoutAll (relBox (1/8) (1/8) (7/8) (7/8)) grid
+    small      = layoutAll (relBox (1/4) (1/8) (3/4) (7/8)) twoPane
     auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
+    autoTall   = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -91,20 +89,28 @@ layoutHook = toggleLayouts oneCol allLays
       in layoutN 1 centerBox Nothing Grid $
            layoutAll bottomBox (spacing zoomRow)
 
+    chat =
+      let leftBox  = relBox 0 0 (2/3) 1
+          rightBox = relBox (2/3) 0 1 1
+          prop     = ClassName "Emacs"
+      in layoutP prop leftBox Nothing grid $
+           layoutAll rightBox grid
+
     allLays =
-      renamed [Replace "Auto"]     auto      |||
-      renamed [Replace "Tall"]     tall      |||
-      renamed [Replace "3C"]       threeCols |||
-      renamed [Replace "2C"]       twoCols   |||
-      renamed [Replace "2P"]       twoPane   |||
-      renamed [Replace "Focus"]    focusTag  |||
-      renamed [Replace "Cross"]    cross     |||
-      renamed [Replace "Grid"]     grid      |||
-      renamed [Replace "SGrid"]    sgrid     |||
-      renamed [Replace "Big"]      big       |||
-      renamed [Replace "1080p"]    ten80     |||
-      renamed [Replace "Centered"] cmaster   |||
-      renamed [Replace "Full"]     full
+      renamed [Replace "Auto"]      auto      |||
+      renamed [Replace "Auto Tall"] autoTall  |||
+      renamed [Replace "Chat"]      chat      |||
+      renamed [Replace "Tall"]      tall      |||
+      renamed [Replace "3C"]        threeCols |||
+      renamed [Replace "2C"]        twoCols   |||
+      renamed [Replace "2P"]        twoPane   |||
+      renamed [Replace "Focus"]     focusTag  |||
+      renamed [Replace "Cross"]     cross     |||
+      renamed [Replace "Grid"]      grid      |||
+      renamed [Replace "Big"]       big       |||
+      renamed [Replace "1080p"]     ten80     |||
+      renamed [Replace "Centered"]  cmaster   |||
+      renamed [Replace "Full"]      full
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -124,12 +130,13 @@ selectLayoutByName conf =
     go selected =
       case lookup selected layoutNames of
         Nothing   -> return ()
-        Just name -> do sendMessage (JumpToLayout name)
-                        sendMessage PartitionWins
+        Just name -> sendMessage (JumpToLayout name)
 
     layoutNames :: [(String, String)]
     layoutNames =
       [ ("Auto",               "Auto")
+      , ("Auto Tall",          "Auto Tall")
+      , ("Chat",               "Chat")
       , ("1080p",              "1080p")
       , ("Big",                "Big")
       , ("Centered",           "Centered")
@@ -137,7 +144,6 @@ selectLayoutByName conf =
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
-      , ("Split Grid",         "SGrid")
       , ("Tall",               "Tall")
       , ("Three Columns (3C)", "3C")
       , ("Two Columns (2C)",   "2C")

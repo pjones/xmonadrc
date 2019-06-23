@@ -20,6 +20,7 @@ module XMonad.Local.Workspaces
 import Control.Monad (unless)
 import XMonad
 import XMonad.Actions.DynamicProjects
+import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
 
@@ -30,15 +31,8 @@ projects =
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 spawn "e -c"
-                spawn "konsole"
-                spawn "konsole"
-            }
-
-  , Project { projectName      = "agenda"
-            , projectDirectory = "~/notes"
-            , projectStartHook = Just $ do
-                spawn "firefox"
-                spawn "e -cs agenda"
+                spawn "konsole --workdir $(pwd)"
+                spawn "konsole --workdir $(pwd)"
             }
 
   , Project { projectName      = "browsers"
@@ -46,24 +40,38 @@ projects =
             , projectStartHook = Just $ spawn "firefox"
             }
 
+  , Project { projectName      = "chat"
+            , projectDirectory = "~/download"
+            , projectStartHook = Just $
+                sendMessage (JumpToLayout "Chat")
+            }
+
   , Project { projectName      = "mail"
             , projectDirectory = "~/"
-            , projectStartHook = Just $ spawn "e -cs mail"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Auto Tall")
+                spawn "e -cs mail"
             }
 
   , Project { projectName      = "rc"
             , projectDirectory = "~/src/rc"
-            , projectStartHook = Nothing
+            , projectStartHook = Just $ do
+                spawn "e -cs rc"
+                spawn "konsole --workdir $(pwd)"
             }
 
   , Project { projectName      = "rfa"
             , projectDirectory = "~/src/rfa"
-            , projectStartHook = Nothing
+            , projectStartHook = Just $ do
+                spawn "e -cs rfa"
+                spawn "konsole --workdir $(pwd)"
             }
 
   , Project { projectName      = "mint"
             , projectDirectory = "~/src/mint"
-            , projectStartHook = Nothing
+            , projectStartHook = Just $ do
+                spawn "e -cs mint"
+                spawn "konsole --workdir $(pwd)"
             }
 
   ]

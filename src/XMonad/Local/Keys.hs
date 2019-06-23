@@ -13,6 +13,7 @@ module XMonad.Local.Keys (keys, rawKeys) where
 --------------------------------------------------------------------------------
 -- General Haskell Packages.
 import qualified Data.Map as M
+import Data.Maybe (fromMaybe)
 import Graphics.X11.Xlib
 import System.Directory
 import System.FilePath ((</>))
@@ -236,7 +237,7 @@ emacs = do
 restartIntoDebugging :: X ()
 restartIntoDebugging = do
   home <- io getHomeDirectory
-  restart (home </> "src/rc/xmonadrc/dist/build/xmonadrc/xmonadrc")  True
+  restart (home </> "src/rc/xmonadrc/result/bin/xmonadrc")  True
 
 --------------------------------------------------------------------------------
 windowPromptGoto :: X ()
@@ -261,10 +262,7 @@ messageMenu conf =
 
   where
     go :: String -> X ()
-    go selected =
-      case lookup selected actions of
-        Nothing   -> return ()
-        Just a    -> a
+    go selected = fromMaybe (return ()) $ lookup selected actions
 
     actions :: [ (String, X ()) ]
     actions = [ ("IncLayoutN",    sendMessage (IncLayoutN 1))
