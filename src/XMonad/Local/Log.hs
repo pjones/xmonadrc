@@ -20,8 +20,11 @@ import XMonad.Hooks.FadeWindows
   , fadeWindowsLogHook
   , transparency
   , opaque
-  , isUnfocused
   , isFloating
+  )
+
+import XMonad.Hooks.FadeInactive
+  ( isUnfocusedOnCurrentWS
   )
 
 --------------------------------------------------------------------------------
@@ -38,6 +41,6 @@ logHook =
 fadeHook :: FadeHook
 fadeHook = composeAll
   [ opaque
-  , isUnfocused --> transparency 0.3
-  , isFloating  --> transparency 0.0
+  , isUnfocusedOnCurrentWS --> transparency 0.25
+  , isFloating             --> transparency 0.0
   ]
