@@ -10,6 +10,7 @@ the LICENSE file. -}
 -- | Workspace configuration and utilities.
 module XMonad.Local.Workspaces
        ( projects
+       , terminal
        , names
        , scratchPads
        , asKey
@@ -18,11 +19,16 @@ module XMonad.Local.Workspaces
 
 --------------------------------------------------------------------------------
 import Control.Monad (unless)
-import XMonad
+import XMonad hiding (terminal)
 import XMonad.Actions.DynamicProjects
 import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
+
+--------------------------------------------------------------------------------
+-- | The command to run to start a terminal.
+terminal :: String
+terminal = "konsole --notransparency --workdir $(pwd)"
 
 --------------------------------------------------------------------------------
 projects :: [Project]
@@ -31,13 +37,22 @@ projects =
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 spawn "e -c"
-                spawn "konsole --workdir $(pwd)"
-                spawn "konsole --workdir $(pwd)"
+                spawn terminal
+                spawn terminal
             }
 
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
             , projectStartHook = Just $ spawn "firefox"
+            }
+
+  , Project { projectName      = "monitoring"
+            , projectDirectory = "~/"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Tall")
+                spawn "chromium --app='https://stats.printedmint.com/d/UpWo-GSWk/machines?orgId=1&refresh=30s&kiosk'"
+                spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
+                spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
             }
 
   , Project { projectName      = "chat"
@@ -57,21 +72,21 @@ projects =
             , projectDirectory = "~/src/rc"
             , projectStartHook = Just $ do
                 spawn "e -cs rc"
-                spawn "konsole --workdir $(pwd)"
+                spawn terminal
             }
 
   , Project { projectName      = "rfa"
             , projectDirectory = "~/src/rfa"
             , projectStartHook = Just $ do
                 spawn "e -cs rfa"
-                spawn "konsole --workdir $(pwd)"
+                spawn terminal
             }
 
   , Project { projectName      = "mint"
             , projectDirectory = "~/src/mint"
             , projectStartHook = Just $ do
                 spawn "e -cs mint"
-                spawn "konsole --workdir $(pwd)"
+                spawn terminal
             }
 
   ]

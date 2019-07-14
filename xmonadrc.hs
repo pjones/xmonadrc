@@ -34,7 +34,7 @@ import qualified XMonad.Local.Workspaces as Workspaces
 --
 -- config :: XConfig a
 config = desktopConfig
-  { terminal           = "konsole --notransparency"
+  { terminal           = Workspaces.terminal
   , layoutHook         = avoidStruts Local.layoutHook
 
   , manageHook         = manageHook desktopConfig <>
