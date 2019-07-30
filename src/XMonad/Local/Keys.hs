@@ -39,9 +39,9 @@ import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts(..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import XMonad.Layout.LayoutBuilder (IncLayoutN(..))
+import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing (incWindowSpacing, decWindowSpacing, toggleWindowSpacingEnabled)
-import XMonad.Layout.ToggleLayouts (ToggleLayout(..))
 import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
@@ -189,7 +189,7 @@ layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
   [ ("M-<Backspace>", selectLayoutByName Local.promptConfig)
   , ("M-w <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
-  , ("M-S-1",         sendMessage ToggleLayout)
+  , ("M-S-1",         withFocused (sendMessage . maximizeRestore))
   , ("M-S-8",         cycleThroughLayouts ["Auto", "Focus"])
   , ("M-w s",         toggleWindowSpacingEnabled)
   , ("M-w M-s",       sendMessage ToggleStruts)

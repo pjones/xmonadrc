@@ -20,8 +20,8 @@ import XMonad.Layout.Cross (Cross(..))
 import XMonad.Layout.Grid (Grid(Grid))
 import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.Magnifier (magnifiercz)
 import XMonad.Layout.Master (mastered)
+import XMonad.Layout.Maximize (maximizeWithPadding)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.OneBig (OneBig(..))
 import XMonad.Layout.Reflect (reflectHoriz)
@@ -29,7 +29,6 @@ import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.Spacing (Border(..), spacingRaw)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
-import XMonad.Layout.ToggleLayouts (toggleLayouts)
 import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Layout.ZoomRow (zoomRow)
 import XMonad.Local.Prompt (aListCompFunc)
@@ -48,16 +47,14 @@ import XMonad.Layout.LayoutBuilder
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
-layoutHook = toggleLayouts oneCol allLays
+layoutHook = maximizeWithPadding 100 allLays
   where
     uniformBorder n = Border n n n n
-    spacing  = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
-    spacing' = spacingRaw False (uniformBorder 0) False (uniformBorder 2)  True
+    spacing = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
 
     full       = noBorders Full
     cmaster    = centerMaster grid
     big        = spacing $ OneBig (3/4) (3/4)
-    oneCol     = spacing' $ magnifiercz 0.9 Accordion
     threeCols  = spacing $ reflectHoriz $ ThreeColMid 1 (1/100) (3/8)
     twoCols    = spacing $ mastered (1/100) (1/2) Accordion
     twoPane    = spacing $ TwoPane (1/100) (1/2)
