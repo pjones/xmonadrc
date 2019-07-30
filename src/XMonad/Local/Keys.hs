@@ -42,6 +42,7 @@ import XMonad.Layout.LayoutBuilder (IncLayoutN(..))
 import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing (incWindowSpacing, decWindowSpacing, toggleWindowSpacingEnabled)
+import XMonad.Layout.ZoomRow (zoomIn, zoomOut, zoomReset)
 import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
@@ -195,6 +196,9 @@ layoutKeys c =
   , ("M-w M-s",       sendMessage ToggleStruts)
   , ("M-C-S-=",       incWindowSpacing 5)
   , ("M-C--",         decWindowSpacing 5)
+  , ("M-z S-=",       sendMessage zoomIn)
+  , ("M-z -",         sendMessage zoomOut)
+  , ("M-z <Esc>",     sendMessage zoomReset)
   ]
 
 --------------------------------------------------------------------------------

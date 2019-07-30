@@ -14,9 +14,7 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
-import XMonad.Layout.Accordion (Accordion(..))
 import XMonad.Layout.CenteredMaster (centerMaster)
-import XMonad.Layout.Cross (Cross(..))
 import XMonad.Layout.Grid (Grid(Grid))
 import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
@@ -56,12 +54,11 @@ layoutHook = maximizeWithPadding 100 allLays
     cmaster    = centerMaster grid
     big        = spacing $ OneBig (3/4) (3/4)
     threeCols  = spacing $ reflectHoriz $ ThreeColMid 1 (1/100) (3/8)
-    twoCols    = spacing $ mastered (1/100) (1/2) Accordion
+    twoCols    = spacing $ mastered (1/100) (1/2) (Mirror zoomRow)
     twoPane    = spacing $ TwoPane (1/100) (1/2)
     tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing Grid
-    cross      = spacing $ Cross (4/5) (1/100)
     ten80      = centered 2560 (1930, 1090) -- Account for border width
     cgrid      = layoutAll (relBox (1/8) (1/8) (7/8) (7/8)) grid
     small      = layoutAll (relBox (1/4) (1/8) (3/4) (7/8)) twoPane
@@ -102,7 +99,6 @@ layoutHook = maximizeWithPadding 100 allLays
       renamed [Replace "2C"]        twoCols   |||
       renamed [Replace "2P"]        twoPane   |||
       renamed [Replace "Focus"]     focusTag  |||
-      renamed [Replace "Cross"]     cross     |||
       renamed [Replace "Grid"]      grid      |||
       renamed [Replace "Big"]       big       |||
       renamed [Replace "1080p"]     ten80     |||
@@ -137,7 +133,6 @@ selectLayoutByName conf =
       , ("1080p",              "1080p")
       , ("Big",                "Big")
       , ("Centered",           "Centered")
-      , ("Cross",              "Cross")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
