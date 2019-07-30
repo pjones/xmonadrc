@@ -14,7 +14,6 @@ module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
 
 --------------------------------------------------------------------------------
 import XMonad hiding ((|||), layoutHook, float)
-import XMonad.Layout.CenteredMaster (centerMaster)
 import XMonad.Layout.Grid (Grid(Grid))
 import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
@@ -51,7 +50,6 @@ layoutHook = maximizeWithPadding 100 allLays
     spacing = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
 
     full       = noBorders Full
-    cmaster    = centerMaster grid
     big        = spacing $ OneBig (3/4) (3/4)
     threeCols  = spacing $ reflectHoriz $ ThreeColMid 1 (1/100) (3/8)
     twoCols    = spacing $ mastered (1/100) (1/2) (Mirror zoomRow)
@@ -102,7 +100,6 @@ layoutHook = maximizeWithPadding 100 allLays
       renamed [Replace "Grid"]      grid      |||
       renamed [Replace "Big"]       big       |||
       renamed [Replace "1080p"]     ten80     |||
-      renamed [Replace "Centered"]  cmaster   |||
       renamed [Replace "Full"]      full
 
 --------------------------------------------------------------------------------
@@ -132,7 +129,6 @@ selectLayoutByName conf =
       , ("Chat",               "Chat")
       , ("1080p",              "1080p")
       , ("Big",                "Big")
-      , ("Centered",           "Centered")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
