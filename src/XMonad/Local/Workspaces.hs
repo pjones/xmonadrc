@@ -22,6 +22,7 @@ import Control.Monad (unless)
 import XMonad hiding (terminal)
 import XMonad.Actions.DynamicProjects
 import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
+import XMonad.Layout.Spacing
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
 
@@ -43,13 +44,16 @@ projects =
 
   , Project { projectName      = "browsers"
             , projectDirectory = "~/download"
-            , projectStartHook = Just $ spawn "firefox"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Tall")
+                spawn "firefox"
             }
 
   , Project { projectName      = "monitoring"
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 sendMessage (JumpToLayout "Tall")
+                setScreenWindowSpacing 20
                 spawn "chromium --app='https://stats.printedmint.com/d/UpWo-GSWk/machines?orgId=1&refresh=30s&kiosk'"
                 spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
                 spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
@@ -64,7 +68,7 @@ projects =
   , Project { projectName      = "mail"
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
-                sendMessage (JumpToLayout "Auto Tall")
+                sendMessage (JumpToLayout "Mail")
                 spawn "e -cs mail"
             }
 
@@ -94,7 +98,7 @@ projects =
 --------------------------------------------------------------------------------
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names = ["scratch", "browsers", "agenda", "music", "mail", "chat"]
+names = ["scratch", "browsers", "music", "mail", "chat"]
 
 --------------------------------------------------------------------------------
 scratchPads :: NamedScratchpads

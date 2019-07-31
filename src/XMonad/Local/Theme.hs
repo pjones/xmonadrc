@@ -19,5 +19,5 @@ import XMonad
 xmonadColors :: XConfig a -> XConfig a
 xmonadColors x = x { normalBorderColor  = "#444444"
                    , focusedBorderColor = "#ff52bb"
-                   , borderWidth        = 5
+                   , borderWidth        = 2
                    }

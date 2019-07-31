@@ -57,11 +57,11 @@ layoutHook = maximizeWithPadding 100 allLays
     tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing Grid
-    ten80      = centered 2560 (1930, 1090) -- Account for border width
+    ten80      = centered 2560 (1924, 1084) -- Account for border width
     cgrid      = layoutAll (relBox (1/8) (1/8) (7/8) (7/8)) grid
     small      = layoutAll (relBox (1/4) (1/8) (3/4) (7/8)) twoPane
     auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
-    autoTall   = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
+    mail       = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -90,7 +90,7 @@ layoutHook = maximizeWithPadding 100 allLays
 
     allLays =
       renamed [Replace "Auto"]      auto      |||
-      renamed [Replace "Auto Tall"] autoTall  |||
+      renamed [Replace "Mail"]      mail      |||
       renamed [Replace "Chat"]      chat      |||
       renamed [Replace "Tall"]      tall      |||
       renamed [Replace "3C"]        threeCols |||
@@ -125,7 +125,7 @@ selectLayoutByName conf =
     layoutNames :: [(String, String)]
     layoutNames =
       [ ("Auto",               "Auto")
-      , ("Auto Tall",          "Auto Tall")
+      , ("Mail",               "Mail")
       , ("Chat",               "Chat")
       , ("1080p",              "1080p")
       , ("Big",                "Big")
