@@ -54,7 +54,6 @@ projects =
             , projectStartHook = Just $ do
                 sendMessage (JumpToLayout "Tall")
                 setScreenWindowSpacing 20
-                spawn "chromium --app='https://stats.printedmint.com/d/UpWo-GSWk/machines?orgId=1&refresh=30s&kiosk'"
                 spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
                 spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
             }
@@ -85,14 +84,6 @@ projects =
                 spawn "e -cs rfa"
                 spawn terminal
             }
-
-  , Project { projectName      = "mint"
-            , projectDirectory = "~/src/mint"
-            , projectStartHook = Just $ do
-                spawn "e -cs mint"
-                spawn terminal
-            }
-
   ]
 
 --------------------------------------------------------------------------------
