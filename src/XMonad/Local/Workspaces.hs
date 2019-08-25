@@ -53,7 +53,7 @@ projects =
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
                 sendMessage (JumpToLayout "Tall")
-                setScreenWindowSpacing 20
+                setScreenSpacing $ Border 40 40 40 40
                 spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
                 spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
             }

@@ -47,7 +47,7 @@ import XMonad.Layout.LayoutBuilder
 layoutHook = maximizeWithPadding 100 allLays
   where
     uniformBorder n = Border n n n n
-    spacing = spacingRaw False (uniformBorder 0) False (uniformBorder 10) True
+    spacing = spacingRaw False (uniformBorder 0) True (uniformBorder 10) True
 
     full       = noBorders Full
     big        = spacing $ OneBig (3/4) (3/4)

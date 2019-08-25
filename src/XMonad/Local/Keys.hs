@@ -194,21 +194,25 @@ layoutKeys c =
   , ("M-S-1",         withFocused (sendMessage . maximizeRestore))
   , ("M-S-8",         cycleThroughLayouts ["Auto", "Focus"])
   , ("M-w s t",       toggleWindowSpacingEnabled)
-  , ("M-w s 0",       setScreenWindowSpacing  0)
-  , ("M-w s 1",       setScreenWindowSpacing 10)
-  , ("M-w s 2",       setScreenWindowSpacing 20)
-  , ("M-w s 3",       setScreenWindowSpacing 30)
-  , ("M-w s 4",       setScreenWindowSpacing 40)
-  , ("M-w s 5",       setScreenWindowSpacing  5)
-  , ("M-w s S-=",     incScreenWindowSpacing  2)
-  , ("M-w s -",       decScreenWindowSpacing  2)
-  , ("M-w M-s",       sendMessage ToggleStruts)
+  , ("M-w s 0",       setScreenSpacing $ uniborder  0)
+  , ("M-w s 1",       setScreenSpacing $ uniborder 10)
+  , ("M-w s 2",       setScreenSpacing $ uniborder 20)
+  , ("M-w s 3",       setScreenSpacing $ uniborder 30)
+  , ("M-w s 4",       setScreenSpacing $ uniborder 40)
+  , ("M-w s 5",       setScreenSpacing $ uniborder  5)
   , ("M-C-S-=",       incWindowSpacing 1)
   , ("M-C--",         decWindowSpacing 1)
+  , ("M-M1-C-S-=",    incScreenSpacing 2)
+  , ("M-M1-C--",      decScreenSpacing 2)
   , ("M-z S-=",       sendMessage zoomIn)
   , ("M-z -",         sendMessage zoomOut)
   , ("M-z <Esc>",     sendMessage zoomReset)
+  , ("M-w M-s",       sendMessage ToggleStruts)
   ]
+
+  where
+    uniborder :: Integer -> Border
+    uniborder n = Border n n n n
 
 --------------------------------------------------------------------------------
 -- Keys to manipulate screens (actual physical monitors).
