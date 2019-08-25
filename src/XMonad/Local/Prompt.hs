@@ -27,16 +27,16 @@ import XMonad.Prompt
 promptConfig :: XPConfig
 promptConfig = def
   { position          = CenteredAt (1/3) (1/2)
-  , height            = 35
-  , font              = "xft:dejavu sans mono:size=14"
-  , bgColor           = "#002b36"
-  , fgColor           = "#93a1a1"
-  , fgHLight          = "#d33682"
-  , bgHLight          = "#073642"
-  , borderColor       = "#053542"
-  , promptBorderWidth = 5
+  , height            = 50
+  , font              = "xft:Office Code Pro:size=14"
+  , bgColor           = "#262e3d"
+  , fgColor           = "#eeeeee"
+  , fgHLight          = "#ffffff"
+  , bgHLight          = "#c50ed2"
+  , borderColor       = "#0D1729"
+  , promptBorderWidth = 4
   , maxComplRows      = Just 12
-  , alwaysHighlight   = True
+  , alwaysHighlight   = False
   , promptKeymap      = emacsLikeXPKeymap
   , searchPredicate   = predicateFunction
   }

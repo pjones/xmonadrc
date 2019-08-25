@@ -101,16 +101,17 @@ windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   -- Focusing Windows:
   [ ("M-;",     nextMatch History (return True))
+  , ("M-C-;",   switchLayer)
   , ("M-w k",   windows W.focusUp)
   , ("M-w j",   windows W.focusDown)
   , ("M-u",     focusUrgent)
   , ("M-o",     windowPromptGoto')
   , ("M-C-o",   windowPromptGoto)
   , ("M-w c",   windowPrompt Local.promptConfig BringCopy allWindows)
-  , ("M-j",     windowGo D True)
-  , ("M-k",     windowGo U True)
-  , ("M-l",     windowGo R True)
-  , ("M-h",     windowGo L True)
+  , ("M-j",     windowGo D False)
+  , ("M-k",     windowGo U False)
+  , ("M-l",     windowGo R False)
+  , ("M-h",     windowGo L False)
   , ("M-C-m",   windows W.focusMaster)
 
   -- Moving Windows:
@@ -180,8 +181,8 @@ workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
   [ ("M-'",       viewPrevWS)
   , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
-  , ("M-f",       lookupProject "agenda"   >>= maybe (return ()) switchProject)
-  , ("M-g",       lookupProject "browsers" >>= maybe (return ()) switchProject)
+  , ("M-f",       lookupProject "mail"     >>= mapM_ switchProject)
+  , ("M-g",       lookupProject "browsers" >>= mapM_ switchProject)
   ]
 
 --------------------------------------------------------------------------------
