@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable          #-}
 {-# OPTIONS -fno-warn-missing-signatures #-}
 
 --------------------------------------------------------------------------------
@@ -10,9 +11,16 @@ the LICENSE file. -}
 
 --------------------------------------------------------------------------------
 -- | Layout configuration and hook.
-module XMonad.Local.Layout (layoutHook, selectLayoutByName) where
+module XMonad.Local.Layout
+  ( layoutHook
+  , selectLayoutByName
+  , toggleLayout
+  ) where
 
 --------------------------------------------------------------------------------
+import Data.Map (Map)
+import qualified Data.Map as Map
+import Data.Maybe (fromMaybe)
 import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Grid (Grid(Grid))
 import XMonad.Layout.IfMax (ifMax)
@@ -24,12 +32,15 @@ import XMonad.Layout.OneBig (OneBig(..))
 import XMonad.Layout.Reflect (reflectHoriz)
 import XMonad.Layout.Renamed (Rename(..), renamed)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
+import XMonad.Layout.Simplest (Simplest(..))
 import XMonad.Layout.Spacing (Border(..), spacingRaw)
 import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Layout.ZoomRow (zoomRow)
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Prompt
+import qualified XMonad.StackSet as Stack
+import XMonad.Util.ExtensibleState as XState
 import XMonad.Util.WindowProperties (Property(..))
 
 import XMonad.Layout.LayoutBuilder
@@ -44,7 +55,9 @@ import XMonad.Layout.LayoutBuilder
 --------------------------------------------------------------------------------
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
-layoutHook = maximizeWithPadding 100 allLays
+layoutHook =
+    renamed [CutWordsLeft 1] $
+      maximizeWithPadding 100 allLays
   where
     uniformBorder n = Border n n n n
     spacing = spacingRaw False (uniformBorder 0) True (uniformBorder 10) True
@@ -58,8 +71,9 @@ layoutHook = maximizeWithPadding 100 allLays
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing Grid
     ten80      = centered 2560 (1924, 1084) -- Account for border width
-    cgrid      = layoutAll (relBox (1/8) (1/8) (7/8) (7/8)) grid
-    small      = layoutAll (relBox (1/4) (1/8) (3/4) (7/8)) twoPane
+    cgrid      = layoutAll (relBox (1/8) (1/8)  (7/8) (7/8))   grid
+    small      = layoutAll (relBox (1/4) (1/8)  (3/4) (7/8))   twoPane
+    single     = layoutAll (relBox (1/4) (1/30) (3/4) (29/30)) Simplest
     auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
     mail       = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
 
@@ -90,16 +104,17 @@ layoutHook = maximizeWithPadding 100 allLays
 
     allLays =
       renamed [Replace "Auto"]      auto      |||
-      renamed [Replace "Mail"]      mail      |||
-      renamed [Replace "Chat"]      chat      |||
-      renamed [Replace "Tall"]      tall      |||
-      renamed [Replace "3C"]        threeCols |||
+      renamed [Replace "1080p"]     ten80     |||
       renamed [Replace "2C"]        twoCols   |||
       renamed [Replace "2P"]        twoPane   |||
+      renamed [Replace "3C"]        threeCols |||
+      renamed [Replace "Big"]       big       |||
+      renamed [Replace "Chat"]      chat      |||
       renamed [Replace "Focus"]     focusTag  |||
       renamed [Replace "Grid"]      grid      |||
-      renamed [Replace "Big"]       big       |||
-      renamed [Replace "1080p"]     ten80     |||
+      renamed [Replace "Mail"]      mail      |||
+      renamed [Replace "Single"]    single    |||
+      renamed [Replace "Tall"]      tall      |||
       renamed [Replace "Full"]      full
 
 --------------------------------------------------------------------------------
@@ -125,15 +140,54 @@ selectLayoutByName conf =
     layoutNames :: [(String, String)]
     layoutNames =
       [ ("Auto",               "Auto")
-      , ("Mail",               "Mail")
-      , ("Chat",               "Chat")
       , ("1080p",              "1080p")
       , ("Big",                "Big")
+      , ("Chat",               "Chat")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
+      , ("Mail",               "Mail")
+      , ("Single",             "Single")
       , ("Tall",               "Tall")
       , ("Three Columns (3C)", "3C")
       , ("Two Columns (2C)",   "2C")
       , ("Two Pane (2P)",      "2P")
       ]
+
+--------------------------------------------------------------------------------
+-- | Keep track of layouts when jumping with 'toggleLayout'.
+newtype LayoutHistory = LayoutHistory
+  { runLayoutHistory :: Map String String }
+  deriving (Typeable)
+
+instance ExtensionClass LayoutHistory where
+  initialValue = LayoutHistory Map.empty
+
+--------------------------------------------------------------------------------
+-- | Toggle between the current layout and the one given as an argument.
+toggleLayout :: String -> X ()
+toggleLayout name = do
+  winset <- XMonad.gets windowset
+
+  let ws = Stack.workspace . Stack.current $ winset
+      wn = Stack.tag ws
+      ld = description . Stack.layout $ ws
+
+  if name == ld
+    then restoreLayout wn
+    else rememberAndGo wn ld
+
+  where
+    -- Restore the previous workspace.
+    restoreLayout :: String -> X ()
+    restoreLayout ws = do
+      history <- runLayoutHistory <$> XState.get
+      let ld = fromMaybe "Auto" (Map.lookup ws history)
+      sendMessage (JumpToLayout ld)
+
+    -- Remember the current workspace and jump to the requested one.
+    rememberAndGo :: String -> String -> X ()
+    rememberAndGo ws current = do
+      history <- runLayoutHistory <$> XState.get
+      XState.put (LayoutHistory $ Map.insert ws current history)
+      sendMessage (JumpToLayout name)

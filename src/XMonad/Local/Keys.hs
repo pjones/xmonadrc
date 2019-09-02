@@ -26,7 +26,6 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 -- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
-import XMonad.Actions.CycleSelectedLayouts (cycleThroughLayouts)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt, lookupProject, switchProject)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
 import XMonad.Actions.Navigation2D
@@ -51,7 +50,7 @@ import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
 --------------------------------------------------------------------------------
 -- Local modules.
-import XMonad.Local.Layout (selectLayoutByName)
+import XMonad.Local.Layout (selectLayoutByName, toggleLayout)
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
@@ -144,7 +143,7 @@ windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-/",   tagPrompt Local.promptConfig)
   , ("M-a",   primaryJumpTagUp)
-  , ("M-s",   secondaryJumpTagUp)
+  , ("M-C-a", secondaryJumpTagUp)
   , ("M-t a", addFocusTag)
   , ("M-t d", rmFocusTag)
   , ("M-t j", tagPrompt' Local.promptConfig [SetJumpTag])
@@ -172,7 +171,7 @@ windowTagKeys _ =
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
       [ ("M-",   focusTag')
-      , ("M-t ", toggleTagOnCurrentWindow)
+      , ("M-C-", toggleTagOnCurrentWindow)
       ]
 
 --------------------------------------------------------------------------------
@@ -192,7 +191,8 @@ layoutKeys c =
   [ ("M-<Backspace>", selectLayoutByName Local.promptConfig)
   , ("M-w <Esc>",     setLayout (layoutHook c)) -- Reset to default layout.
   , ("M-S-1",         withFocused (sendMessage . maximizeRestore))
-  , ("M-S-8",         cycleThroughLayouts ["Auto", "Focus"])
+  , ("M-S-8",         toggleLayout "Focus")
+  , ("M-M1-8",        toggleLayout "Single")
   , ("M-w s t",       toggleWindowSpacingEnabled)
   , ("M-w s 0",       setScreenSpacing $ uniborder  0)
   , ("M-w s 1",       setScreenSpacing $ uniborder 10)
