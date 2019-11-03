@@ -102,6 +102,14 @@ layoutHook =
       in layoutP prop leftBox Nothing grid $
            layoutAll rightBox grid
 
+    -- Firefox on the left, other windows in a tall config on the right.
+    dev =
+      let leftBox  = relBox 0 0 (1/3) 1
+          rightBox = relBox (1/3) 0 1 1
+          prop     = ClassName "Firefox"
+      in layoutP prop leftBox Nothing grid $
+           layoutAll rightBox tall
+
     allLays =
       renamed [Replace "Auto"]      auto      |||
       renamed [Replace "1080p"]     ten80     |||
@@ -110,6 +118,7 @@ layoutHook =
       renamed [Replace "3C"]        threeCols |||
       renamed [Replace "Big"]       big       |||
       renamed [Replace "Chat"]      chat      |||
+      renamed [Replace "Dev"]       dev       |||
       renamed [Replace "Focus"]     focusTag  |||
       renamed [Replace "Grid"]      grid      |||
       renamed [Replace "Mail"]      mail      |||
@@ -143,6 +152,7 @@ selectLayoutByName conf =
       , ("1080p",              "1080p")
       , ("Big",                "Big")
       , ("Chat",               "Chat")
+      , ("Dev",                "Dev")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
