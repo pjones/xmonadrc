@@ -95,7 +95,7 @@ names = ["scratch", "browsers", "music", "mail", "chat"]
 scratchPads :: NamedScratchpads
 scratchPads =
   [ NS { name  = "emacs"
-       , cmd   = "e -c -- -F '((name . \"scratch\"))'"
+       , cmd   = "e -s mail -c -- -F '((name . \"scratch\"))'"
        , query = className =? "Emacs" <&&> appName =? "scratch"
        , hook  = floatOnRight
        }
