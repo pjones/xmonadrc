@@ -22,7 +22,6 @@ import Control.Monad (unless)
 import XMonad hiding (terminal)
 import XMonad.Actions.DynamicProjects
 import XMonad.Layout.LayoutCombinators (JumpToLayout(..))
-import XMonad.Layout.Spacing
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
 
@@ -52,9 +51,8 @@ projects =
   , Project { projectName      = "monitoring"
             , projectDirectory = "~/"
             , projectStartHook = Just $ do
-                sendMessage (JumpToLayout "Tall")
-                setScreenSpacing $ Border 40 40 40 40
                 spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
+                spawn "chromium --app='https://stats.devalot.com/d/NeLIJZ1Zk/hq?orgId=1&from=now-1h&to=now&refresh=10s&kiosk'"
                 spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
             }
 
@@ -76,6 +74,15 @@ projects =
             , projectStartHook = Just $ do
                 spawn "e -cs rc"
                 spawn terminal
+            }
+
+  , Project { projectName      = "music"
+            , projectDirectory = "~/documents/music"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Tall")
+                spawn "spotify"
+                spawn "cantata"
+                spawn "pavucontrol"
             }
 
   , Project { projectName      = "rfa"
