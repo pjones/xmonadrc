@@ -91,6 +91,22 @@ projects =
                 spawn "e -cs rfa"
                 spawn terminal
             }
+
+  , Project { projectName      = "sthenauth"
+            , projectDirectory = "~/src/haskell/sthenauth"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Dev")
+                spawn "e -cs sthenauth"
+                spawn terminal
+            }
+
+  , Project { projectName      = "iolaus"
+            , projectDirectory = "~/src/haskell/iolaus"
+            , projectStartHook = Just $ do
+                sendMessage (JumpToLayout "Dev")
+                spawn "e -cs iolaus"
+                spawn terminal
+            }
   ]
 
 --------------------------------------------------------------------------------

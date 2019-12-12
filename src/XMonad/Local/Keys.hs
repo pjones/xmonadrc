@@ -13,7 +13,6 @@ module XMonad.Local.Keys (keys, rawKeys) where
 --------------------------------------------------------------------------------
 -- General Haskell Packages.
 import qualified Data.Map as M
-import Data.Maybe (fromMaybe)
 import Graphics.X11.Xlib
 import System.Directory
 import System.FilePath ((</>))
@@ -44,8 +43,9 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.ZoomRow (zoomIn, zoomOut, zoomReset)
 import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
-import XMonad.Prompt.Window (WindowPrompt(..), windowPrompt, windowMultiPrompt, allWindows, wsWindows)
+import XMonad.Prompt.Window (WindowPrompt(..), windowMultiPrompt, allWindows, wsWindows)
 import XMonad.Util.EZConfig (mkKeymap)
+import qualified XMonad.Util.ExtensibleState as XState
 import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
 --------------------------------------------------------------------------------
@@ -89,9 +89,10 @@ withUpdatePointer = map addAction
 --------------------------------------------------------------------------------
 -- Specifically manage my prefix key (C-z), and for controlling XMonad.
 baseKeys :: XConfig Layout -> [(String, X ())]
-baseKeys _ =
+baseKeys c =
   [ ("M-x r",       restartIntoDebugging)
-  , ("M-x <Space>", messageMenu Local.promptConfig)
+  , ("M-x <Space>", messageMenu c Local.promptConfig)
+  , ("M-.",         repeatLastXMessage)
   ]
 
 --------------------------------------------------------------------------------
@@ -104,9 +105,7 @@ windowKeys _ =
   , ("M-w k",   windows W.focusUp)
   , ("M-w j",   windows W.focusDown)
   , ("M-u",     focusUrgent)
-  , ("M-o",     windowPromptGoto')
-  , ("M-C-o",   windowPromptGoto)
-  , ("M-w c",   windowPrompt Local.promptConfig BringCopy allWindows)
+  , ("M-o",     windowPromptGoto)
   , ("M-j",     windowGo D False)
   , ("M-k",     windowGo U False)
   , ("M-l",     windowGo R False)
@@ -141,7 +140,7 @@ windowKeys _ =
 -- Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
-  [ ("M-/",   tagPrompt Local.promptConfig)
+  [ ("M-/",   tagPrompt Local.promptConfig >> sendMessage (IncLayoutN 0))
   , ("M-a",   primaryJumpTagUp)
   , ("M-C-a", secondaryJumpTagUp)
   , ("M-t a", addFocusTag)
@@ -178,8 +177,8 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-'",       viewPrevWS)
-  , ("M-<Space>", switchProjectPrompt  Local.promptConfig)
+  [ ("M-<Space>", switchProjectPrompt Local.promptConfig)
+  , ("M-'",       viewPrevWS)
   , ("M-f",       lookupProject "mail"     >>= mapM_ switchProject)
   , ("M-g",       lookupProject "browsers" >>= mapM_ switchProject)
   ]
@@ -193,26 +192,7 @@ layoutKeys c =
   , ("M-S-1",         withFocused (sendMessage . maximizeRestore))
   , ("M-S-8",         toggleLayout "Focus")
   , ("M-M1-8",        toggleLayout "Single")
-  , ("M-w s t",       toggleWindowSpacingEnabled)
-  , ("M-w s 0",       setScreenSpacing $ uniborder  0)
-  , ("M-w s 1",       setScreenSpacing $ uniborder 10)
-  , ("M-w s 2",       setScreenSpacing $ uniborder 20)
-  , ("M-w s 3",       setScreenSpacing $ uniborder 30)
-  , ("M-w s 4",       setScreenSpacing $ uniborder 40)
-  , ("M-w s 5",       setScreenSpacing $ uniborder  5)
-  , ("M-C-S-=",       incWindowSpacing 1)
-  , ("M-C--",         decWindowSpacing 1)
-  , ("M-M1-C-S-=",    incScreenSpacing 2)
-  , ("M-M1-C--",      decScreenSpacing 2)
-  , ("M-z S-=",       sendMessage zoomIn)
-  , ("M-z -",         sendMessage zoomOut)
-  , ("M-z <Esc>",     sendMessage zoomReset)
-  , ("M-w M-s",       sendMessage ToggleStruts)
   ]
-
-  where
-    uniborder :: Integer -> Border
-    uniborder n = Border n n n n
 
 --------------------------------------------------------------------------------
 -- Keys to manipulate screens (actual physical monitors).
@@ -259,33 +239,68 @@ restartIntoDebugging = do
 --------------------------------------------------------------------------------
 windowPromptGoto :: X ()
 windowPromptGoto = windowMultiPrompt Local.promptConfig modes
-  where modes = [(Goto, allWindows), (Goto, wsWindows)]
-
---------------------------------------------------------------------------------
-windowPromptGoto' :: X ()
-windowPromptGoto' = windowMultiPrompt Local.promptConfig modes
-  where modes = [(Goto, wsWindows), (Goto, allWindows)]
+  where modes = [ (Goto,      allWindows)
+                , (Goto,      wsWindows)
+                , (BringCopy, allWindows)
+                , (Bring,     allWindows)
+                ]
 
 --------------------------------------------------------------------------------
 -- | A menu of less frequently used actions:
 data MessageMenu = MessageMenu
 
 instance XPrompt MessageMenu where
-  showXPrompt MessageMenu = "X Action: "
+  showXPrompt MessageMenu = "XMonad Action: "
 
-messageMenu :: XPConfig -> X ()
-messageMenu conf =
-  mkXPrompt MessageMenu conf (Local.aListCompFunc conf actions) go
+messageMenu :: XConfig Layout -> XPConfig -> X ()
+messageMenu xc conf =
+  mkXPrompt MessageMenu conf' (Local.aListCompFunc conf' actions) go
 
   where
     go :: String -> X ()
-    go selected = fromMaybe (return ()) $ lookup selected actions
+    go selected = maybe (return ()) recordXMessage $ lookup selected actions
+
+    conf' :: XPConfig
+    conf' = conf { alwaysHighlight = True }
 
     actions :: [ (String, X ()) ]
-    actions = [ ("IncLayoutN",    sendMessage (IncLayoutN 1))
-              , ("DecLayoutN",    sendMessage (IncLayoutN (-1)))
-              , ("IncMasterN",    sendMessage (IncMasterN 1))
-              , ("DecMasterN",    sendMessage (IncMasterN (-1)))
-              , ("ToggleStruts",  sendMessage ToggleStruts)
-              , ("ToggleSpacing", toggleWindowSpacingEnabled)
+    actions = [ ("IncLayoutN",         sendMessage (IncLayoutN 1))
+              , ("DecLayoutN",         sendMessage (IncLayoutN (-1)))
+              , ("Next Layout",        sendMessage NextLayout)
+              , ("IncMasterN",         sendMessage (IncMasterN 1))
+              , ("DecMasterN",         sendMessage (IncMasterN (-1)))
+              , ("ToggleStruts",       sendMessage ToggleStruts)
+              , ("ToggleSpacing",      toggleWindowSpacingEnabled)
+              , ("Tile Window",        withFocused $ windows . W.sink)
+              , ("Screen Spacing 0",   setScreenSpacing (Border 0 0 0 0))
+              , ("Screen Spacing +5",  incWindowSpacing 5)
+              , ("Screen Spacing -5",  decWindowSpacing 5)
+              , ("Window Spacing +5",  incWindowSpacing 5)
+              , ("Window Spacing -5",  decWindowSpacing 5)
+              , ("ZoomIn",             sendMessage zoomIn)
+              , ("ZoomOut",            sendMessage zoomOut)
+              , ("ZoomReset",          sendMessage zoomReset)
+              , ("Reset Layout",       setLayout (layoutHook xc))
               ]
+
+--------------------------------------------------------------------------------
+-- | Remember certain actions taken so they can be repeated.
+newtype LastXMessage = LastXMessage
+  { getLastMessage :: X () }
+
+instance ExtensionClass LastXMessage where
+  initialValue = LastXMessage (return ())
+
+--------------------------------------------------------------------------------
+-- | Record the given message as the last used message, then execute it.
+recordXMessage :: X () -> X ()
+recordXMessage message = do
+  XState.put (LastXMessage message)
+  message
+
+--------------------------------------------------------------------------------
+-- | Execute the last recorded message.
+repeatLastXMessage :: X ()
+repeatLastXMessage = do
+  message <- getLastMessage <$> XState.get
+  message

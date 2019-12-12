@@ -36,8 +36,7 @@ import qualified XMonad.StackSet as W
 manageHook :: ManageHook
 manageHook = composeOne
     [ -- Windows to ignore:
-      isInProperty "_NET_WM_STATE" "_NET_WM_STATE_SKIP_TASKBAR"
-        -?> (doCenterFloat >> doIgnore)
+      isInProperty "_NET_WM_STATE" "_NET_WM_STATE_SKIP_TASKBAR" -?> doIgnore
 
       -- Start by tagging new windows:
     , className =? "Chromium-browser"   `addTagAndContinue` "browser"

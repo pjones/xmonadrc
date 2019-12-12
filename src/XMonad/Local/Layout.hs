@@ -76,6 +76,7 @@ layoutHook =
     single     = layoutAll (relBox (1/4) (1/30) (3/4) (29/30)) Simplest
     auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
     mail       = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
+    devMirror  = reflectHoriz dev
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -106,25 +107,26 @@ layoutHook =
     dev =
       let leftBox  = relBox 0 0 (1/3) 1
           rightBox = relBox (1/3) 0 1 1
-          prop     = ClassName "Firefox"
+          prop     = Or (ClassName "Firefox") (Tagged "side")
       in layoutP prop leftBox Nothing grid $
            layoutAll rightBox tall
 
     allLays =
-      renamed [Replace "Auto"]      auto      |||
-      renamed [Replace "1080p"]     ten80     |||
-      renamed [Replace "2C"]        twoCols   |||
-      renamed [Replace "2P"]        twoPane   |||
-      renamed [Replace "3C"]        threeCols |||
-      renamed [Replace "Big"]       big       |||
-      renamed [Replace "Chat"]      chat      |||
-      renamed [Replace "Dev"]       dev       |||
-      renamed [Replace "Focus"]     focusTag  |||
-      renamed [Replace "Grid"]      grid      |||
-      renamed [Replace "Mail"]      mail      |||
-      renamed [Replace "Single"]    single    |||
-      renamed [Replace "Tall"]      tall      |||
-      renamed [Replace "Full"]      full
+      renamed [Replace "Auto"]       auto      |||
+      renamed [Replace "1080p"]      ten80     |||
+      renamed [Replace "2C"]         twoCols   |||
+      renamed [Replace "2P"]         twoPane   |||
+      renamed [Replace "3C"]         threeCols |||
+      renamed [Replace "Big"]        big       |||
+      renamed [Replace "Chat"]       chat      |||
+      renamed [Replace "Dev"]        dev       |||
+      renamed [Replace "Dev Mirror"] devMirror |||
+      renamed [Replace "Focus"]      focusTag  |||
+      renamed [Replace "Grid"]       grid      |||
+      renamed [Replace "Mail"]       mail      |||
+      renamed [Replace "Single"]     single    |||
+      renamed [Replace "Tall"]       tall      |||
+      renamed [Replace "Full"]       full
 
 --------------------------------------------------------------------------------
 -- | A data type for the @XPrompt@ class.
@@ -137,7 +139,7 @@ instance XPrompt LayoutByName where
 -- | Use @Prompt@ to choose a layout.
 selectLayoutByName :: XPConfig -> X ()
 selectLayoutByName conf =
-  mkXPrompt LayoutByName conf (aListCompFunc conf layoutNames) go
+  mkXPrompt LayoutByName conf' (aListCompFunc conf' layoutNames) go
 
   where
     go :: String -> X ()
@@ -146,6 +148,9 @@ selectLayoutByName conf =
         Nothing   -> return ()
         Just name -> sendMessage (JumpToLayout name)
 
+    conf' :: XPConfig
+    conf' = conf { alwaysHighlight = True }
+
     layoutNames :: [(String, String)]
     layoutNames =
       [ ("Auto",               "Auto")
@@ -153,6 +158,7 @@ selectLayoutByName conf =
       , ("Big",                "Big")
       , ("Chat",               "Chat")
       , ("Dev",                "Dev")
+      , ("Dev Mirror",         "Dev Mirror")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")

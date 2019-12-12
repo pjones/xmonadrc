@@ -58,20 +58,22 @@ radioStationPlaylist = do
 
 --------------------------------------------------------------------------------
 radioPrompt :: XPConfig -> X ()
-radioPrompt c = do
+radioPrompt conf = do
   playlist' <- io $ radioStationPlaylist `catch` econst (Left "fail")
 
   case playlist' of
     Left _         -> return ()
     Right playlist -> go playlist
 
-
   where
     go :: Playlist -> X ()
-    go playlist = mkXPrompt RadioStream c (comp playlist) (playStream playlist)
+    go playlist = mkXPrompt RadioStream conf' (comp playlist) (playStream playlist)
+
+    conf' :: XPConfig
+    conf' = conf { alwaysHighlight = True }
 
     comp :: Playlist -> ComplFunction
-    comp = listCompFunc c . titles
+    comp = listCompFunc conf' . titles
 
     titles :: Playlist -> [String]
     titles = mapMaybe (fmap Text.unpack . trackTitle)

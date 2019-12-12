@@ -1,7 +1,7 @@
 {
   "url": "https://code.devalot.com/mirrors/xmonad.git",
-  "rev": "bb13853929f8f6fc59b526bcc10631e1bac309ad",
-  "date": "2018-09-30T13:34:01+02:00",
-  "sha256": "1f2w0vkv4i40sa52d0bxdhmn9zsikzymm91xwdi4m64nqwip1i97",
+  "rev": "b65728032d6d533732b1a570a2a901264ef62f00",
+  "date": "2019-11-17T12:08:20+05:30",
+  "sha256": "0q1ks7dnw3a08bflhhhcmf99isdpbjyxqz79ysx9k57mpm9800yc",
   "fetchSubmodules": false
 }

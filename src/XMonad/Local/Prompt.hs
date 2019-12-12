@@ -28,7 +28,7 @@ promptConfig :: XPConfig
 promptConfig = def
   { position          = CenteredAt (1/3) (1/2)
   , height            = 50
-  , font              = "xft:Office Code Pro:size=14"
+  , font              = "xft:Fira Code:size=14"
   , bgColor           = "#262e3d"
   , fgColor           = "#eeeeee"
   , fgHLight          = "#ffffff"
