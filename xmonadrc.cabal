@@ -2,14 +2,14 @@ cabal-version: 2.2
 
 ------------------------------------------------------------------------------
 name:          xmonadrc
-version:       19.05.04
+version:       19.5.4
 synopsis:      Peter's XMonad Configuration
 homepage:      https://github.com/pjones/xmonadrc
 license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Peter Jones <pjones@pmade.com>
 maintainer:    Peter Jones <pjones@pmade.com>
-copyright:     Copyright (c) 2013-2019 Peter J. Jones
+copyright:     Copyright (c) 2013-2020 Peter J. Jones
 category:      Graphics
 build-type:    Simple
 

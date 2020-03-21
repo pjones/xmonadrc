@@ -27,6 +27,7 @@ import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master (mastered)
 import XMonad.Layout.Maximize (maximizeWithPadding)
+import XMonad.Layout.MultiColumns (multiCol)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.OneBig (OneBig(..))
 import XMonad.Layout.Reflect (reflectHoriz)
@@ -77,6 +78,7 @@ layoutHook =
     auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
     mail       = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
     devMirror  = reflectHoriz dev
+    mcols      = spacing $ reflectHoriz $ multiCol [1, 2] 4 0.01 0.33
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -124,6 +126,7 @@ layoutHook =
       renamed [Replace "Focus"]      focusTag  |||
       renamed [Replace "Grid"]       grid      |||
       renamed [Replace "Mail"]       mail      |||
+      renamed [Replace "MultiCols"]  mcols     |||
       renamed [Replace "Single"]     single    |||
       renamed [Replace "Tall"]       tall      |||
       renamed [Replace "Full"]       full
@@ -163,6 +166,7 @@ selectLayoutByName conf =
       , ("Full",               "Full")
       , ("Grid",               "Grid")
       , ("Mail",               "Mail")
+      , ("MultiCols",          "MultiCols")
       , ("Single",             "Single")
       , ("Tall",               "Tall")
       , ("Three Columns (3C)", "3C")
