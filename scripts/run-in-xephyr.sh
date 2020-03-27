@@ -73,5 +73,5 @@ done
 
   xterm -hold xrandr &
   xterm &
-  dist/build/xmonadrc/xmonadrc
+  cabal run xmonadrc
 )

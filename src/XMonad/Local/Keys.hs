@@ -27,6 +27,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt, lookupProject, switchProject)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
+import XMonad.Actions.Minimize
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens (onNextNeighbour, onPrevNeighbour)
 import XMonad.Actions.Promote (promote)
@@ -51,6 +52,7 @@ import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 --------------------------------------------------------------------------------
 -- Local modules.
 import XMonad.Local.Layout (selectLayoutByName, toggleLayout)
+import XMonad.Local.Layout.Columns (IncMasterCol(..))
 import XMonad.Local.Music (radioPrompt)
 import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
@@ -113,27 +115,25 @@ windowKeys _ =
   , ("M-C-m",   windows W.focusMaster)
 
   -- Moving Windows:
-  , ("M-M1-l",  windowSwap R False)
-  , ("M-M1-h",  windowSwap L False)
-  , ("M-M1-j",  windowSwap D False)
-  , ("M-M1-k",  windowSwap U False)
+  , ("M-C-l",  windowSwap R False)
+  , ("M-C-h",  windowSwap L False)
+  , ("M-C-j",  windowSwap D False)
+  , ("M-C-k",  windowSwap U False)
   , ("M-<U>",   rotSlavesUp)
   , ("M-<D>",   rotSlavesDown)
   , ("M-m",     whenX (swapHybrid False) promote) -- Promote current window to master.
 
   -- Resizing Windows:
-  , ("M-C-h",   sendMessage Shrink)
-  , ("M-C-l",   sendMessage Expand)
-  , ("M-C-j",   sendMessage MirrorShrink)
-  , ("M-C-k",   sendMessage MirrorExpand)
-  , ("M-w -",   sendMessage $ IncMasterN (-1))
-  , ("M-w S-=", sendMessage $ IncMasterN 1)
+  , ("M-S-h",   sendMessage Shrink)
+  , ("M-S-l",   sendMessage Expand)
+  , ("M-S-j",   sendMessage MirrorShrink)
+  , ("M-S-k",   sendMessage MirrorExpand)
 
   -- Window Layers and Killing and Yanking:
   , ("M-w t",   withFocused $ windows . W.sink) -- Tile window.
   , ("M-q",     kill1) -- Kill the current window.
-  , ("M-b",     killWindowToBury)
-  , ("M-v",     yankWindowFromBury)
+  , ("M-S-y",   withFocused minimizeWindow >> windows W.focusDown)
+  , ("M-S-p",   withLastMinimized maximizeWindowAndFocus)
   ]
 
 --------------------------------------------------------------------------------
@@ -192,6 +192,13 @@ layoutKeys c =
   , ("M-S-1",         withFocused (sendMessage . maximizeRestore))
   , ("M-S-8",         toggleLayout "Focus")
   , ("M-M1-8",        toggleLayout "Single")
+  , ("M-=",           sendMessage (IncMasterN 1))
+  , ("M--",           sendMessage (IncMasterN (-1)))
+  , ("M-S-=",         sendMessage (IncLayoutN 1))
+  , ("M-S--",         sendMessage (IncLayoutN (-1)))
+  , ("M-C-=",         sendMessage (IncMasterCol 1))
+  , ("M-C--",         sendMessage (IncMasterCol (-1)))
+  , ("M-s",           sendMessage ToggleStruts)
   ]
 
 --------------------------------------------------------------------------------
@@ -301,6 +308,4 @@ recordXMessage message = do
 --------------------------------------------------------------------------------
 -- | Execute the last recorded message.
 repeatLastXMessage :: X ()
-repeatLastXMessage = do
-  message <- getLastMessage <$> XState.get
-  message
+repeatLastXMessage = getLastMessage =<< XState.get

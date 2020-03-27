@@ -25,19 +25,16 @@ import XMonad hiding ((|||), layoutHook, float)
 import XMonad.Layout.Grid (Grid(Grid))
 import XMonad.Layout.IfMax (ifMax)
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.Master (mastered)
 import XMonad.Layout.Maximize (maximizeWithPadding)
-import XMonad.Layout.MultiColumns (multiCol)
+import XMonad.Layout.Minimize (minimize)
 import XMonad.Layout.NoBorders (noBorders)
 import XMonad.Layout.OneBig (OneBig(..))
-import XMonad.Layout.Reflect (reflectHoriz)
 import XMonad.Layout.Renamed (Rename(..), renamed)
-import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.Simplest (Simplest(..))
 import XMonad.Layout.Spacing (Border(..), spacingRaw)
-import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.TwoPane (TwoPane(..))
 import XMonad.Layout.ZoomRow (zoomRow)
+import XMonad.Local.Layout.Columns
 import XMonad.Local.Prompt (aListCompFunc)
 import XMonad.Prompt
 import qualified XMonad.StackSet as Stack
@@ -57,7 +54,8 @@ import XMonad.Layout.LayoutBuilder
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook =
-    renamed [CutWordsLeft 1] $
+    renamed [CutWordsLeft 2] $
+      minimize $
       maximizeWithPadding 100 allLays
   where
     uniformBorder n = Border n n n n
@@ -65,20 +63,17 @@ layoutHook =
 
     full       = noBorders Full
     big        = spacing $ OneBig (3/4) (3/4)
-    threeCols  = spacing $ reflectHoriz $ ThreeColMid 1 (1/100) (3/8)
-    twoCols    = spacing $ mastered (1/100) (1/2) (Mirror zoomRow)
+    tall       = spacing $ mkCols 0 1 2 (3/5) (1/100) RightToLeft
     twoPane    = spacing $ TwoPane (1/100) (1/2)
-    tall       = spacing $ ResizableTall 1 (1/100) (3/5) []
     focusTag   = spacing $ only (Tagged "focus")
     grid       = spacing Grid
     ten80      = centered 2560 (1924, 1084) -- Account for border width
     cgrid      = layoutAll (relBox (1/8) (1/8)  (7/8) (7/8))   grid
     small      = layoutAll (relBox (1/4) (1/8)  (3/4) (7/8))   twoPane
     single     = layoutAll (relBox (1/4) (1/30) (3/4) (29/30)) Simplest
-    auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane threeCols
-    mail       = ifMax 1 (noBorders small) $ ifMax 2 small threeCols
-    devMirror  = reflectHoriz dev
-    mcols      = spacing $ reflectHoriz $ multiCol [1, 2] 4 0.01 0.33
+    auto       = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane mcols
+    mail       = ifMax 1 (noBorders small) $ ifMax 2 small mcols
+    mcols      = spacing $ mkCols 1 1 3 (3/8) (1/100) RightToLeft
 
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
@@ -87,7 +82,7 @@ layoutHook =
     only prop =
       let topBox = relBox 0 0 1 (7/8)
           botBox = relBox 0 (7/8) 1 1
-      in layoutP prop topBox Nothing threeCols $
+      in layoutP prop topBox Nothing mcols $
            layoutAll botBox zoomRow
 
     -- Center the master window horizontally, locked to the given
@@ -105,24 +100,12 @@ layoutHook =
       in layoutP prop leftBox Nothing grid $
            layoutAll rightBox grid
 
-    -- Firefox on the left, other windows in a tall config on the right.
-    dev =
-      let leftBox  = relBox 0 0 (1/3) 1
-          rightBox = relBox (1/3) 0 1 1
-          prop     = Or (ClassName "Firefox") (Tagged "side")
-      in layoutP prop leftBox Nothing grid $
-           layoutAll rightBox tall
-
     allLays =
       renamed [Replace "Auto"]       auto      |||
       renamed [Replace "1080p"]      ten80     |||
-      renamed [Replace "2C"]         twoCols   |||
       renamed [Replace "2P"]         twoPane   |||
-      renamed [Replace "3C"]         threeCols |||
       renamed [Replace "Big"]        big       |||
       renamed [Replace "Chat"]       chat      |||
-      renamed [Replace "Dev"]        dev       |||
-      renamed [Replace "Dev Mirror"] devMirror |||
       renamed [Replace "Focus"]      focusTag  |||
       renamed [Replace "Grid"]       grid      |||
       renamed [Replace "Mail"]       mail      |||
@@ -160,17 +143,12 @@ selectLayoutByName conf =
       , ("1080p",              "1080p")
       , ("Big",                "Big")
       , ("Chat",               "Chat")
-      , ("Dev",                "Dev")
-      , ("Dev Mirror",         "Dev Mirror")
       , ("Focus",              "Focus")
       , ("Full",               "Full")
       , ("Grid",               "Grid")
       , ("Mail",               "Mail")
-      , ("MultiCols",          "MultiCols")
       , ("Single",             "Single")
       , ("Tall",               "Tall")
-      , ("Three Columns (3C)", "3C")
-      , ("Two Columns (2C)",   "2C")
       , ("Two Pane (2P)",      "2P")
       ]
 

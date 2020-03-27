@@ -24,6 +24,7 @@ import XMonad hiding (manageHook, handleEventHook)
 import XMonad.Actions.TagWindows (addTag)
 import XMonad.Hooks.InsertPosition (Focus(..), Position(..), insertPosition)
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.Minimize (minimizeEventHook)
 import qualified XMonad.StackSet as W
 
 --------------------------------------------------------------------------------
@@ -105,6 +106,7 @@ forceCenterFloat = doFloatDep move
 --------------------------------------------------------------------------------
 handleEventHook :: Event -> X All
 handleEventHook = mconcat [ focusFollowsTiledOnly
+                          , minimizeEventHook
                           ]
 
 --------------------------------------------------------------------------------

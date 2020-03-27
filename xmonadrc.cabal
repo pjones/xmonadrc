@@ -50,9 +50,12 @@ library
     XMonad.Local.Action
     XMonad.Local.Keys
     XMonad.Local.Layout
+    XMonad.Local.Layout.Columns
+    XMonad.Local.Layout.Common
     XMonad.Local.Log
     XMonad.Local.Music
     XMonad.Local.Prompt
+    XMonad.Local.Stack
     XMonad.Local.Tagging
     XMonad.Local.Theme
     XMonad.Local.Workspaces
