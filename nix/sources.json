@@ -1,0 +1,74 @@
+{
+    "ghcide-nix": {
+        "ref": "master",
+        "repo": "https://code.devalot.com/pjones/ghcide-nix.git",
+        "rev": "6ebbfcb233f2bfad4dfd03d964013096ea142750",
+        "type": "git"
+    },
+    "niv": {
+        "branch": "master",
+        "description": "Easy dependency management for Nix projects",
+        "homepage": "https://github.com/nmattia/niv",
+        "owner": "nmattia",
+        "repo": "niv",
+        "rev": "f73bf8d584148677b01859677a63191c31911eae",
+        "sha256": "0jlmrx633jvqrqlyhlzpvdrnim128gc81q5psz2lpp2af8p8q9qs",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/niv/archive/f73bf8d584148677b01859677a63191c31911eae.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nix-hs": {
+        "ref": "next",
+        "repo": "https://code.devalot.com/open/nix-hs.git",
+        "rev": "b267b7dff1e83909e537b5e9af7de0975caf112c",
+        "type": "git"
+    },
+    "nixpkgs": {
+        "branch": "nixos-20.03",
+        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
+        "homepage": "https://github.com/NixOS/nixpkgs",
+        "owner": "NixOS",
+        "repo": "nixpkgs-channels",
+        "rev": "2faa76db27c4a8045d050d9b390dbb2249b0f3c0",
+        "sha256": "19g7bas7kd4cipbwxh1hw0kgh4670plsfmk5gqsnivq0x12lbhqd",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/2faa76db27c4a8045d050d9b390dbb2249b0f3c0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "ormolu": {
+        "branch": "master",
+        "description": "A formatter for Haskell source code",
+        "homepage": null,
+        "owner": "tweag",
+        "repo": "ormolu",
+        "rev": "3fbc130a0962ab236d87711beae1895d84a68362",
+        "sha256": "1gfdc5rc9jgwkx4y7gfqasl95nxkpmkgwj3489s3n9ws88dfragw",
+        "type": "tarball",
+        "url": "https://github.com/tweag/ormolu/archive/3fbc130a0962ab236d87711beae1895d84a68362.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "playlists": {
+        "ref": "master",
+        "repo": "https://code.devalot.com/open/playlists.git",
+        "rev": "74e147065bd15a95a3cfe73e26e4fa7f3bb7a344",
+        "type": "git"
+    },
+    "playlists-http": {
+        "ref": "master",
+        "repo": "https://code.devalot.com/open/playlists-http.git",
+        "rev": "30cd1944dda87ba147d9e589e6b30a76476679f3",
+        "type": "git"
+    },
+    "xmonad": {
+        "ref": "master",
+        "repo": "https://code.devalot.com/mirrors/xmonad.git",
+        "rev": "b65728032d6d533732b1a570a2a901264ef62f00",
+        "type": "git"
+    },
+    "xmonad-contrib": {
+        "ref": "master",
+        "repo": "https://code.devalot.com/mirrors/xmonad-contrib.git",
+        "rev": "52f8c82504e24fb78380819ddffb0ec19b56a763",
+        "type": "git"
+    }
+}

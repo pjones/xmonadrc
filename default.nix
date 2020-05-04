@@ -1,31 +1,25 @@
-{ pkgs ? import <nixpkgs> { }
+{ sources ? import ./nix/sources.nix
+, pkgs ? import sources.nixpkgs { }
+, nix-hs ? import sources.nix-hs { inherit pkgs; }
+, ghcide ? sources.ghcide-nix
+, ormolu ? sources.ormolu
+, ghc ? "default"
 }:
 
-let
-  nix-hs = import (fetchGit {
-    url = "https://code.devalot.com/open/nix-hs.git";
-    rev = "528e487580c701e310e17347f8cf2a8e2796054d";
-  }) { inherit pkgs; };
-
-  # Replace the source attribute so it points at the source found in
-  # the given JSON file:
-  replaceSrc = haskell: nix: json:
-    let src = pkgs.fetchgit (removeAttrs (pkgs.lib.importJSON json) ["date"]);
-        mkD = args: haskell.mkDerivation (args // { inherit src; });
-    in haskell.callPackage nix { mkDerivation = mkD; };
-
-in nix-hs {
+nix-hs {
   cabal = ./xmonadrc.cabal;
+  compiler = ghc;
 
-  overrides = lib: self: super: with lib; rec {
-    playlists = import ./nix/playlists.nix { inherit pkgs; haskell = self; };
-    playlists-http = import ./nix/playlists-http.nix { inherit pkgs; haskell = self; };
+  overrides = lib: self: super: with lib; {
+    xmonad = super.callCabal2nix "xmonad" sources.xmonad {};
+    xmonad-contrib = super.callCabal2nix "xmonad-contrib" sources.xmonad-contrib {};
+    playlists = import sources.playlists { inherit (lib) pkgs; };
+    playlists-http = import sources.playlists-http { inherit (lib) pkgs; };
 
-    xmonad = replaceSrc self ./nix/xmonad.cabal.nix ./nix/xmonad.json;
-    xmonad-contrib = replaceSrc self ./nix/xmonad-contrib.cabal.nix ./nix/xmonad-contrib.json;
-
-    http-client = if super ? http-client_0_6_2
-      then super.http-client_0_6_2
-      else super.http-client;
+    ghcide = import ghcide { ghc = compilerName; };
+    ormolu = (import ormolu {
+      inherit (lib) pkgs;
+      ormoluCompiler = lib.compilerName;
+    }).ormolu;
   };
 }
