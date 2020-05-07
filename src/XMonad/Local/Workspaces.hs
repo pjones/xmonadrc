@@ -129,7 +129,7 @@ scratchPads =
       },
     NS
       { name = "ffdoc",
-        cmd = "firefox --class ffdoc --no-remote --profile ~/.mozilla/firefox/ao695ojj.Docs --kiosk https://hackage.haskell.org/",
+        cmd = "firefox --class ffdoc --no-remote --profile ~/.mozilla/firefox/ao695ojj.Docs https://hackage.haskell.org/",
         query = className =? "ffdoc",
         hook = floatOnLeft
       }
