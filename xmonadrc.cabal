@@ -2,7 +2,7 @@ cabal-version: 2.2
 
 ------------------------------------------------------------------------------
 name:          xmonadrc
-version:       19.5.4
+version:       20.5.13
 synopsis:      Peter's XMonad Configuration
 homepage:      https://github.com/pjones/xmonadrc
 license:       BSD-3-Clause

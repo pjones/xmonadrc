@@ -91,12 +91,13 @@ withUpdatePointer = map addAction
     addAction (key, action) = (key, action >> updatePointer (0.75, 0.25) (0, 0))
 
 --------------------------------------------------------------------------------
--- Specifically manage my prefix key (C-z), and for controlling XMonad.
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys c =
   [ ("M-x r", restartIntoDebugging),
     ("M-x <Space>", messageMenu c Local.promptConfig),
-    ("M-.", repeatLastXMessage)
+    ("M-.", repeatLastXMessage),
+    -- Push the KDE desktop window down the stack to see other windows:
+    ("M-x d", spawn "for w in $(xdo id -a Desktop); do xdo lower $w; done")
   ]
 
 --------------------------------------------------------------------------------
