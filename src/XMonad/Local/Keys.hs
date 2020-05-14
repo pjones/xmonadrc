@@ -49,7 +49,6 @@ import qualified XMonad.Local.Prompt as Local
 import XMonad.Local.Tagging
 import XMonad.Local.Workspaces (asKey, scratchPads, viewPrevWS)
 import XMonad.Prompt
-import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Window (WindowPrompt (..), allWindows, windowMultiPrompt, wsWindows)
 import qualified XMonad.StackSet as W
 import XMonad.Util.EZConfig (mkKeymap)
@@ -214,7 +213,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c)),
-    ("M-<Esc>", shellPrompt Local.promptConfig),
+    ("M-<Esc>", spawn "rofi -show drun"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
     ("M-]", namedScratchpadAction scratchPads "emacs"),
