@@ -177,7 +177,7 @@ windowTagKeys _ =
 -- Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys _ =
-  [ ("M-<Space>", switchProjectPrompt Local.promptConfig),
+  [ ("M-<Esc>", switchProjectPrompt Local.promptConfig),
     ("M-'", viewPrevWS)
   ]
 
@@ -213,7 +213,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c)),
-    ("M-<Esc>", spawn "rofi -show drun"),
+    ("M-<Space>", spawn "rofi -show Desktop"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
     ("M-]", namedScratchpadAction scratchPads "emacs"),
