@@ -55,9 +55,10 @@ projects =
       { projectName = "monitoring",
         projectDirectory = "~/",
         projectStartHook = Just $ do
-          spawn "chromium --app='https://stats.devalot.com/d/trW0cTIZz/server-health?orgId=1&refresh=10s&kiosk'"
-          spawn "chromium --app='https://stats.devalot.com/d/NeLIJZ1Zk/hq?orgId=1&from=now-1h&to=now&refresh=10s&kiosk'"
-          spawn "chromium --app='http://hass.pmade.com:8123/lovelace/0'"
+          spawn "chromium --app='https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa'"
+          spawn "chromium --app='https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula'"
+          spawn "chromium --app='https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk'"
+          spawn "chromium --app='https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk'"
       },
     Project
       { projectName = "chat",
