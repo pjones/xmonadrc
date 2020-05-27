@@ -138,7 +138,7 @@ scratchPads =
   where
     floatOnRight =
       customFloating $
-        StackSet.RationalRect (2 / 3) (1 / 10) (1 / 3) (8 / 10)
+        StackSet.RationalRect (1 / 2) (1 / 10) (1 / 2) (8 / 10)
     floatOnLeft =
       customFloating $
         StackSet.RationalRect 0 (1 / 10) (1 / 2) (8 / 10)
