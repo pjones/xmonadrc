@@ -49,7 +49,8 @@ projects =
         projectDirectory = "~/download",
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Tall")
-          spawn "firefox"
+          spawn "vimb https://calendar.google.com/calendar/"
+          spawn "sleep 1 && vimb"
       },
     Project
       { projectName = "monitoring",
@@ -130,8 +131,8 @@ scratchPads =
       },
     NS
       { name = "ffdoc",
-        cmd = "firefox --class ffdoc --no-remote --profile ~/.mozilla/firefox/ao695ojj.Docs https://hackage.haskell.org/",
-        query = className =? "ffdoc",
+        cmd = "tabbed -ckn ffdoc vimb -e",
+        query = appName =? "ffdoc",
         hook = floatOnLeft
       }
   ]
