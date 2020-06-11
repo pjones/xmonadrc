@@ -1,10 +1,4 @@
 {
-    "ghcide-nix": {
-        "ref": "master",
-        "repo": "https://code.devalot.com/pjones/ghcide-nix.git",
-        "rev": "6ebbfcb233f2bfad4dfd03d964013096ea142750",
-        "type": "git"
-    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
@@ -18,10 +12,16 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-hs": {
-        "ref": "next",
-        "repo": "https://code.devalot.com/open/nix-hs.git",
-        "rev": "b267b7dff1e83909e537b5e9af7de0975caf112c",
-        "type": "git"
+        "branch": "master",
+        "description": "Haskell + nixpkgs = nix-hs",
+        "homepage": null,
+        "owner": "pjones",
+        "repo": "nix-hs",
+        "rev": "26fcc02fff3aafb73de29165ecf82abd3b088e98",
+        "sha256": "021rzc1g1a80rh96whpf5vr9h2angy1janv71n0clbv01lizn9ar",
+        "type": "tarball",
+        "url": "https://github.com/pjones/nix-hs/archive/26fcc02fff3aafb73de29165ecf82abd3b088e98.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
         "branch": "nixos-20.03",
@@ -29,46 +29,46 @@
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "2faa76db27c4a8045d050d9b390dbb2249b0f3c0",
-        "sha256": "19g7bas7kd4cipbwxh1hw0kgh4670plsfmk5gqsnivq0x12lbhqd",
+        "rev": "e2bb73ce5f786b83e984b80199112f86b8a6cc9d",
+        "sha256": "0mpcdwhippvgsj3kj8vw35dgz94dnzgxgsfqqzcfpmvnzjc23vk7",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/2faa76db27c4a8045d050d9b390dbb2249b0f3c0.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "ormolu": {
-        "branch": "master",
-        "description": "A formatter for Haskell source code",
-        "homepage": null,
-        "owner": "tweag",
-        "repo": "ormolu",
-        "rev": "3fbc130a0962ab236d87711beae1895d84a68362",
-        "sha256": "1gfdc5rc9jgwkx4y7gfqasl95nxkpmkgwj3489s3n9ws88dfragw",
-        "type": "tarball",
-        "url": "https://github.com/tweag/ormolu/archive/3fbc130a0962ab236d87711beae1895d84a68362.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/e2bb73ce5f786b83e984b80199112f86b8a6cc9d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "playlists": {
-        "ref": "master",
-        "repo": "https://code.devalot.com/open/playlists.git",
-        "rev": "74e147065bd15a95a3cfe73e26e4fa7f3bb7a344",
-        "type": "git"
+        "branch": "next",
+        "description": "Library and executable for working with playlist files.",
+        "homepage": null,
+        "owner": "pjones",
+        "repo": "playlists",
+        "rev": "c615bf863aa179c28acd46005fdc9e4afb15b393",
+        "sha256": "1fc5931xa3x50swfzm2hpjqa8llvbvwkx9d14ss5f91yy15v74r4",
+        "type": "tarball",
+        "url": "https://github.com/pjones/playlists/archive/c615bf863aa179c28acd46005fdc9e4afb15b393.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "playlists-http": {
         "ref": "master",
-        "repo": "https://code.devalot.com/open/playlists-http.git",
+        "repo": "https://github.com/pjones/playlists-http.git",
         "rev": "30cd1944dda87ba147d9e589e6b30a76476679f3",
         "type": "git"
     },
     "xmonad": {
         "ref": "master",
-        "repo": "https://code.devalot.com/mirrors/xmonad.git",
+        "repo": "https://github.com/pjones/xmonad.git",
         "rev": "b65728032d6d533732b1a570a2a901264ef62f00",
         "type": "git"
     },
     "xmonad-contrib": {
-        "ref": "master",
-        "repo": "https://code.devalot.com/mirrors/xmonad-contrib.git",
-        "rev": "52f8c82504e24fb78380819ddffb0ec19b56a763",
-        "type": "git"
+        "branch": "pjones/master",
+        "description": "Contributed modules for xmonad",
+        "homepage": null,
+        "owner": "pjones",
+        "repo": "xmonad-contrib",
+        "rev": "22539d630f8af676709472cdfe6c28b7dc13ae00",
+        "sha256": "13svgdhxpwzv8w019zh5xfllgpab233g6nvydvnv8kzwb3m6jfra",
+        "type": "tarball",
+        "url": "https://github.com/pjones/xmonad-contrib/archive/22539d630f8af676709472cdfe6c28b7dc13ae00.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
