@@ -31,7 +31,7 @@ import XMonad.Util.NamedScratchpad
 
 -- | The command to run to start a terminal.
 terminal :: String
-terminal = "konsole --notransparency --workdir $(pwd)"
+terminal = "eterm"
 
 --------------------------------------------------------------------------------
 projects :: [Project]
@@ -39,10 +39,7 @@ projects =
   [ Project
       { projectName = "scratch",
         projectDirectory = "~/",
-        projectStartHook = Just $ do
-          spawn "e -c"
-          spawn terminal
-          spawn terminal
+        projectStartHook = Nothing
       },
     Project
       { projectName = "browsers",
@@ -78,9 +75,7 @@ projects =
     Project
       { projectName = "rc",
         projectDirectory = "~/src/rc",
-        projectStartHook = Just $ do
-          spawn "e -cs rc"
-          spawn terminal
+        projectStartHook = Nothing
       },
     Project
       { projectName = "music",
@@ -88,29 +83,22 @@ projects =
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Tall")
           spawn "spotify"
-          spawn "cantata"
           spawn "pavucontrol"
       },
     Project
       { projectName = "rfa",
         projectDirectory = "~/src/rfa",
-        projectStartHook = Just $ do
-          spawn "e -cs rfa"
-          spawn terminal
+        projectStartHook = Nothing
       },
     Project
       { projectName = "sthenauth",
         projectDirectory = "~/src/sthenauth",
-        projectStartHook = Just $ do
-          spawn "e -cs sthenauth"
-          spawn terminal
+        projectStartHook = Nothing
       },
     Project
       { projectName = "iolaus",
         projectDirectory = "~/src/haskell/iolaus",
-        projectStartHook = Just $ do
-          spawn "e -cs iolaus"
-          spawn terminal
+        projectStartHook = Nothing
       }
   ]
 
