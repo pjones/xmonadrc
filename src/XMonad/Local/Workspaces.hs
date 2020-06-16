@@ -45,32 +45,31 @@ projects =
       { projectName = "browsers",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Tall")
           spawn "vimb https://calendar.google.com/calendar/"
-          spawn "sleep 1 && vimb"
+          spawn "vimb"
       },
     Project
       { projectName = "monitoring",
         projectDirectory = "~/",
         projectStartHook = Just $ do
-          spawn "chromium --app='https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa'"
-          spawn "chromium --app='https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula'"
-          spawn "chromium --app='https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk'"
-          spawn "chromium --app='https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk'"
+          spawn "vimb 'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa'"
+          spawn "vimb 'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula'"
+          spawn "vimb 'https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk'"
+          spawn "vimb 'https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk'"
       },
     Project
       { projectName = "chat",
         projectDirectory = "~/download",
-        projectStartHook =
-          Just $
-            sendMessage (JumpToLayout "Chat")
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Chat")
+          spawn "vimb https://messages.google.com/web/conversations"
+          spawn "vimb https://chat.rfa.sc.gov/login"
       },
     Project
       { projectName = "mail",
         projectDirectory = "~/",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Mail")
-          spawn "e -cs mail"
+          spawn "kmail"
       },
     Project
       { projectName = "rc",
@@ -99,6 +98,20 @@ projects =
       { projectName = "iolaus",
         projectDirectory = "~/src/haskell/iolaus",
         projectStartHook = Nothing
+      },
+    Project
+      { projectName = "rip",
+        projectDirectory = "~/documents/ripping",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Tall")
+          spawn "ghb"
+      },
+    Project
+      { projectName = "meetings",
+        projectDirectory = "~/download",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "1080p")
+          spawn "chromium"
       }
   ]
 
@@ -113,8 +126,8 @@ scratchPads :: NamedScratchpads
 scratchPads =
   [ NS
       { name = "emacs",
-        cmd = "e -s mail -c -- -F '((name . \"scratch\"))'",
-        query = className =? "Emacs" <&&> appName =? "scratch",
+        cmd = "e -s notes -c -- -F '((name . \"notes\"))'",
+        query = className =? "Emacs" <&&> appName =? "notes",
         hook = floatOnRight
       },
     NS

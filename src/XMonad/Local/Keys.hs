@@ -205,7 +205,8 @@ screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("M-S-0", onNextNeighbour def W.view),
     ("M-S-9", onPrevNeighbour def W.view),
-    ("M-[", screenSwap L True)
+    ("M-[", screenSwap L True),
+    ("C-M1-l", spawn "loginctl lock-session")
   ]
 
 --------------------------------------------------------------------------------
