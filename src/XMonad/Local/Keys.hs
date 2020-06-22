@@ -205,7 +205,7 @@ screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("M-S-0", onNextNeighbour def W.view),
     ("M-S-9", onPrevNeighbour def W.view),
-    ("M-[", screenSwap L True),
+    ("M-S-[", screenSwap L True),
     ("C-M1-l", spawn "loginctl lock-session")
   ]
 
@@ -217,7 +217,7 @@ appKeys c =
     ("M-<Space>", spawn "rofi -show Desktop"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
-    ("M-]", namedScratchpadAction scratchPads "emacs"),
+    ("M-S-]", namedScratchpadAction scratchPads "emacs"),
     ("M-d", namedScratchpadAction scratchPads "ffdoc")
   ]
 

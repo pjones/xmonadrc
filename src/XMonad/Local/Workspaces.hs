@@ -33,6 +33,10 @@ import XMonad.Util.NamedScratchpad
 terminal :: String
 terminal = "eterm"
 
+-- | The full-screen browser to use:
+browserFull :: String
+browserFull = "vimb -C 'set status-bar=false' "
+
 --------------------------------------------------------------------------------
 projects :: [Project]
 projects =
@@ -52,18 +56,18 @@ projects =
       { projectName = "monitoring",
         projectDirectory = "~/",
         projectStartHook = Just $ do
-          spawn "vimb 'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa'"
-          spawn "vimb 'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula'"
-          spawn "vimb 'https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk'"
-          spawn "vimb 'https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk'"
+          spawn (browserFull <> "'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa'")
+          spawn (browserFull <> "'https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula'")
+          spawn (browserFull <> "'https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk'")
+          spawn (browserFull <> "'https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk'")
       },
     Project
       { projectName = "chat",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Chat")
-          spawn "vimb https://messages.google.com/web/conversations"
-          spawn "vimb https://chat.rfa.sc.gov/login"
+          spawn (browserFull <> "https://messages.google.com/web/conversations")
+          spawn (browserFull <> "https://chat.rfa.sc.gov/login")
       },
     Project
       { projectName = "mail",
