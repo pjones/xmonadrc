@@ -37,7 +37,7 @@ terminal = "eterm"
 -- | The full-screen browser to use.  The sleep is to let the first
 -- Chromium instance fully start before more windows open.
 browserFull :: String -> String
-browserFull = printf "sleep 0.5 && chromium --app='%s'"
+browserFull = printf "chromium --app='%s' && sleep 1"
 
 --------------------------------------------------------------------------------
 projects :: [Project]
