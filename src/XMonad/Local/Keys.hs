@@ -1,4 +1,3 @@
---------------------------------------------------------------------------------
 {- This file is part of the xmonadrc package. It is subject to the
 license terms in the LICENSE file found in the top-level directory of
 this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
@@ -6,22 +5,14 @@ the xmonadrc package, including this file, may be copied, modified,
 propagated, or distributed except according to the terms contained in
 the LICENSE file. -}
 
---------------------------------------------------------------------------------
-
 -- | Key bindings.
 module XMonad.Local.Keys (keys, rawKeys) where
 
---------------------------------------------------------------------------------
--- General Haskell Packages.
 import qualified Data.Map as M
 import Graphics.X11.Xlib
 import System.Directory
 import System.FilePath ((</>))
---------------------------------------------------------------------------------
--- Package: xmonad.
 import XMonad hiding (keys)
---------------------------------------------------------------------------------
--- Package: xmonad-contrib.
 import XMonad.Actions.CopyWindow (kill1)
 import XMonad.Actions.DynamicProjects (switchProjectPrompt)
 import XMonad.Actions.GroupNavigation (Direction (..), nextMatch)
@@ -40,8 +31,6 @@ import XMonad.Layout.Maximize (maximizeRestore)
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing
 import XMonad.Layout.ZoomRow (zoomIn, zoomOut, zoomReset)
---------------------------------------------------------------------------------
--- Local modules.
 import XMonad.Local.Layout (selectLayoutByName, toggleLayout)
 import XMonad.Local.Layout.Columns (IncMasterCol (..))
 import XMonad.Local.Music (radioPrompt)
@@ -55,12 +44,9 @@ import XMonad.Util.EZConfig (mkKeymap)
 import qualified XMonad.Util.ExtensibleState as XState
 import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 
---------------------------------------------------------------------------------
--- Join all the key maps into a single list and send it through @mkKeymap@.
+-- | Join all the key maps into a single list and send it through @mkKeymap@.
 keys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 keys c = mkKeymap c (rawKeys c)
-
---------------------------------------------------------------------------------
 
 -- | Access the unprocessed key meant to be fed into @mkKeymap@.
 rawKeys :: XConfig Layout -> [(String, X ())]
@@ -77,8 +63,6 @@ rawKeys c = withUpdatePointer $ concatMap ($ c) keymaps
         musicKeys
       ]
 
---------------------------------------------------------------------------------
-
 -- | Modify all keybindings so that after they finish their action the
 -- mouse pointer is moved to the corner of the focused window.  This
 -- is a bit of a hack to work around some issues I have with
@@ -89,23 +73,18 @@ withUpdatePointer = map addAction
     addAction :: (String, X ()) -> (String, X ())
     addAction (key, action) = (key, action >> updatePointer (0.75, 0.25) (0, 0))
 
---------------------------------------------------------------------------------
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys c =
   [ ("M-x r", restartIntoDebugging),
     ("M-x <Space>", messageMenu c Local.promptConfig),
-    ("M-.", repeatLastXMessage),
-    -- Push the KDE desktop window down the stack to see other windows:
-    ("M-x d", spawn "for w in $(xdo id -a Desktop); do xdo lower $w; done")
+    ("M-.", repeatLastXMessage)
   ]
 
---------------------------------------------------------------------------------
--- Window focusing, swapping, and other actions.
+-- | Window focusing, swapping, and other actions.
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   -- Focusing Windows:
   [ ("M-;", nextMatch History (return True)),
-    ("M-C-;", switchLayer),
     ("M-w k", windows W.focusUp),
     ("M-w j", windows W.focusDown),
     ("M-u", focusUrgent),
@@ -122,22 +101,22 @@ windowKeys _ =
     ("M-C-k", windowSwap U False),
     ("M-<U>", rotSlavesUp),
     ("M-<D>", rotSlavesDown),
-    ("M-m", whenX (swapHybrid False) promote), -- Promote current window to master.
-
+    -- Promote current window to master.
+    ("M-m", whenX (swapHybrid False) promote),
     -- Resizing Windows:
     ("M-S-h", sendMessage Shrink),
     ("M-S-l", sendMessage Expand),
     ("M-S-j", sendMessage MirrorShrink),
     ("M-S-k", sendMessage MirrorExpand),
     -- Window Layers and Killing and Yanking:
+    ("M-C-;", switchLayer),
     ("M-w t", withFocused $ windows . W.sink), -- Tile window.
     ("M-q", kill1), -- Kill the current window.
     ("M-S-y", withFocused minimizeWindow >> windows W.focusDown),
     ("M-S-p", withLastMinimized maximizeWindowAndFocus)
   ]
 
---------------------------------------------------------------------------------
--- Navigate windows by using tags.
+-- | Navigate windows by using tags.
 windowTagKeys :: XConfig Layout -> [(String, X ())]
 windowTagKeys _ =
   [ ("M-/", tagPrompt Local.promptConfig >> sendMessage (IncLayoutN 0)),
@@ -169,38 +148,48 @@ windowTagKeys _ =
       return (prefix ++ asKey key, action key)
     numberedTemplate :: [(String, String -> X ())]
     numberedTemplate =
-      [ ("M-", focusTag'),
-        ("M-C-", toggleTagOnCurrentWindow)
+      [ ("M-M1", focusTag'),
+        ("M-M1-C-", toggleTagOnCurrentWindow)
       ]
 
---------------------------------------------------------------------------------
--- Keys for manipulating workspaces.
+-- | Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
-workspaceKeys _ =
+workspaceKeys conf =
   [ ("M-<Esc>", switchProjectPrompt Local.promptConfig),
     ("M-'", viewPrevWS)
   ]
+    ++ workspaceByIndex
+  where
+    workspaceByIndex :: [(String, X ())]
+    workspaceByIndex = do
+      (name, num) <- zip (workspaces conf) ([1 .. 9] ++ [0])
+      (key, action) <- workspaceTemplate
+      pure (key num, action name)
+    workspaceTemplate :: [(Int -> String, String -> X ())]
+    workspaceTemplate =
+      [ (("M-" <>) . show, windows . W.greedyView),
+        (("M-C-" <>) . show, windows . W.shift)
+      ]
 
---------------------------------------------------------------------------------
--- Layout switching and manipulation.
+-- | Layout switching and manipulation.
 layoutKeys :: XConfig Layout -> [(String, X ())]
 layoutKeys c =
   [ ("M-<Backspace>", selectLayoutByName Local.promptConfig),
     ("M-w <Esc>", setLayout (layoutHook c)), -- Reset to default layout.
-    ("M-`", withFocused (sendMessage . maximizeRestore)),
+    ("M-z", withFocused (sendMessage . maximizeRestore)),
+    ("M-S-f", toggleLayout "Full"),
     ("M-f", toggleLayout "Focus"),
-    ("M-\\", toggleLayout "Single"),
+    ("M-c", toggleLayout "Single"),
     ("M-=", sendMessage (IncMasterN 1)),
     ("M--", sendMessage (IncMasterN (-1))),
     ("M-S-=", sendMessage (IncLayoutN 1)),
     ("M-S--", sendMessage (IncLayoutN (-1))),
     ("M-C-=", sendMessage (IncMasterCol 1)),
     ("M-C--", sendMessage (IncMasterCol (-1))),
-    ("M-s", sendMessage ToggleStruts)
+    ("M-s", sendMessage ToggleStruts >> spawn "polybar-msg cmd toggle")
   ]
 
---------------------------------------------------------------------------------
--- Keys to manipulate screens (actual physical monitors).
+-- | Keys to manipulate screens (actual physical monitors).
 screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("M-S-0", onNextNeighbour def W.view),
@@ -209,8 +198,7 @@ screenKeys _ =
     ("C-M1-l", spawn "loginctl lock-session")
   ]
 
---------------------------------------------------------------------------------
--- Keys for launching applications.
+-- | Keys for launching applications.
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c)),
@@ -221,22 +209,24 @@ appKeys c =
     ("M-d", namedScratchpadAction scratchPads "ffdoc")
   ]
 
---------------------------------------------------------------------------------
--- Keys for controlling music and volume.
+-- | Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-  [ ("M-r", radioPrompt Local.promptConfig)
+  [ ("M-r", radioPrompt Local.promptConfig),
+    ("<XF86AudioPlay>", spawn "player-mpris-tail play-pause"),
+    ("<XF86AudioPrev>", spawn "player-mpris-tail previous"),
+    ("<XF86AudioNext>", spawn "player-mpris-tail next"),
+    ("<XF86Tools>", spawn "player-mpris-tail raise"),
+    ("<XF86AudioLowerVolume>", spawn "pamixer --decrease 5"),
+    ("<XF86AudioRaiseVolume>", spawn "pamixer --increase 5"),
+    ("<XF86AudioMute>", spawn "pamixer --toggle-mute")
   ]
-
---------------------------------------------------------------------------------
 
 -- | Start an Emacs server for the current workspace.
 emacs :: X ()
 emacs = do
   name <- gets (W.tag . W.workspace . W.current . windowset)
   spawn ("e -cs " ++ name)
-
---------------------------------------------------------------------------------
 
 -- | Restart XMonad but instead of starting the XMonad in @PATH@,
 -- start a debugging version built out of my development tree.
@@ -245,7 +235,6 @@ restartIntoDebugging = do
   home <- io getHomeDirectory
   restart (home </> "src/rc/xmonadrc/result/bin/xmonadrc") True
 
---------------------------------------------------------------------------------
 windowPromptGoto :: X ()
 windowPromptGoto = windowMultiPrompt Local.promptConfig modes
   where
@@ -255,8 +244,6 @@ windowPromptGoto = windowMultiPrompt Local.promptConfig modes
         (BringCopy, allWindows),
         (Bring, allWindows)
       ]
-
---------------------------------------------------------------------------------
 
 -- | A menu of less frequently used actions:
 data MessageMenu = MessageMenu
@@ -293,8 +280,6 @@ messageMenu xc conf =
         ("Reset Layout", setLayout (layoutHook xc))
       ]
 
---------------------------------------------------------------------------------
-
 -- | Remember certain actions taken so they can be repeated.
 newtype LastXMessage = LastXMessage
   {getLastMessage :: X ()}
@@ -302,15 +287,11 @@ newtype LastXMessage = LastXMessage
 instance ExtensionClass LastXMessage where
   initialValue = LastXMessage (return ())
 
---------------------------------------------------------------------------------
-
 -- | Record the given message as the last used message, then execute it.
 recordXMessage :: X () -> X ()
 recordXMessage message = do
   XState.put (LastXMessage message)
   message
-
---------------------------------------------------------------------------------
 
 -- | Execute the last recorded message.
 repeatLastXMessage :: X ()

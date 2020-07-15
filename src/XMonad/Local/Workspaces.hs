@@ -1,12 +1,9 @@
---------------------------------------------------------------------------------
 {- This file is part of the xmonadrc package. It is subject to the
 license terms in the LICENSE file found in the top-level directory of
 this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
 the xmonadrc package, including this file, may be copied, modified,
 propagated, or distributed except according to the terms contained in
 the LICENSE file. -}
-
---------------------------------------------------------------------------------
 
 -- | Workspace configuration and utilities.
 module XMonad.Local.Workspaces
@@ -19,7 +16,6 @@ module XMonad.Local.Workspaces
   )
 where
 
---------------------------------------------------------------------------------
 import Control.Monad (unless)
 import Text.Printf (printf)
 import XMonad hiding (terminal)
@@ -27,8 +23,6 @@ import XMonad.Actions.DynamicProjects
 import XMonad.Layout.LayoutCombinators (JumpToLayout (..))
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
-
---------------------------------------------------------------------------------
 
 -- | The command to run to start a terminal.
 terminal :: String
@@ -39,7 +33,6 @@ terminal = "eterm"
 browserFull :: String -> String
 browserFull = printf "chromium --app='%s' && sleep 1"
 
---------------------------------------------------------------------------------
 projects :: [Project]
 projects =
   [ Project
@@ -120,13 +113,20 @@ projects =
       }
   ]
 
---------------------------------------------------------------------------------
-
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names = ["scratch", "browsers", "music", "mail", "chat"]
+names =
+  [ "scratch",
+    "browsers",
+    "chat",
+    "mail",
+    "rc",
+    "rip",
+    "rfa",
+    "meetings",
+    "music"
+  ]
 
---------------------------------------------------------------------------------
 scratchPads :: NamedScratchpads
 scratchPads =
   [ NS
@@ -150,15 +150,11 @@ scratchPads =
       customFloating $
         StackSet.RationalRect 0 (1 / 10) (1 / 2) (8 / 10)
 
---------------------------------------------------------------------------------
-
 -- | Helper function to translate workspace names into key names for
 -- using in @EZConfig@ key bindings.
 asKey :: String -> String
 asKey ('F' : xs) = "<F" ++ xs ++ ">" -- Function key (i.e. "F1" -> "<F1>")
 asKey x = x -- Any other key.
-
---------------------------------------------------------------------------------
 
 -- | Toggle between the current and previous workspaces.
 viewPrevWS :: X ()
