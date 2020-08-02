@@ -205,6 +205,7 @@ appKeys c =
     ("M-<Space>", spawn "rofi -show Desktop"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
+    ("M-r", spawn "rofi -show drun"),
     ("M-S-]", namedScratchpadAction scratchPads "emacs"),
     ("M-d", namedScratchpadAction scratchPads "ffdoc")
   ]
@@ -212,14 +213,14 @@ appKeys c =
 -- | Keys for controlling music and volume.
 musicKeys :: XConfig Layout -> [(String, X ())]
 musicKeys _ =
-  [ ("M-r", radioPrompt Local.promptConfig),
-    ("<XF86AudioPlay>", spawn "player-mpris-tail play-pause"),
+  [ ("<XF86AudioPlay>", spawn "player-mpris-tail play-pause"),
     ("<XF86AudioPrev>", spawn "player-mpris-tail previous"),
     ("<XF86AudioNext>", spawn "player-mpris-tail next"),
-    ("<XF86Tools>", spawn "player-mpris-tail raise"),
+    ("<XF86Tools>", spawn "paswitch"),
     ("<XF86AudioLowerVolume>", spawn "pamixer --decrease 5"),
     ("<XF86AudioRaiseVolume>", spawn "pamixer --increase 5"),
-    ("<XF86AudioMute>", spawn "pamixer --toggle-mute")
+    ("<XF86AudioMute>", spawn "pamixer --toggle-mute"),
+    ("<XF86Launch7>", radioPrompt Local.promptConfig)
   ]
 
 -- | Start an Emacs server for the current workspace.
