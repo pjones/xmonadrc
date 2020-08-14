@@ -194,7 +194,7 @@ screenKeys :: XConfig Layout -> [(String, X ())]
 screenKeys _ =
   [ ("M-S-0", onNextNeighbour def W.view),
     ("M-S-9", onPrevNeighbour def W.view),
-    ("M-S-[", screenSwap L True),
+    ("M-d", screenSwap L True),
     ("C-M1-l", spawn "loginctl lock-session")
   ]
 
@@ -207,7 +207,7 @@ appKeys c =
     ("M-p", spawn "rofi-pass.sh"),
     ("M-r", spawn "rofi -show drun"),
     ("M-S-]", namedScratchpadAction scratchPads "emacs"),
-    ("M-d", namedScratchpadAction scratchPads "ffdoc")
+    ("M-S-[", namedScratchpadAction scratchPads "ffdoc")
   ]
 
 -- | Keys for controlling music and volume.
