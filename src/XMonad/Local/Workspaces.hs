@@ -26,7 +26,7 @@ import XMonad.Util.NamedScratchpad
 
 -- | The command to run to start a terminal.
 terminal :: String
-terminal = "eterm"
+terminal = "konsole"
 
 -- | The full-screen browser to use.  The sleep is to let the first
 -- Chromium instance fully start before more windows open.
