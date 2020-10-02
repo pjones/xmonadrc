@@ -84,7 +84,7 @@ baseKeys c =
 windowKeys :: XConfig Layout -> [(String, X ())]
 windowKeys _ =
   -- Focusing Windows:
-  [ ("M-;", nextMatch History (return True)),
+  [ ("M-'", nextMatch History (return True)),
     ("M-w k", windows W.focusUp),
     ("M-w j", windows W.focusDown),
     ("M-u", focusUrgent),
@@ -156,7 +156,7 @@ windowTagKeys _ =
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys conf =
   [ ("M-<Esc>", switchProjectPrompt Local.promptConfig),
-    ("M-'", viewPrevWS)
+    ("M-;", viewPrevWS)
   ]
     ++ workspaceByIndex
   where
