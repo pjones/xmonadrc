@@ -44,8 +44,8 @@ projects =
       { projectName = "browsers",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          spawn "vimb https://calendar.google.com/calendar/"
-          spawn "vimb"
+          spawn "chromium https://calendar.google.com/calendar/"
+          spawn "chromium"
       },
     Project
       { projectName = "monitoring",
@@ -136,9 +136,9 @@ scratchPads =
         hook = floatOnRight
       },
     NS
-      { name = "ffdoc",
-        cmd = "tabbed -ckn ffdoc vimb -e",
-        query = appName =? "ffdoc",
+      { name = "browser",
+        cmd = "chromium --user-data-dir=~/.config/chromium-sidebar --class=csidebar",
+        query = className =? "csidebar",
         hook = floatOnLeft
       }
   ]

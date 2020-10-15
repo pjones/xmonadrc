@@ -207,7 +207,7 @@ appKeys c =
     ("M-p", spawn "rofi-pass.sh"),
     ("M-r", spawn "rofi -show drun"),
     ("M-S-]", namedScratchpadAction scratchPads "emacs"),
-    ("M-S-[", namedScratchpadAction scratchPads "ffdoc")
+    ("M-S-[", namedScratchpadAction scratchPads "browser")
   ]
 
 -- | Keys for controlling music and volume.
