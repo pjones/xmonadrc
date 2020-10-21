@@ -202,6 +202,7 @@ screenKeys _ =
 appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c)),
+    ("M-C-<Return>", spawn ((terminal c) <> " -e zsh")),
     ("M-<Space>", spawn "rofi -show Desktop"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
