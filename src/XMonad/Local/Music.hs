@@ -1,6 +1,7 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE NamedFieldPuns      #-}
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 {-
@@ -16,9 +17,7 @@ the LICENSE file.
 module XMonad.Local.Music (radioPrompt) where
 
 import Control.Exception
-import Control.Monad (when)
 import Control.Monad.Except
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Random (evalRandIO, uniform)
 import Control.Monad.Reader
 import qualified Data.ByteString as ByteString
@@ -149,10 +148,12 @@ isStream (Just song) = http || https
 
 deleteSong :: Maybe MPD.Song -> MPD.MPD ()
 deleteSong Nothing = return ()
-deleteSong (Just song) = do
-  sid <- maybe (fail "no song ID!") return $ MPD.sgId song
-  MPD.stop
-  MPD.deleteId sid
+deleteSong (Just song) = 
+  case MPD.sgId song of
+    Nothing -> return ()
+    Just sid -> do
+      MPD.stop
+      MPD.deleteId sid
 
 -- | Send a notification.
 notify :: String -> String -> IO ()
