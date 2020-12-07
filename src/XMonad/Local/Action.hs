@@ -19,7 +19,6 @@ where
 
 --------------------------------------------------------------------------------
 import Control.Monad (when)
-import Data.List
 import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (handleEventHook, manageHook)
@@ -43,14 +42,13 @@ manageHook =
     [ -- Windows to ignore:
       isInProperty "_NET_WM_STATE" "_NET_WM_STATE_SKIP_TASKBAR" -?> doIgnore,
       -- Start by tagging new windows:
-      className =? "Chromium-browser" `addTagAndContinue` "browser",
-      title =* "[irc]" `addTagAndContinue` "irc",
+      className =? "Chromium" `addTagAndContinue` "browser",
       -- Some application windows ask to be floating (I'm guessing) but
       -- it's stupid to float them.
       title =? "HandBrake" -?> (ask >>= doF . W.sink),
       -- Chrome debugging windows and application windows show up as
       -- pop-ups so we need to deal with that before floating pop-ups.
-      ( className =? "Chromium-browser"
+      ( className =? "Chromium"
           <&&> stringProperty "WM_WINDOW_ROLE" =? "pop-up"
       )
         -?> normalTile,
@@ -69,8 +67,6 @@ manageHook =
       pure True -?> normalTile
     ]
   where
-    (=*) :: Query String -> String -> Query Bool
-    (=*) q s = isInfixOf s <$> q
     gtkFile = "GtkFileChooserDialog"
     normalTile = insertPosition Above Newer
     tileBelow = insertPosition Below Newer

@@ -44,17 +44,9 @@ projects =
       { projectName = "browsers",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Tall")
           spawn "chromium https://calendar.google.com/calendar/"
           spawn "chromium"
-      },
-    Project
-      { projectName = "monitoring",
-        projectDirectory = "~/",
-        projectStartHook = Just $ do
-          spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa")
-          spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula")
-          spawn (browserFull "https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk")
-          spawn (browserFull "https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk")
       },
     Project
       { projectName = "chat",
@@ -66,36 +58,38 @@ projects =
       },
     Project
       { projectName = "mail",
-        projectDirectory = "~/",
-        projectStartHook = Nothing
+        projectDirectory = "~/download",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Padded")
+          spawn "e -cs mail"
       },
     Project
       { projectName = "rc",
         projectDirectory = "~/src/rc",
-        projectStartHook = Nothing
-      },
-    Project
-      { projectName = "music",
-        projectDirectory = "~/documents/music",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Tall")
-          spawn "spotify"
-          spawn "pavucontrol"
+          sendMessage (JumpToLayout "Padded")
+          spawn "e -cs rc"
       },
     Project
       { projectName = "rfa",
         projectDirectory = "~/src/rfa",
-        projectStartHook = Nothing
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Padded")
+          spawn "e -cs rfa"
       },
     Project
-      { projectName = "sthenauth",
-        projectDirectory = "~/src/sthenauth",
-        projectStartHook = Nothing
+      { projectName = "nix-hs",
+        projectDirectory = "~/src/haskell/nix-hs",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Padded")
+          spawn "e -cs nix-hs"
       },
     Project
-      { projectName = "iolaus",
-        projectDirectory = "~/src/haskell/iolaus",
-        projectStartHook = Nothing
+      { projectName = "edify",
+        projectDirectory = "~/src/haskell/edify",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Padded")
+          spawn "e -cs edify"
       },
     Project
       { projectName = "rip",
@@ -105,40 +99,50 @@ projects =
           spawn "ghb"
       },
     Project
-      { projectName = "meetings",
+      { projectName = "music",
+        projectDirectory = "~/documents/music",
+        projectStartHook = Just $ do
+          sendMessage (JumpToLayout "Tall")
+          spawn "spotify"
+      },
+    Project
+      { projectName = "slack",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "1080p")
-          spawn "chromium"
+          sendMessage (JumpToLayout "Padded")
+          spawn "slack"
+      },
+    Project
+      { projectName = "monitoring",
+        projectDirectory = "~/",
+        projectStartHook = Just $ do
+          spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa")
+          spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula")
+          spawn (browserFull "https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk")
+          spawn (browserFull "https://stats.devalot.com/d/UJ0W9oRGk/headquarters?openVizPicker&orgId=1&from=now-3h&to=now&refresh=30s&kiosk")
       }
   ]
 
 -- | Names of my workspaces.
 names :: [WorkspaceId]
-names =
-  [ "scratch",
-    "browsers",
-    "chat",
-    "mail",
-    "rc",
-    "rip",
-    "rfa",
-    "meetings",
-    "music"
-  ]
+names = map projectName projects
 
 scratchPads :: NamedScratchpads
 scratchPads =
   [ NS
       { name = "emacs",
-        cmd = "e -s notes -c -- -F '((name . \"notes\"))'",
-        query = className =? "Emacs" <&&> appName =? "notes",
+        cmd = "e -ncs notes",
+        query =
+          className =? "Emacs"
+            <&&> ( stringProperty "WM_WINDOW_ROLE" =? "notes"
+                     <||> appName =? "notes"
+                 ),
         hook = floatOnRight
       },
     NS
       { name = "browser",
-        cmd = "chromium --user-data-dir=~/.config/chromium-sidebar --class=csidebar",
-        query = className =? "csidebar",
+        cmd = "browser-sidebar",
+        query = className =? "chromium-sidebar",
         hook = floatOnLeft
       }
   ]
