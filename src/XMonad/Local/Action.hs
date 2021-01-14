@@ -42,9 +42,7 @@ import qualified XMonad.StackSet as W
 manageHook :: ManageHook
 manageHook =
   composeOne
-    [ -- Windows to ignore:
-      isInProperty "_NET_WM_STATE" "_NET_WM_STATE_SKIP_TASKBAR" -?> doIgnore,
-      -- Start by tagging new windows:
+    [ -- Start by tagging new windows:
       className =? "Chromium" `addTagAndContinue` "browser",
       -- Some application windows ask to be floating (I'm guessing) but
       -- it's stupid to float them.
@@ -53,8 +51,6 @@ manageHook =
       -- pop-ups so we need to deal with that before floating pop-ups.
       className =? "Chromium" <&&> role =? "pop-up" -?> normalTile,
       -- Certain windows shouldn't steal the master pane.
-      className =? "konsole" -?> tileBelow,
-      className =? "eterm" -?> tileBelow,
       className =? "Emacs" <&&> role =? "popup" -?> tileBelowNoFocus,
       -- Force dialog windows and pop-ups to be floating.
       role =? "pop-up" -?> doCenterFloat,
@@ -70,7 +66,6 @@ manageHook =
     role = stringProperty "WM_WINDOW_ROLE"
     gtkFile = "GtkFileChooserDialog"
     normalTile = insertPosition Above Newer
-    tileBelow = insertPosition Below Newer
     tileBelowNoFocus = insertPosition Below Older
 
 -- | If the given condition is 'True' then add the given tag name to
