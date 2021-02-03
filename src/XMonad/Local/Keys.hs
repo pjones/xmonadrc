@@ -23,7 +23,6 @@ import XMonad.Actions.Promote (promote)
 import XMonad.Actions.RotSlaves (rotSlavesDown, rotSlavesUp)
 import XMonad.Actions.SwapPromote (swapHybrid)
 import XMonad.Actions.TagWindows (addTag, delTag, withTagged)
-import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.ManageDocks (ToggleStruts (..))
 import XMonad.Hooks.UrgencyHook (focusUrgent)
 import XMonad.Layout.LayoutBuilder (IncLayoutN (..))
@@ -50,7 +49,7 @@ keys c = mkKeymap c (rawKeys c)
 
 -- | Access the unprocessed key meant to be fed into @mkKeymap@.
 rawKeys :: XConfig Layout -> [(String, X ())]
-rawKeys c = withUpdatePointer $ concatMap ($ c) keymaps
+rawKeys c = concatMap ($ c) keymaps
   where
     keymaps =
       [ baseKeys,
@@ -62,16 +61,6 @@ rawKeys c = withUpdatePointer $ concatMap ($ c) keymaps
         appKeys,
         musicKeys
       ]
-
--- | Modify all keybindings so that after they finish their action the
--- mouse pointer is moved to the corner of the focused window.  This
--- is a bit of a hack to work around some issues I have with
--- @UpdatePointer@.
-withUpdatePointer :: [(String, X ())] -> [(String, X ())]
-withUpdatePointer = map addAction
-  where
-    addAction :: (String, X ()) -> (String, X ())
-    addAction (key, action) = (key, action >> updatePointer (0.75, 0.25) (0, 0))
 
 baseKeys :: XConfig Layout -> [(String, X ())]
 baseKeys c =
