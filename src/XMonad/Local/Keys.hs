@@ -1,11 +1,19 @@
-{- This file is part of the xmonadrc package. It is subject to the
-license terms in the LICENSE file found in the top-level directory of
-this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
-the xmonadrc package, including this file, may be copied, modified,
-propagated, or distributed except according to the terms contained in
-the LICENSE file. -}
-
--- | Key bindings.
+-- |
+--
+-- Copyright:
+--   This file is part of the package xmonadrc. It is subject to the
+--   license terms in the LICENSE file found in the top-level
+--   directory of this distribution and at:
+--
+--     https://github.com/pjones/xmonadrc
+--
+--   No part of this package, including this file, may be copied,
+--   modified, propagated, or distributed except according to the
+--   terms contained in the LICENSE file.
+--
+-- License: BSD-3-Clause
+--
+-- Key bindings.
 module XMonad.Local.Keys (keys, rawKeys) where
 
 import qualified Data.Map as M
@@ -144,7 +152,8 @@ windowTagKeys _ =
 -- | Keys for manipulating workspaces.
 workspaceKeys :: XConfig Layout -> [(String, X ())]
 workspaceKeys conf =
-  [ ("M-<Esc>", switchProjectPrompt Local.promptConfig),
+  [ ("M-<Space>", switchProjectPrompt Local.promptConfig),
+    ("M-<Esc>", spawn "rofi -show Desktop"),
     ("M-;", viewPrevWS)
   ]
     ++ workspaceByIndex
@@ -192,10 +201,10 @@ appKeys :: XConfig Layout -> [(String, X ())]
 appKeys c =
   [ ("M-<Return>", spawn (terminal c)),
     ("M-C-<Return>", spawn ((terminal c) <> " -e zsh")),
-    ("M-<Space>", spawn "rofi -show Desktop"),
     ("M-e", emacs),
     ("M-p", spawn "rofi-pass.sh"),
     ("M-r", spawn "rofi -show drun"),
+    ("M-C-u", Local.webAppPrompt Local.promptConfig),
     ("M-S-]", namedScratchpadAction scratchPads "emacs"),
     ("M-S-[", namedScratchpadAction scratchPads "browser")
   ]
@@ -269,7 +278,8 @@ messageMenu xc conf =
         ("ZoomIn", sendMessage zoomIn),
         ("ZoomOut", sendMessage zoomOut),
         ("ZoomReset", sendMessage zoomReset),
-        ("Reset Layout", setLayout (layoutHook xc))
+        ("Reset Layout", setLayout (layoutHook xc)),
+        ("WebApp Prompt", Local.webAppPrompt Local.promptConfig)
       ]
 
 -- | Remember certain actions taken so they can be repeated.

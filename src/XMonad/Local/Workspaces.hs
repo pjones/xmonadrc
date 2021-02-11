@@ -21,17 +21,13 @@ import Text.Printf (printf)
 import XMonad hiding (terminal)
 import XMonad.Actions.DynamicProjects
 import XMonad.Layout.LayoutCombinators (JumpToLayout (..))
+import XMonad.Local.Prompt (WebApp (..), webAppCommand)
 import qualified XMonad.StackSet as StackSet
 import XMonad.Util.NamedScratchpad
 
 -- | The command to run to start a terminal.
 terminal :: String
 terminal = "konsole"
-
--- | The full-screen browser to use.  The sleep is to let the first
--- Chromium instance fully start before more windows open.
-browserFull :: String -> String
-browserFull = printf "chromium --app='%s' && sleep 1"
 
 projects :: [Project]
 projects =
@@ -53,8 +49,8 @@ projects =
         projectDirectory = "~/download",
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Chat")
-          spawn (browserFull "https://messages.google.com/web/conversations")
-          spawn (browserFull "https://chat.rfa.sc.gov/login")
+          spawn (webAppCommand Mattermost)
+          spawn (webAppCommand GoogleMessages)
       },
     Project
       { projectName = "mail",
@@ -116,6 +112,7 @@ projects =
       { projectName = "monitoring",
         projectDirectory = "~/",
         projectStartHook = Just $ do
+          let browserFull = printf "sleep 1 && chromium --app='%s'"
           spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa")
           spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula")
           spawn (browserFull "https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk")
