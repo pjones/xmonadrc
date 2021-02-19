@@ -175,8 +175,8 @@ layoutKeys c =
   [ ("M-<Backspace>", selectLayoutByName Local.promptConfig),
     ("M-w <Esc>", setLayout (layoutHook c)), -- Reset to default layout.
     ("M-z", withFocused (sendMessage . maximizeRestore)),
-    ("M-S-f", toggleLayout "Full"),
-    ("M-f", toggleLayout "Focus"),
+    ("M-f", toggleLayout "Full"),
+    ("M-S-f", toggleLayout "Focus"),
     ("M-c", toggleLayout "Single"),
     ("M-=", sendMessage (IncMasterN 1)),
     ("M--", sendMessage (IncMasterN (-1))),

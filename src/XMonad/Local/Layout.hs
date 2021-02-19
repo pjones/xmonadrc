@@ -75,9 +75,8 @@ layoutHook =
     grid = ifMax 3 tall (spacing Grid)
     pgrid = pad (1 / 8) grid
     ten80 = centered 2560 (1924, 1084) -- Account for border width
-    cgrid = layoutAll (relBox (1 / 8) (1 / 8) (7 / 8) (7 / 8)) grid
-    single = noBorders (pad (1 / 4) Simplest)
-    auto = ifMax 1 (noBorders cgrid) $ ifMax 2 twoPane mcols
+    single = noBorders (pad (1 / 8) Simplest)
+    auto = ifMax 1 single tall
     padded = ifMax 1 single (pad (1 / 8) tall)
     mcols = spacing $ mkCols 1 1 3 (3 / 8) (1 / 100) RightToLeft
     -- Layout modifier that places the requested padding around the
@@ -149,6 +148,7 @@ selectLayoutByName conf =
         ("1080p", "1080p"),
         ("Big", "Big"),
         ("Chat", "Chat"),
+        ("Columns", "MultiCols"),
         ("Focus", "Focus"),
         ("Full", "Full"),
         ("Grid", "Grid"),
