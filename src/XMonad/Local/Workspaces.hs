@@ -1,11 +1,19 @@
-{- This file is part of the xmonadrc package. It is subject to the
-license terms in the LICENSE file found in the top-level directory of
-this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
-the xmonadrc package, including this file, may be copied, modified,
-propagated, or distributed except according to the terms contained in
-the LICENSE file. -}
-
--- | Workspace configuration and utilities.
+-- |
+--
+-- Copyright:
+--   This file is part of the package xmonadrc. It is subject to the
+--   license terms in the LICENSE file found in the top-level
+--   directory of this distribution and at:
+--
+--     https://github.com/pjones/xmonadrc
+--
+--   No part of this package, including this file, may be copied,
+--   modified, propagated, or distributed except according to the
+--   terms contained in the LICENSE file.
+--
+-- License: BSD-3-Clause
+--
+-- Workspace configuration and utilities.
 module XMonad.Local.Workspaces
   ( projects,
     terminal,
@@ -40,7 +48,6 @@ projects =
       { projectName = "browsers",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Tall")
           spawn "chromium https://calendar.google.com/calendar/"
           spawn "chromium"
       },
@@ -48,7 +55,6 @@ projects =
       { projectName = "chat",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Chat")
           spawn (webAppCommand Mattermost)
           spawn (webAppCommand GoogleMessages)
       },
@@ -91,14 +97,12 @@ projects =
       { projectName = "rip",
         projectDirectory = "~/documents/ripping",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Tall")
           spawn "ghb"
       },
     Project
       { projectName = "music",
         projectDirectory = "~/documents/music",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Tall")
           spawn "spotify"
       },
     Project

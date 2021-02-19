@@ -1,52 +1,47 @@
-cabal-version: 2.2
-
-------------------------------------------------------------------------------
+cabal-version: 2.4
 name:          xmonadrc
-version:       20.5.13
+version:       21.2
 synopsis:      Peter's XMonad Configuration
 homepage:      https://github.com/pjones/xmonadrc
 license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Peter Jones <pjones@pmade.com>
 maintainer:    Peter Jones <pjones@pmade.com>
-copyright:     Copyright (c) 2013-2020 Peter J. Jones
-category:      Graphics
+copyright:     Copyright (c) 2013-2021 Peter J. Jones
+category:      System
 build-type:    Simple
 
---------------------------------------------------------------------------------
 common options
   default-language: Haskell2010
-  ghc-options: -Wall
-               -Wincomplete-record-updates
-               -Wredundant-constraints
-               -fwarn-incomplete-uni-patterns
+  ghc-options:
+    -Wall -Wincomplete-record-updates -Wredundant-constraints
+    -fwarn-incomplete-uni-patterns
 
---------------------------------------------------------------------------------
 common dependencies
-  build-depends: base           >= 4.0  && < 5.0
-               , MonadRandom    >= 0.4  && < 0.6
-               , X11            >= 1.8  && < 2.0
-               , bytestring     >= 0.9  && < 0.11
-               , containers     >= 0.4  && < 0.7
-               , directory      >= 1.1  && < 1.4
-               , either         >= 4.4  && < 6.0
-               , filepath       >= 1.3  && < 1.5
-               , hostname       >= 1.0  && < 1.1
-               , http-client    >= 0.6  && < 0.7
-               , libmpd         >= 0.8  && < 0.10
-               , libnotify      >= 0.2
-               , mtl            >= 2.2  && < 3.0
-               , parsec         >= 3.1  && < 3.2
-               , playlists      >= 0.1  && < 1.0
-               , playlists-http >= 0.1  && < 1.0
-               , setlocale      >= 1.0  && < 1.1
-               , text           >= 0.11 && < 1.3
-               , xmonad         == 0.15
-               , xmonad-contrib == 0.16
+  build-depends:
+    , base            >=4.0  && <5.0
+    , bytestring      >=0.9  && <0.11
+    , containers      >=0.4  && <0.7
+    , directory       >=1.1  && <1.4
+    , either          >=4.4  && <6.0
+    , filepath        >=1.3  && <1.5
+    , hostname        ^>=1.0
+    , http-client     ^>=0.6
+    , libmpd          >=0.8  && <0.10
+    , libnotify       >=0.2
+    , MonadRandom     >=0.4  && <0.6
+    , mtl             >=2.2  && <3.0
+    , parsec          ^>=3.1
+    , playlists       >=0.1  && <1.0
+    , playlists-http  >=0.1  && <1.0
+    , setlocale       ^>=1.0
+    , text            >=0.11 && <1.3
+    , X11             >=1.8  && <2.0
+    , xmonad          ==0.15
+    , xmonad-contrib  ==0.16
 
-------------------------------------------------------------------------------
 library
-  import: options, dependencies
+  import:          options, dependencies
   exposed-modules:
     XMonad.Local.Action
     XMonad.Local.Keys
@@ -61,21 +56,19 @@ library
     XMonad.Local.Theme
     XMonad.Local.Workspaces
 
-  other-modules:
-    Paths_xmonadrc
+  other-modules:   Paths_xmonadrc
+  hs-source-dirs:  src
 
-  hs-source-dirs: src
-
-------------------------------------------------------------------------------
 executable xmonadrc
-  import: options, dependencies
-  main-is: xmonadrc.hs
-  build-depends: base
-               , xmonadrc
+  import:        options, dependencies
+  main-is:       xmonadrc.hs
+  build-depends:
+    , base
+    , xmonadrc
 
-------------------------------------------------------------------------------
 executable checkrc
-  import: options, dependencies
-  main-is: checkrc.hs
-  build-depends: base
-               , xmonadrc
+  import:        options, dependencies
+  main-is:       checkrc.hs
+  build-depends:
+    , base
+    , xmonadrc

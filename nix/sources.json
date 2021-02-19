@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "pjones",
         "repo": "nix-hs",
-        "rev": "67163bb02a8791d79136ba6914b6d6dad594533b",
-        "sha256": "0f7sjh45wxbf2m76l37f4l4v4dkq32dm599p85acx53324nr9y8z",
+        "rev": "cbf9641c096849497386dad8c4f0bae0a417d2e3",
+        "sha256": "1vca9wx43n1f32ffvi7zwfycc5al9wxkrqbxsn0lwcp7b8pf73np",
         "type": "tarball",
-        "url": "https://github.com/pjones/nix-hs/archive/67163bb02a8791d79136ba6914b6d6dad594533b.tar.gz",
+        "url": "https://github.com/pjones/nix-hs/archive/cbf9641c096849497386dad8c4f0bae0a417d2e3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {

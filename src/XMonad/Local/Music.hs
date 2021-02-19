@@ -1,27 +1,33 @@
-{-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE LambdaCase          #-}
-{-# LANGUAGE NamedFieldPuns      #-}
-{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-{-
-This file is part of the xmonadrc package. It is subject to the
-license terms in the LICENSE file found in the top-level directory of
-this distribution and at git://pmade.com/xmonadrc/LICENSE. No part of
-the xmonadrc package, including this file, may be copied, modified,
-propagated, or distributed except according to the terms contained in
-the LICENSE file.
--}
-
--- | Utilities and configuration for manipulating music from within XMonad.
+-- |
+--
+-- Copyright:
+--   This file is part of the package xmonadrc. It is subject to the
+--   license terms in the LICENSE file found in the top-level
+--   directory of this distribution and at:
+--
+--     https://github.com/pjones/xmonadrc
+--
+--   No part of this package, including this file, may be copied,
+--   modified, propagated, or distributed except according to the
+--   terms contained in the LICENSE file.
+--
+-- License: BSD-3-Clause
+--
+-- Utilities and configuration for manipulating music from within XMonad.
 module XMonad.Local.Music (radioPrompt) where
 
 import Control.Exception
 import Control.Monad.Except
 import Control.Monad.Random (evalRandIO, uniform)
 import Control.Monad.Reader
-import qualified Data.ByteString as ByteString
 import Data.ByteString (ByteString)
+import qualified Data.ByteString as ByteString
 import qualified Data.ByteString.Lazy as LByteString
 import Data.Foldable (find)
 import Data.List (isPrefixOf)
@@ -96,11 +102,12 @@ radioPlayOrPrompt path =
     downloadPlaylist url = do
       RadioStream {radioHttpManager} <- ask
       req <- maybe (throwError "bad url") pure $ HTTP.parseUrlThrow url
-      liftIO $ (`catch` \(_ :: HTTP.HttpException) -> pure ByteString.empty)
-        $ HTTP.withResponse req radioHttpManager
-        $ \res -> do
-          bs <- HTTP.brReadSome (HTTP.responseBody res) (2 * 1024 * 1024) -- 2MB
-          pure (LByteString.toStrict bs)
+      liftIO $
+        (`catch` \(_ :: HTTP.HttpException) -> pure ByteString.empty) $
+          HTTP.withResponse req radioHttpManager $
+            \res -> do
+              bs <- HTTP.brReadSome (HTTP.responseBody res) (2 * 1024 * 1024) -- 2MB
+              pure (LByteString.toStrict bs)
     parse :: Format -> ByteString -> Radio Playlist
     parse fmt = either throwError pure . parsePlaylist fmt
 
@@ -127,10 +134,12 @@ radioPrompt conf = do
 -- https://github.com/vimus/libmpd-haskell/issues/114
 playUrl :: FilePath -> X ()
 playUrl url = do
-  result <- liftIO $ (`catch` onE) $ MPD.withMPD_ (Just "127.0.0.1") Nothing $ do
-    current <- MPD.currentSong
-    when (isStream current) $ deleteSong current
-    MPD.addId (fromString url) Nothing >>= MPD.playId
+  result <- liftIO $
+    (`catch` onE) $
+      MPD.withMPD_ (Just "127.0.0.1") Nothing $ do
+        current <- MPD.currentSong
+        when (isStream current) $ deleteSong current
+        MPD.addId (fromString url) Nothing >>= MPD.playId
   case result of
     Left e -> liftIO (notify "MPD Error" (show e))
     Right _ -> pure ()
@@ -148,7 +157,7 @@ isStream (Just song) = http || https
 
 deleteSong :: Maybe MPD.Song -> MPD.MPD ()
 deleteSong Nothing = return ()
-deleteSong (Just song) = 
+deleteSong (Just song) =
   case MPD.sgId song of
     Nothing -> return ()
     Just sid -> do

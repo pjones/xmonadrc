@@ -61,9 +61,9 @@ import XMonad.Util.WindowProperties (Property (..))
 -- | XMonad layout hook.  No type signature because it's freaking
 -- nasty and I can't come up with a way to make it generic.
 layoutHook =
-  renamed [CutWordsLeft 2]
-    $ minimize
-    $ maximizeWithPadding 100 allLays
+  renamed [CutWordsLeft 2] $
+    minimize $
+      maximizeWithPadding 100 allLays
   where
     uniformBorder n = Border n n n n
     spacing = spacingRaw False (uniformBorder 0) True (uniformBorder 10) True
@@ -79,6 +79,7 @@ layoutHook =
     auto = ifMax 1 single tall
     padded = ifMax 1 single (pad (1 / 8) tall)
     mcols = spacing $ mkCols 1 1 3 (3 / 8) (1 / 100) RightToLeft
+
     -- Layout modifier that places the requested padding around the
     -- given layout.
     pad ::
@@ -87,6 +88,7 @@ layoutHook =
       l1 a ->
       LayoutB l1 Full () a
     pad offset = layoutAll (relBox offset (1 / 30) (1 - offset) (29 / 30))
+
     -- A layout where windows you want to focus on are specified using
     -- @WindowProperties@.  Windows matching the given properties will
     -- be placed into the main layout.  Other windows are pushed to
@@ -96,6 +98,7 @@ layoutHook =
           botBox = relBox 0 (7 / 8) 1 1
        in layoutP prop topBox Nothing mcols $
             layoutAll botBox zoomRow
+
     -- Center the master window horizontally, locked to the given
     -- width and height, display all other windows below in a grid.
     centered x (w, h) =
