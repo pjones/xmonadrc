@@ -24,7 +24,6 @@ where
 
 --------------------------------------------------------------------------------
 import Control.Monad (when)
-import qualified Data.Map as M
 import Data.Monoid
 import XMonad hiding (handleEventHook, manageHook)
 import XMonad.Actions.TagWindows (addTag)
@@ -92,22 +91,4 @@ forceCenterFloat = doFloatDep move
     y = (1 - h) / 2
 
 handleEventHook :: Event -> X All
-handleEventHook =
-  mconcat
-    [ focusFollowsTiledOnly,
-      minimizeEventHook
-    ]
-
--- | Enables 'focusFollowsMouse' for tiled windows only.  For this to
--- work you need to turn off 'focusFollowsMouse' in your configuration
--- and then add this function to your 'handleEventHook'.
-focusFollowsTiledOnly :: Event -> X All
-focusFollowsTiledOnly e@CrossingEvent {ev_window = w, ev_event_type = t}
-  | isNormalEnter = whenX bothTiled (focus w) >> mempty
-  where
-    isNormalEnter = t == enterNotify && ev_mode e == notifyNormal
-    bothTiled = notFloating w <&&> currentIsTiled
-    currentIsTiled = currentWindow >>= maybe (return True) notFloating
-    currentWindow = gets $ W.peek . windowset
-    notFloating w' = gets $ not . M.member w' . W.floating . windowset
-focusFollowsTiledOnly _ = mempty
+handleEventHook = minimizeEventHook
