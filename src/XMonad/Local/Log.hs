@@ -39,8 +39,9 @@ logHook =
 -- | Control the opacity of windows.  The list is processed from the
 -- bottom up.
 fadeHook :: FadeHook
-fadeHook = composeAll
-  [ opaque
-  , isUnfocusedOnCurrentWS --> transparency 0.25
-  , isFloating             --> transparency 0.0
-  ]
+fadeHook =
+  composeAll
+    [ opaque,
+      isUnfocusedOnCurrentWS --> transparency 0.1,
+      isFloating --> opaque
+    ]
