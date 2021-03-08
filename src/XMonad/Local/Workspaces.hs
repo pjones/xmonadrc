@@ -55,8 +55,9 @@ projects =
       { projectName = "chat",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          spawn (webAppCommand Mattermost)
           spawn (webAppCommand GoogleMessages)
+          spawn "signal-desktop"
+          spawn "telegram-desktop"
       },
     Project
       { projectName = "mail",
@@ -77,6 +78,7 @@ projects =
         projectDirectory = "~/src/rfa",
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Padded")
+          spawn (webAppCommand Mattermost)
           spawn "e -cs rfa"
       },
     Project
@@ -104,13 +106,14 @@ projects =
         projectDirectory = "~/documents/music",
         projectStartHook = Just $ do
           spawn "spotify"
+          spawn "cantata"
       },
     Project
-      { projectName = "slack",
+      { projectName = "social",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Padded")
-          spawn "slack"
+          spawn (webAppCommand Tweetdeck)
+          spawn "zulip"
       },
     Project
       { projectName = "monitoring",
