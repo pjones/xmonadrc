@@ -86,7 +86,7 @@ webAppURL = \case
 
 -- | The full-screen browser to use.
 webAppCommand :: WebApp -> String
-webAppCommand = printf "chromium --app='%s'" . webAppURL
+webAppCommand = printf "browser --app='%s'" . webAppURL
 
 -- | For prompting.
 data WebAppPrompt = WebAppPrompt

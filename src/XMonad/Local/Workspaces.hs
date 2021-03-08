@@ -48,8 +48,8 @@ projects =
       { projectName = "browsers",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          spawn "chromium https://calendar.google.com/calendar/"
-          spawn "chromium"
+          spawn "browser https://calendar.google.com/calendar/"
+          spawn "browser"
       },
     Project
       { projectName = "chat",
@@ -116,7 +116,7 @@ projects =
       { projectName = "monitoring",
         projectDirectory = "~/",
         projectStartHook = Just $ do
-          let browserFull = printf "sleep 1 && chromium --app='%s'"
+          let browserFull = printf "sleep 1 && browser --app='%s'"
           spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=kilgrave&var-node=medusa")
           spawn (browserFull "https://stats.devalot.com/d/fkNz2pRMz/system-health?orgId=1&from=now-1h&to=now&refresh=30s&kiosk&var-node=moriarty&var-node=ursula")
           spawn (browserFull "https://stats.devalot.com/d/9H98YpRMk/mail?orgId=1&refresh=1m&kiosk")
@@ -143,7 +143,7 @@ scratchPads =
     NS
       { name = "browser",
         cmd = "browser-sidebar",
-        query = className =? "chromium-sidebar",
+        query = className =? "browser-sidebar",
         hook = floatOnLeft
       }
   ]

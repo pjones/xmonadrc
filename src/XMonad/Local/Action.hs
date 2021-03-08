@@ -43,12 +43,15 @@ manageHook =
   composeOne
     [ -- Start by tagging new windows:
       className =? "Chromium" `addTagAndContinue` "browser",
+      className =? "Brave-browser" `addTagAndContinue` "browser",
+      className =? "Firefox" `addTagAndContinue` "browser",
       -- Some application windows ask to be floating (I'm guessing) but
       -- it's stupid to float them.
       title =? "HandBrake" -?> (ask >>= doF . W.sink),
       -- Chrome debugging windows and application windows show up as
       -- pop-ups so we need to deal with that before floating pop-ups.
       className =? "Chromium" <&&> role =? "pop-up" -?> normalTile,
+      className =? "Brave-browser" <&&> role =? "pop-up" -?> normalTile,
       -- Certain windows shouldn't steal the master pane.
       className =? "Emacs" <&&> role =? "popup" -?> tileBelowNoFocus,
       -- Force dialog windows and pop-ups to be floating.
