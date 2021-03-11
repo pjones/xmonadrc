@@ -57,7 +57,6 @@ projects =
         projectStartHook = Just $ do
           spawn (webAppCommand GoogleMessages)
           spawn "signal-desktop"
-          spawn "telegram-desktop"
       },
     Project
       { projectName = "mail",
