@@ -56,13 +56,14 @@ projects =
         projectDirectory = "~/download",
         projectStartHook = Just $ do
           spawn (webAppCommand GoogleMessages)
+          spawn (webAppCommand Mattermost)
           spawn "signal-desktop"
       },
     Project
       { projectName = "mail",
         projectDirectory = "~/download",
         projectStartHook = Just $ do
-          sendMessage (JumpToLayout "Padded")
+          spawn (webAppCommand Outlook)
           spawn "e -cs mail"
       },
     Project
@@ -77,7 +78,6 @@ projects =
         projectDirectory = "~/src/rfa",
         projectStartHook = Just $ do
           sendMessage (JumpToLayout "Padded")
-          spawn (webAppCommand Mattermost)
           spawn "e -cs rfa"
       },
     Project
