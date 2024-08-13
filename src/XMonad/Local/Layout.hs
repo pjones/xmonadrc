@@ -78,6 +78,8 @@ layoutHook =
     single = noBorders (pad (1 / 8) Simplest)
     auto = ifMax 1 single tall
     padded = ifMax 1 single (pad (1 / 8) tall)
+    onecol l = layoutAll (relBox (3 / 8) (1 / 30) (1 / 2) (29 / 30)) l
+    writing = ifMax 1 (noBorders $ onecol Simplest) (onecol $ Mirror tall)
     mcols = spacing $ mkCols 1 1 3 (3 / 8) (1 / 100) RightToLeft
 
     -- Layout modifier that places the requested padding around the
@@ -126,6 +128,7 @@ layoutHook =
         ||| renamed [Replace "PGrid"] pgrid
         ||| renamed [Replace "Single"] single
         ||| renamed [Replace "Tall"] tall
+        ||| renamed [Replace "Writing"] writing
 
 -- | A data type for the @XPrompt@ class.
 data LayoutByName = LayoutByName
@@ -159,7 +162,8 @@ selectLayoutByName conf =
         ("Padded", "Padded"),
         ("Single", "Single"),
         ("Tall", "Tall"),
-        ("Two Pane (2P)", "2P")
+        ("Two Pane (2P)", "2P"),
+        ("Writing", "Writing")
       ]
 
 -- | Keep track of layouts when jumping with 'toggleLayout'.
